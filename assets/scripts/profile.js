@@ -34,6 +34,7 @@ function renderProfile(container) {
                                 <option value="移住者" ${userProfile.role === '移住者' ? 'selected' : ''}>移住者</option>
                                 <option value="事業者" ${userProfile.role === '事業者' ? 'selected' : ''}>事業者</option>
                                 <option value="起業家" ${userProfile.role === '起業家' ? 'selected' : ''}>起業家</option>
+                                <option value="起業家" ${userProfile.role === '地域おこし協力隊' ? 'selected' : ''}>地域おこし協力隊</option>
                                 <option value="学生" ${userProfile.role === '学生' ? 'selected' : ''}>学生</option>
                                 <option value="研究者" ${userProfile.role === '研究者' ? 'selected' : ''}>研究者</option>
                                 <option value="NPO関係者" ${userProfile.role === 'NPO関係者' ? 'selected' : ''}>NPO関係者</option>
