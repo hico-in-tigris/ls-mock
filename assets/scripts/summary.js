@@ -197,19 +197,36 @@ function renderDailyReflection() {
             <div class="card">
                 <div class="card-header">
                     <h3 class="font-semibold">今日のふりかえり</h3>
+                    <p class="text-sm text-muted-foreground">今日の活動を振り返って記録しましょう</p>
                 </div>
                 <div class="card-content space-y-4">
                     <div>
                         <label class="text-sm font-medium text-green-700">✓ よかったこと</label>
-                        <div class="mt-1 p-3 bg-green-50 rounded-md text-sm">${latestDaily.reflection.good}</div>
+                        <textarea id="daily-good" class="w-full mt-1 p-3 border border-green-200 bg-green-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" placeholder="今日うまくいったことを記録してください...">${latestDaily.reflection.good}</textarea>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-orange-700">△ 課題・改善点</label>
-                        <div class="mt-1 p-3 bg-orange-50 rounded-md text-sm">${latestDaily.reflection.challenge}</div>
+                        <textarea id="daily-challenge" class="w-full mt-1 p-3 border border-orange-200 bg-orange-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent" rows="3" placeholder="改善できる点や課題を記録してください...">${latestDaily.reflection.challenge}</textarea>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-blue-700">→ 明日やること</label>
-                        <div class="mt-1 p-3 bg-blue-50 rounded-md text-sm">${latestDaily.reflection.next}</div>
+                        <textarea id="daily-next" class="w-full mt-1 p-3 border border-blue-200 bg-blue-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="明日の具体的なアクションを記録してください...">${latestDaily.reflection.next}</textarea>
+                    </div>
+                    <div class="flex space-x-2 pt-4">
+                        <button onclick="saveDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+                                <polyline points="9,11 12,14 22,4"/>
+                            </svg>
+                            ふりかえりを保存
+                        </button>
+                        <button onclick="clearDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="1,4 1,10 7,10"/>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                            </svg>
+                            リセット
+                        </button>
                     </div>
                 </div>
             </div>
@@ -218,22 +235,44 @@ function renderDailyReflection() {
             <div class="card">
                 <div class="card-header">
                     <h3 class="font-semibold">新しいアクションを追加</h3>
+                    <p class="text-sm text-muted-foreground">今日実施したアクションを記録しましょう</p>
                 </div>
                 <div class="card-content space-y-4">
                     <div class="grid gap-4 md:grid-cols-3">
-                        <input type="time" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" placeholder="時間">
-                        <input type="text" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" placeholder="アクション内容">
-                        <select class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm">
-                            <option value="meeting">会議</option>
-                            <option value="work">作業</option>
-                            <option value="research">調査</option>
-                            <option value="planning">企画</option>
-                        </select>
+                        <div>
+                            <label class="text-sm font-medium">時間</label>
+                            <input id="action-time" type="time" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="時間">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">アクション内容</label>
+                            <input id="action-content" type="text" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="実施したアクション">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">種類</label>
+                            <select id="action-type" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                                <option value="meeting">会議</option>
+                                <option value="work">作業</option>
+                                <option value="research">調査</option>
+                                <option value="planning">企画</option>
+                            </select>
+                        </div>
                     </div>
-                    <textarea class="w-full p-2 border rounded-md text-sm" rows="2" placeholder="結果・成果"></textarea>
-                    <button onclick="addDailyAction()" class="bg-primary text-primary-foreground px-4 py-2 rounded-md">
-                        アクションを追加
-                    </button>
+                    <div>
+                        <label class="text-sm font-medium">結果・成果</label>
+                        <textarea id="action-result" class="mt-1 w-full p-3 border border-input bg-background rounded-md text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" rows="2" placeholder="どのような結果や成果が得られましたか？"></textarea>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addDailyAction()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            アクションを追加
+                        </button>
+                        <button onclick="clearActionForm()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                            クリア
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -565,7 +604,68 @@ function switchReflectionPeriod(period) {
 }
 
 function addDailyAction() {
-    alert('日次アクションが追加されました（実装予定）');
+    const time = document.getElementById('action-time')?.value;
+    const content = document.getElementById('action-content')?.value;
+    const type = document.getElementById('action-type')?.value;
+    const result = document.getElementById('action-result')?.value;
+    
+    if (!time || !content || !result) {
+        alert('すべての項目を入力してください');
+        return;
+    }
+    
+    // Add to reflection data (in a real app, this would save to backend)
+    const newAction = {
+        time: time,
+        action: content,
+        result: result,
+        type: type
+    };
+    
+    reflectionData.daily[0].actions.unshift(newAction);
+    
+    // Clear form
+    clearActionForm();
+    
+    // Refresh the daily reflection view
+    switchReflectionPeriod('daily');
+    
+    alert('アクションが追加されました！');
+}
+
+function clearActionForm() {
+    document.getElementById('action-time').value = '';
+    document.getElementById('action-content').value = '';
+    document.getElementById('action-type').selectedIndex = 0;
+    document.getElementById('action-result').value = '';
+}
+
+function saveDailyReflection() {
+    const good = document.getElementById('daily-good')?.value;
+    const challenge = document.getElementById('daily-challenge')?.value;
+    const next = document.getElementById('daily-next')?.value;
+    
+    if (!good && !challenge && !next) {
+        alert('少なくとも一つの項目を入力してください');
+        return;
+    }
+    
+    // Update reflection data (in a real app, this would save to backend)
+    reflectionData.daily[0].reflection = {
+        good: good || reflectionData.daily[0].reflection.good,
+        challenge: challenge || reflectionData.daily[0].reflection.challenge,
+        next: next || reflectionData.daily[0].reflection.next
+    };
+    
+    alert('今日のふりかえりが保存されました！');
+}
+
+function clearDailyReflection() {
+    if (confirm('ふりかえりの内容をリセットしますか？')) {
+        document.getElementById('daily-good').value = '';
+        document.getElementById('daily-challenge').value = '';
+        document.getElementById('daily-next').value = '';
+    }
 }
 
 function saveSummary() {
@@ -580,5 +680,8 @@ function promoteSelectedToNext() {
 window.renderSummary = renderSummary;
 window.switchReflectionPeriod = switchReflectionPeriod;
 window.addDailyAction = addDailyAction;
+window.clearActionForm = clearActionForm;
+window.saveDailyReflection = saveDailyReflection;
+window.clearDailyReflection = clearDailyReflection;
 window.saveSummary = saveSummary;
 window.promoteSelectedToNext = promoteSelectedToNext;
