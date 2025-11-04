@@ -702,6 +702,31 @@ function renderAddPersonModal() {
                         <label class="block text-sm font-medium mb-2">タグ（カンマ区切り）</label>
                         <input type="text" id="new-person-tags" class="w-full p-2 border border-input rounded-md" placeholder="例: #移住相談, #農業, #イベント">
                     </div>
+                    <div class="grid gap-4 md:grid-cols-2 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">エリア</label>
+                            <select id="new-person-area" class="w-full p-2 border border-input rounded-md">
+                                <option value="地域内">地域内</option>
+                                <option value="地域外">地域外</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">住所</label>
+                            <input type="text" id="new-person-address" class="w-full p-2 border border-input rounded-md" placeholder="例: 北海道虻田郡喜茂別町字喜茂別123">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">緯度</label>
+                            <input type="number" step="any" id="new-person-lat" class="w-full p-2 border border-input rounded-md" placeholder="42.8314">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">経度</label>
+                            <input type="number" step="any" id="new-person-lng" class="w-full p-2 border border-input rounded-md" placeholder="140.9678">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-2">ランドマーク・目印</label>
+                        <input type="text" id="new-person-landmark" class="w-full p-2 border border-input rounded-md" placeholder="例: 喜茂別駅から徒歩5分">
+                    </div>
                     <div class="mt-4">
                         <label class="block text-sm font-medium mb-2">メモ</label>
                         <textarea id="new-person-notes" class="w-full p-2 border border-input rounded-md h-24" placeholder="この人との関係や特記事項を記録"></textarea>
@@ -777,6 +802,30 @@ function openPersonDetail(personId) {
                             <h4 class="text-sm font-medium text-muted-foreground mb-1">連絡先</h4>
                             <p class="text-sm">${appState.masking ? '非表示' : person.email}</p>
                             <p class="text-sm">${appState.masking ? '非表示' : person.phone}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-muted-foreground mb-1">拠点</h4>
+                            ${person.location ? `
+                                <div class="space-y-1">
+                                    <p class="text-sm">
+                                        <span class="inline-block px-2 py-1 text-xs rounded-full ${person.location.area === '地域内' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${person.location.area}</span>
+                                    </p>
+                                    ${person.location.address ? `<p class="text-sm text-gray-700">${person.location.address}</p>` : ''}
+                                    ${person.location.landmark ? `<p class="text-xs text-muted-foreground">${person.location.landmark}</p>` : ''}
+                                    ${person.location.lat && person.location.lng ? `
+                                        <p class="text-xs text-muted-foreground">
+                                            座標: ${person.location.lat.toFixed(4)}, ${person.location.lng.toFixed(4)}
+                                            <button onclick="openMapWithLocation(${person.location.lat}, ${person.location.lng})" class="ml-2 text-blue-600 hover:text-blue-800">
+                                                <svg class="inline-block w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                                    <circle cx="12" cy="10" r="3"/>
+                                                </svg>
+                                                地図で確認
+                                            </button>
+                                        </p>
+                                    ` : ''}
+                                </div>
+                            ` : '<p class="text-sm text-muted-foreground">拠点情報が設定されていません</p>'}
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-muted-foreground mb-1">最終連絡</h4>
@@ -959,6 +1008,11 @@ function closeAddPersonModal() {
     document.getElementById('new-person-email').value = '';
     document.getElementById('new-person-phone').value = '';
     document.getElementById('new-person-tags').value = '';
+    document.getElementById('new-person-area').value = '地域内';
+    document.getElementById('new-person-address').value = '';
+    document.getElementById('new-person-lat').value = '';
+    document.getElementById('new-person-lng').value = '';
+    document.getElementById('new-person-landmark').value = '';
     document.getElementById('new-person-notes').value = '';
 }
 
@@ -970,6 +1024,11 @@ function addNewPerson(event) {
     const email = document.getElementById('new-person-email').value.trim();
     const phone = document.getElementById('new-person-phone').value.trim();
     const tagsInput = document.getElementById('new-person-tags').value.trim();
+    const area = document.getElementById('new-person-area').value;
+    const address = document.getElementById('new-person-address').value.trim();
+    const lat = parseFloat(document.getElementById('new-person-lat').value) || null;
+    const lng = parseFloat(document.getElementById('new-person-lng').value) || null;
+    const landmark = document.getElementById('new-person-landmark').value.trim();
     const notes = document.getElementById('new-person-notes').value.trim();
     
     // Process tags
@@ -990,7 +1049,14 @@ function addNewPerson(event) {
         email: email || 'example@email.com',
         phone: phone || '090-0000-0000',
         notes: notes || '',
-        avatar: avatar
+        avatar: avatar,
+        location: {
+            area: area,
+            address: address || '',
+            lat: lat,
+            lng: lng,
+            landmark: landmark || ''
+        }
     };
     
     sampleData.people.push(newPerson);
@@ -1008,7 +1074,246 @@ function getCommonConnections(person) {
 }
 
 function editPerson(personId) {
-    alert('編集機能は今後実装予定です');
+    const person = getPersonById(personId);
+    const modal = document.getElementById('person-detail-modal');
+    const content = document.getElementById('person-detail-content');
+    
+    content.innerHTML = `
+        <div class="flex justify-between items-start mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="avatar avatar-xl">${person.avatar}</div>
+                <div>
+                    <h2 class="text-2xl font-bold">人物情報を編集</h2>
+                    <p class="text-muted-foreground">${getMaskedName(person.name)}</p>
+                </div>
+            </div>
+            <button onclick="openPersonDetail(${person.id})" class="text-muted-foreground hover:text-foreground">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        
+        <form onsubmit="savePersonEdit(event, ${person.id})" class="space-y-6">
+            <div class="grid gap-6 lg:grid-cols-2">
+                <!-- Left Column: Basic Info -->
+                <div class="space-y-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">基本情報</h3>
+                        </div>
+                        <div class="card-content space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">名前 *</label>
+                                <input type="text" id="edit-person-name" value="${person.name}" class="w-full p-2 border border-input rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">役職 *</label>
+                                <input type="text" id="edit-person-role" value="${person.role}" class="w-full p-2 border border-input rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">メールアドレス</label>
+                                <input type="email" id="edit-person-email" value="${person.email}" class="w-full p-2 border border-input rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">電話番号</label>
+                                <input type="tel" id="edit-person-phone" value="${person.phone}" class="w-full p-2 border border-input rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">タグ（カンマ区切り）</label>
+                                <input type="text" id="edit-person-tags" value="${person.tags.join(', ')}" class="w-full p-2 border border-input rounded-md" placeholder="例: #移住相談, #農業, #イベント">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">メモ</label>
+                                <textarea id="edit-person-notes" class="w-full p-2 border border-input rounded-md h-24" placeholder="この人との関係や特記事項を記録">${person.notes}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Location Info -->
+                <div class="space-y-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">拠点情報</h3>
+                        </div>
+                        <div class="card-content space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">エリア</label>
+                                <select id="edit-person-area" class="w-full p-2 border border-input rounded-md">
+                                    <option value="地域内" ${person.location?.area === '地域内' ? 'selected' : ''}>地域内</option>
+                                    <option value="地域外" ${person.location?.area === '地域外' ? 'selected' : ''}>地域外</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">住所</label>
+                                <input type="text" id="edit-person-address" value="${person.location?.address || ''}" class="w-full p-2 border border-input rounded-md" placeholder="例: 北海道虻田郡喜茂別町字喜茂別123">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">緯度</label>
+                                    <input type="number" step="any" id="edit-person-lat" value="${person.location?.lat || ''}" class="w-full p-2 border border-input rounded-md" placeholder="42.8314">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">経度</label>
+                                    <input type="number" step="any" id="edit-person-lng" value="${person.location?.lng || ''}" class="w-full p-2 border border-input rounded-md" placeholder="140.9678">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">ランドマーク・目印</label>
+                                <input type="text" id="edit-person-landmark" value="${person.location?.landmark || ''}" class="w-full p-2 border border-input rounded-md" placeholder="例: 喜茂別駅から徒歩5分">
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                                <p class="text-sm text-blue-700 mb-2">
+                                    <svg class="inline-block w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 6v6l4 2"/>
+                                    </svg>
+                                    住所や緯度経度を設定すると、マップページに表示されます
+                                </p>
+                                <button type="button" onclick="getCurrentLocation()" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                                    現在地を取得する
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">最終連絡日</h3>
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">最終連絡日</label>
+                                <input type="date" id="edit-person-lastcontact" value="${person.lastContact}" class="w-full p-2 border border-input rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 pt-6 border-t">
+                <button type="button" onclick="openPersonDetail(${person.id})" class="px-4 py-2 border border-input rounded-md hover:bg-accent">
+                    キャンセル
+                </button>
+                <button type="submit" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
+                    保存
+                </button>
+            </div>
+        </form>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function savePersonEdit(event, personId) {
+    event.preventDefault();
+    
+    const name = document.getElementById('edit-person-name').value.trim();
+    const role = document.getElementById('edit-person-role').value.trim();
+    const email = document.getElementById('edit-person-email').value.trim();
+    const phone = document.getElementById('edit-person-phone').value.trim();
+    const tagsInput = document.getElementById('edit-person-tags').value.trim();
+    const notes = document.getElementById('edit-person-notes').value.trim();
+    const area = document.getElementById('edit-person-area').value;
+    const address = document.getElementById('edit-person-address').value.trim();
+    const lat = parseFloat(document.getElementById('edit-person-lat').value) || null;
+    const lng = parseFloat(document.getElementById('edit-person-lng').value) || null;
+    const landmark = document.getElementById('edit-person-landmark').value.trim();
+    const lastContact = document.getElementById('edit-person-lastcontact').value;
+    
+    // Process tags
+    const tags = tagsInput ? tagsInput.split(',').map(tag => {
+        const cleanTag = tag.trim();
+        return cleanTag.startsWith('#') ? cleanTag : '#' + cleanTag;
+    }) : [];
+    
+    // Find and update the person
+    const personIndex = sampleData.people.findIndex(p => p.id === personId);
+    if (personIndex !== -1) {
+        const person = sampleData.people[personIndex];
+        
+        // Update basic info
+        person.name = name;
+        person.role = role;
+        person.email = email;
+        person.phone = phone;
+        person.tags = tags;
+        person.notes = notes;
+        person.lastContact = lastContact;
+        
+        // Update location info
+        if (!person.location) {
+            person.location = {};
+        }
+        person.location.area = area;
+        person.location.address = address;
+        person.location.lat = lat;
+        person.location.lng = lng;
+        person.location.landmark = landmark;
+        
+        // Update avatar if name changed
+        person.avatar = name.split(' ').map(part => part.charAt(0).toUpperCase()).join('').slice(0, 2);
+        
+        saveData();
+        openPersonDetail(personId); // Return to detail view
+        
+        // Show success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+        successMessage.textContent = '人物情報を更新しました';
+        document.body.appendChild(successMessage);
+        setTimeout(() => {
+            document.body.removeChild(successMessage);
+        }, 3000);
+    }
+}
+
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        alert('このブラウザでは位置情報を取得できません');
+        return;
+    }
+    
+    const latInput = document.getElementById('edit-person-lat');
+    const lngInput = document.getElementById('edit-person-lng');
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            latInput.value = position.coords.latitude.toFixed(6);
+            lngInput.value = position.coords.longitude.toFixed(6);
+            
+            // Show success message
+            const successMessage = document.createElement('div');
+            successMessage.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+            successMessage.textContent = '現在地を取得しました';
+            document.body.appendChild(successMessage);
+            setTimeout(() => {
+                document.body.removeChild(successMessage);
+            }, 3000);
+        },
+        function(error) {
+            let message = '位置情報の取得に失敗しました';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = '位置情報の使用が許可されていません';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = '位置情報が利用できません';
+                    break;
+                case error.TIMEOUT:
+                    message = '位置情報の取得がタイムアウトしました';
+                    break;
+            }
+            alert(message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
 }
 
 function scheduleMeeting(personId) {
@@ -1372,3 +1677,17 @@ function addLocationToPerson(personId) {
         }
     }
 }
+
+function openMapWithLocation(lat, lng) {
+    // Save the location to highlight on map
+    sessionStorage.setItem('highlightLocation', JSON.stringify({ lat, lng }));
+    
+    // Navigate to map page
+    window.location.hash = '#map';
+    closePersonDetail();
+}
+
+// Export new functions to window for global access
+window.savePersonEdit = savePersonEdit;
+window.getCurrentLocation = getCurrentLocation;
+window.openMapWithLocation = openMapWithLocation;

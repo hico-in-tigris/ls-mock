@@ -120,7 +120,20 @@ function renderProjects(container) {
 }
 
 function openIdeationWorkspace(stage = 'ideation') {
-    const modal = document.getElementById('project-modal');
+    let modal = document.getElementById('project-modal');
+    if (!modal) {
+        // Create modal if it doesn't exist
+        modal = document.createElement('div');
+        modal.id = 'project-modal';
+        modal.className = 'fixed inset-0 z-50 hidden';
+        modal.innerHTML = `
+            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+                <div id="modal-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
     const content = document.getElementById('modal-content');
     
     content.innerHTML = renderIdeationWorkspace(stage);
@@ -129,7 +142,9 @@ function openIdeationWorkspace(stage = 'ideation') {
 
 function closeIdeationWorkspace() {
     const modal = document.getElementById('project-modal');
-    modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
 }
 
 function renderIdeationWorkspace(stage = 'ideation') {
@@ -143,7 +158,20 @@ function renderIdeationWorkspace(stage = 'ideation') {
 }
 
 function openProposalCreation() {
-    const modal = document.getElementById('project-modal');
+    let modal = document.getElementById('project-modal');
+    if (!modal) {
+        // Create modal if it doesn't exist
+        modal = document.createElement('div');
+        modal.id = 'project-modal';
+        modal.className = 'fixed inset-0 z-50 hidden';
+        modal.innerHTML = `
+            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+                <div id="modal-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
     const content = document.getElementById('modal-content');
     
     content.innerHTML = `
@@ -711,34 +739,643 @@ function renderBusinessCanvasFramework(ideationData) {
 }
 
 function loadActiveProjects() {
-    // Load and display active projects from localStorage
-    const projects = JSON.parse(localStorage.getItem('activeProjects') || '[]');
+    // Load and display active projects from sampleData
+    const projects = sampleData.projects || [];
     const container = document.getElementById('active-projects-list');
     
     if (projects.length === 0) {
         return; // Keep the empty state message
     }
     
-    container.innerHTML = projects.map(project => `
-        <div class="p-4 border rounded-lg hover:border-primary/50 transition-colors">
-            <div class="flex justify-between items-start mb-2">
-                <h3 class="font-medium">${project.title}</h3>
-                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${project.stage}</span>
+    // Filter active projects (not Done)
+    const activeProjects = projects.filter(project => project.status !== 'Done');
+    
+    if (activeProjects.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12 text-muted-foreground">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 8,9"/>
+                </svg>
+                <p>現在進行中のプロジェクトはありません</p>
+                <p class="text-sm">上のワークスペースから企画を始めてみましょう</p>
             </div>
-            <p class="text-sm text-muted-foreground mb-3">${project.description}</p>
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-muted-foreground">更新: ${project.lastUpdated}</span>
-                <button onclick="openProject('${project.id}')" class="text-xs text-primary hover:text-primary/80">
-                    続きを見る →
-                </button>
-            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = `
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            ${activeProjects.map(project => {
+                // Get related people for display
+                const relatedPeople = project.relatedPeople ? project.relatedPeople.map(id => 
+                    sampleData.people.find(p => p.id === id)
+                ).filter(Boolean) : [];
+                
+                // Get related actions
+                const relatedActions = sampleData.actions.filter(action => 
+                    action.linkedProjects && action.linkedProjects.includes(project.id)
+                );
+                const todoActions = relatedActions.filter(action => action.status === 'Todo').length;
+                const doingActions = relatedActions.filter(action => action.status === 'Doing').length;
+                
+                // Determine progress
+                const totalActions = relatedActions.length;
+                const completedActions = relatedActions.filter(action => action.status === 'Done').length;
+                const progressPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+                
+                return `
+                    <div class="card hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1" onclick="openProject(${project.id})">
+                        <div class="card-content">
+                            <!-- Project Header -->
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                        ${project.title.charAt(0)}
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-lg line-clamp-1">${project.title}</h3>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
+                                            ${project.tags.slice(0, 2).map(tag => `<span class="tag ${tag.slice(1)} text-xs">${tag}</span>`).join('')}
+                                            ${project.tags.length > 2 ? `<span class="text-xs text-muted-foreground">+${project.tags.length - 2}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Project Purpose -->
+                            <div class="mb-4">
+                                <h4 class="text-sm font-medium text-muted-foreground mb-1">目的</h4>
+                                <p class="text-sm line-clamp-2">${project.purpose}</p>
+                            </div>
+                            
+                            <!-- Project Progress -->
+                            <div class="mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-medium text-muted-foreground">進捗</h4>
+                                    <span class="text-sm font-medium text-blue-600">${progressPercentage}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-muted-foreground">
+                                    <span>${completedActions}/${totalActions} アクション完了</span>
+                                    ${totalActions > 0 ? `
+                                        <span class="flex items-center space-x-2">
+                                            ${doingActions > 0 ? `<span class="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">進行${doingActions}</span>` : ''}
+                                            ${todoActions > 0 ? `<span class="px-1 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">待機${todoActions}</span>` : ''}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <!-- Project KPI -->
+                            <div class="mb-4">
+                                <h4 class="text-sm font-medium text-muted-foreground mb-1">KPI</h4>
+                                <p class="text-sm font-medium text-green-600">${project.kpi}</p>
+                            </div>
+                            
+                            <!-- Related People -->
+                            ${relatedPeople.length > 0 ? `
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-2">関連メンバー</h4>
+                                    <div class="flex items-center space-x-2">
+                                        ${relatedPeople.slice(0, 3).map(person => `
+                                            <div class="flex items-center space-x-1">
+                                                <div class="avatar avatar-xs">${person.avatar}</div>
+                                                <span class="text-xs text-muted-foreground">${getMaskedName(person.name)}</span>
+                                            </div>
+                                        `).join('')}
+                                        ${relatedPeople.length > 3 ? `<span class="text-xs text-muted-foreground">+${relatedPeople.length - 3}</span>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Project Location (if available) -->
+                            ${project.location ? `
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-1">拠点</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs px-2 py-1 rounded-full ${project.location.area === '地域内' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${project.location.area}</span>
+                                        ${project.location.landmark ? `<span class="text-xs text-muted-foreground">${project.location.landmark}</span>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Budget Progress (if available) -->
+                            ${project.budget ? `
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-1">予算執行</h4>
+                                    <div class="flex justify-between text-sm">
+                                        <span>¥${project.budget.spent.toLocaleString()}</span>
+                                        <span class="text-muted-foreground">/ ¥${project.budget.allocated.toLocaleString()}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-1">
+                                        <div class="bg-orange-500 h-1 rounded-full" style="width: ${(project.budget.spent / project.budget.allocated * 100).toFixed(1)}%"></div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div class="flex items-center space-x-3 text-xs text-muted-foreground">
+                                    <span>作成: ${formatDate(project.createdAt)}</span>
+                                    ${project.estimatedDuration ? `<span>期間: ${project.estimatedDuration}</span>` : ''}
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="event.stopPropagation(); openProject(${project.id})" class="text-xs text-primary hover:text-primary/80 px-3 py-1 border border-primary/20 rounded-full hover:bg-primary/5 transition-colors">
+                                        詳細を見る
+                                    </button>
+                                    ${project.location && project.location.lat && project.location.lng ? `
+                                        <button onclick="event.stopPropagation(); openMapWithProject(${project.location.lat}, ${project.location.lng}, ${project.id})" class="text-xs text-blue-600 hover:text-blue-800 px-3 py-1 border border-blue-200 rounded-full hover:bg-blue-50 transition-colors">
+                                            地図で確認
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
         </div>
-    `).join('');
+        
+        <!-- All Projects Link -->
+        <div class="mt-6 text-center">
+            <button onclick="showAllProjects()" class="text-sm text-primary hover:text-primary/80 px-4 py-2 border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors">
+                すべてのプロジェクトを表示 →
+            </button>
+        </div>
+    `;
 }
 
 function openProject(projectId) {
-    // Open specific project - to be implemented
-    console.log('Opening project:', projectId);
+    const project = sampleData.projects.find(p => p.id == projectId);
+    if (!project) {
+        alert('プロジェクトが見つかりません');
+        return;
+    }
+    
+    // Show project detail modal
+    showProjectDetailModal(project);
+}
+
+function showProjectDetailModal(project) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('project-detail-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'project-detail-modal';
+        modal.className = 'fixed inset-0 z-50 hidden';
+        document.body.appendChild(modal);
+    }
+    
+    // Get related people and actions
+    const relatedPeople = project.relatedPeople ? project.relatedPeople.map(id => sampleData.people.find(p => p.id === id)).filter(Boolean) : [];
+    const relatedActions = sampleData.actions.filter(action => action.linkedProjects && action.linkedProjects.includes(project.id));
+    
+    modal.innerHTML = `
+        <div class="fixed inset-0 bg-black/50" onclick="closeProjectDetail()"></div>
+        <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                        ${project.title.charAt(0)}
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">${project.title}</h2>
+                        <div class="flex items-center space-x-3 mt-2">
+                            <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
+                            ${project.tags.map(tag => `<span class="tag ${tag.slice(1)}">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeProjectDetail()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="grid gap-6 lg:grid-cols-3">
+                <!-- Left Column: Overview -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Project Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">プロジェクト概要</h3>
+                        </div>
+                        <div class="card-content space-y-4">
+                            <div>
+                                <h4 class="text-sm font-medium text-muted-foreground mb-2">目的・Purpose</h4>
+                                <p class="text-sm">${project.purpose}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-muted-foreground mb-2">範囲・Scope</h4>
+                                <p class="text-sm">${project.scope}</p>
+                            </div>
+                            ${project.approach ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-2">アプローチ</h4>
+                                    <p class="text-sm">${project.approach}</p>
+                                </div>
+                            ` : ''}
+                            <div>
+                                <h4 class="text-sm font-medium text-muted-foreground mb-2">KPI・成功指標</h4>
+                                <p class="text-sm font-medium text-blue-600">${project.kpi}</p>
+                            </div>
+                            ${project.currentPhase ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-2">現在のフェーズ</h4>
+                                    <p class="text-sm">${project.currentPhase}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Project Metrics (if available) -->
+                    ${project.metrics ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">プロジェクト指標</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="grid gap-4 md:grid-cols-3">
+                                    ${project.metrics.website ? `
+                                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                            <div class="text-2xl font-bold text-blue-600">${project.metrics.website.visitors}</div>
+                                            <div class="text-sm text-muted-foreground">Webサイト訪問者</div>
+                                            <div class="text-xs text-muted-foreground">目標: ${project.metrics.website.target} (${project.metrics.website.period})</div>
+                                        </div>
+                                    ` : ''}
+                                    ${project.metrics.social ? `
+                                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                                            <div class="text-2xl font-bold text-green-600">${project.metrics.social.followers}</div>
+                                            <div class="text-sm text-muted-foreground">SNSフォロワー</div>
+                                            <div class="text-xs text-muted-foreground">目標: ${project.metrics.social.target}, エンゲージメント: ${project.metrics.social.engagement}</div>
+                                        </div>
+                                    ` : ''}
+                                    ${project.metrics.media ? `
+                                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                            <div class="text-2xl font-bold text-purple-600">${project.metrics.media.mentions}</div>
+                                            <div class="text-sm text-muted-foreground">メディア露出</div>
+                                            <div class="text-xs text-muted-foreground">目標: ${project.metrics.media.target} (${project.metrics.media.period})</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Next Milestones (if available) -->
+                    ${project.nextMilestones ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">次のマイルストーン</h3>
+                            </div>
+                            <div class="card-content space-y-3">
+                                ${project.nextMilestones.map(milestone => `
+                                    <div class="flex items-center justify-between p-3 border rounded-lg">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-sm">${milestone.title}</h4>
+                                            <p class="text-xs text-muted-foreground mt-1">担当: ${milestone.responsible}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">${formatDate(milestone.deadline)}</p>
+                                            <span class="text-xs px-2 py-1 rounded-full ${milestone.status === '進行中' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}">
+                                                ${milestone.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- KPT Logs -->
+                    ${project.kptLogs && project.kptLogs.length > 0 ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">KPTログ・振り返り</h3>
+                            </div>
+                            <div class="card-content space-y-3">
+                                ${project.kptLogs.map(log => `
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg ${log.type === 'Keep' ? 'bg-green-50 border-l-4 border-green-400' : log.type === 'Problem' ? 'bg-red-50 border-l-4 border-red-400' : 'bg-blue-50 border-l-4 border-blue-400'}">
+                                        <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${log.type === 'Keep' ? 'bg-green-500' : log.type === 'Problem' ? 'bg-red-500' : 'bg-blue-500'}">
+                                            ${log.type.charAt(0)}
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm">${log.content}</p>
+                                            <p class="text-xs text-muted-foreground mt-1">${formatDate(log.date)} ${log.author ? `• ${log.author}` : ''}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Right Column: Details -->
+                <div class="space-y-6">
+                    <!-- Project Info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">プロジェクト情報</h3>
+                        </div>
+                        <div class="card-content space-y-4">
+                            <div>
+                                <h4 class="text-sm font-medium text-muted-foreground mb-1">開始日</h4>
+                                <p class="text-sm">${formatDate(project.createdAt)}</p>
+                            </div>
+                            ${project.estimatedDuration ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-1">予定期間</h4>
+                                    <p class="text-sm">${project.estimatedDuration}</p>
+                                </div>
+                            ` : ''}
+                            ${project.budget ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-1">予算</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span>総予算</span>
+                                            <span class="font-medium">¥${project.budget.allocated.toLocaleString()}</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>使用済</span>
+                                            <span class="font-medium text-blue-600">¥${project.budget.spent.toLocaleString()}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${(project.budget.spent / project.budget.allocated * 100).toFixed(1)}%"></div>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground">${(project.budget.spent / project.budget.allocated * 100).toFixed(1)}% 使用</p>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            ${project.location ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-1">拠点</h4>
+                                    <div class="space-y-1">
+                                        <p class="text-sm">
+                                            <span class="inline-block px-2 py-1 text-xs rounded-full ${project.location.area === '地域内' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${project.location.area}</span>
+                                        </p>
+                                        ${project.location.address ? `<p class="text-sm text-gray-700">${project.location.address}</p>` : ''}
+                                        ${project.location.landmark ? `<p class="text-xs text-muted-foreground">${project.location.landmark}</p>` : ''}
+                                        ${project.location.scope ? `<p class="text-xs text-muted-foreground">対象範囲: ${project.location.scope}</p>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Related People -->
+                    ${relatedPeople.length > 0 ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">関連する人脈</h3>
+                            </div>
+                            <div class="card-content space-y-3">
+                                ${relatedPeople.map(person => `
+                                    <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted cursor-pointer" onclick="openPersonDetail(${person.id}); closeProjectDetail();">
+                                        <div class="avatar avatar-sm">${person.avatar}</div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium">${getMaskedName(person.name)}</p>
+                                            <p class="text-xs text-muted-foreground">${person.role}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Stakeholders (if available) -->
+                    ${project.stakeholders ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">ステークホルダー</h3>
+                            </div>
+                            <div class="card-content space-y-3">
+                                ${project.stakeholders.map(stakeholder => `
+                                    <div class="p-3 border rounded-lg">
+                                        <h4 class="font-medium text-sm">${stakeholder.name}</h4>
+                                        <p class="text-xs text-muted-foreground mt-1">${stakeholder.role}</p>
+                                        <span class="inline-block mt-2 text-xs px-2 py-1 rounded-full ${stakeholder.involvement === '高' ? 'bg-red-100 text-red-700' : stakeholder.involvement === '中' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}">
+                                            関与度: ${stakeholder.involvement}
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Risks (if available) -->
+                    ${project.risks ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">リスク管理</h3>
+                            </div>
+                            <div class="card-content space-y-3">
+                                ${project.risks.map(risk => `
+                                    <div class="p-3 border rounded-lg">
+                                        <h4 class="font-medium text-sm">${risk.risk}</h4>
+                                        <div class="flex space-x-2 mt-2">
+                                            <span class="text-xs px-2 py-1 rounded-full ${risk.impact === '高' ? 'bg-red-100 text-red-700' : risk.impact === '中' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}">
+                                                影響: ${risk.impact}
+                                            </span>
+                                            <span class="text-xs px-2 py-1 rounded-full ${risk.probability === '高' ? 'bg-red-100 text-red-700' : risk.probability === '中' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}">
+                                                確率: ${risk.probability}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground mt-2">対策: ${risk.mitigation}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Related Actions -->
+                    ${relatedActions.length > 0 ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">関連アクション</h3>
+                            </div>
+                            <div class="card-content space-y-2">
+                                ${relatedActions.slice(0, 5).map(action => `
+                                    <div class="flex items-center space-x-3 p-2 rounded-lg bg-muted/50">
+                                        <span class="badge action-${action.type} text-xs">${action.type}</span>
+                                        <div class="flex-1">
+                                            <p class="text-sm">${action.content}</p>
+                                            <p class="text-xs text-muted-foreground">${formatDate(action.deadline)}</p>
+                                        </div>
+                                        <span class="badge status-${action.status.toLowerCase()} text-xs">${action.status}</span>
+                                    </div>
+                                `).join('')}
+                                ${relatedActions.length > 5 ? `<p class="text-xs text-muted-foreground text-center">他 ${relatedActions.length - 5} 件</p>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Documents (if available) -->
+                    ${project.documents ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">関連ドキュメント</h3>
+                            </div>
+                            <div class="card-content space-y-2">
+                                ${project.documents.map(doc => `
+                                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-muted">
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium">${doc.title}</p>
+                                            <p class="text-xs text-muted-foreground">${doc.type} • 更新: ${formatDate(doc.lastUpdated)}</p>
+                                        </div>
+                                        <span class="text-xs px-2 py-1 rounded-full ${doc.status === '完成' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                                            ${doc.status}
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Lessons (if available) -->
+                    ${project.lessons ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">学んだこと</h3>
+                            </div>
+                            <div class="card-content space-y-2">
+                                ${project.lessons.map(lesson => `
+                                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                                        <p class="text-sm">${lesson}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeProjectDetail() {
+    const modal = document.getElementById('project-detail-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function openMapWithProject(lat, lng, projectId) {
+    // Save the location and project info to highlight on map
+    sessionStorage.setItem('highlightLocation', JSON.stringify({ 
+        lat, 
+        lng, 
+        type: 'project',
+        id: projectId 
+    }));
+    
+    // Navigate to map page
+    window.location.hash = '#map';
+}
+
+function showAllProjects() {
+    // Function to show all projects in a modal or separate view
+    let modal = document.getElementById('project-modal');
+    if (!modal) {
+        // Create modal if it doesn't exist
+        modal = document.createElement('div');
+        modal.id = 'project-modal';
+        modal.className = 'fixed inset-0 z-50 hidden';
+        modal.innerHTML = `
+            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+                <div id="modal-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    const content = document.getElementById('modal-content');
+    
+    const allProjects = sampleData.projects || [];
+    
+    content.innerHTML = `
+        <div class="max-w-6xl mx-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">全プロジェクト一覧</h2>
+                    <p class="text-muted-foreground">すべてのプロジェクトの状況を確認できます</p>
+                </div>
+                <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Project Status Summary -->
+            <div class="grid gap-4 md:grid-cols-4 mb-6">
+                ${['Plan', 'Try', 'Done', 'Pause'].map(status => {
+                    const count = allProjects.filter(p => p.status === status).length;
+                    const percentage = allProjects.length > 0 ? Math.round((count / allProjects.length) * 100) : 0;
+                    return `
+                        <div class="text-center p-4 rounded-lg border-2 ${status === 'Plan' ? 'border-gray-200 bg-gray-50' : status === 'Try' ? 'border-blue-200 bg-blue-50' : status === 'Done' ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}">
+                            <div class="text-2xl font-bold ${status === 'Plan' ? 'text-gray-600' : status === 'Try' ? 'text-blue-600' : status === 'Done' ? 'text-green-600' : 'text-orange-600'}">${count}</div>
+                            <div class="text-sm font-medium">${status}</div>
+                            <div class="text-xs text-muted-foreground">${percentage}%</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <!-- All Projects List -->
+            <div class="space-y-4">
+                ${allProjects.map(project => {
+                    const relatedActions = sampleData.actions.filter(action => 
+                        action.linkedProjects && action.linkedProjects.includes(project.id)
+                    );
+                    const totalActions = relatedActions.length;
+                    const completedActions = relatedActions.filter(action => action.status === 'Done').length;
+                    const progressPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+                    
+                    return `
+                        <div class="card hover:shadow-md transition-all duration-200 cursor-pointer" onclick="closeIdeationWorkspace(); openProject(${project.id})">
+                            <div class="card-content">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                                                ${project.title.charAt(0)}
+                                            </div>
+                                            <h3 class="font-semibold text-lg">${project.title}</h3>
+                                            <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground mb-3 line-clamp-2">${project.purpose}</p>
+                                        <div class="flex items-center space-x-4 text-sm text-muted-foreground">
+                                            <span>KPI: ${project.kpi}</span>
+                                            <span>作成: ${formatDate(project.createdAt)}</span>
+                                            ${totalActions > 0 ? `<span>進捗: ${progressPercentage}% (${completedActions}/${totalActions})</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        ${project.tags.slice(0, 3).map(tag => `<span class="tag ${tag.slice(1)} text-xs">${tag}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
 }
 
 function generateAIOutline() {
@@ -756,6 +1393,12 @@ window.applyKeywordsToStructure = applyKeywordsToStructure;
 window.proceedToNextStage = proceedToNextStage;
 window.selectFramework = selectFramework;
 window.generateAIOutline = generateAIOutline;
+window.openProject = openProject;
+window.showProjectDetailModal = showProjectDetailModal;
+window.closeProjectDetail = closeProjectDetail;
+window.loadActiveProjects = loadActiveProjects;
+window.showAllProjects = showAllProjects;
+window.openMapWithProject = openMapWithProject;
 
 // Proposal creation functions
 function selectProposalTemplate(type) {

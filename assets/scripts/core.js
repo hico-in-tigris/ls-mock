@@ -268,6 +268,170 @@ const sampleData = {
                     date: '2025-10-05'
                 }
             ]
+        },
+        {
+            id: 4,
+            title: '地域ブランディング戦略【サンプル詳細プロジェクト】',
+            purpose: '喜茂別町の知名度向上と観光客誘致により地域経済を活性化させ、移住希望者にとって魅力的な町としてのイメージを確立する',
+            scope: 'ブランドアイデンティティ策定、Webサイト・SNS運用、プロモーション動画制作、メディア連携、イベント企画、地域産品のブランド化、観光コース開発',
+            kpi: 'メディア露出回数 月5回以上、SNSフォロワー数 3ヶ月で1000人増加、観光客数 前年比20%増',
+            status: 'Try',
+            tags: ['#広報', '#観光', '#ブランディング', '#メディア'],
+            relatedPeople: [2, 4, 7], // 佐藤美咲（協力隊）、鈴木花子（事業者）、林雅美（メディア）
+            createdAt: '2025-10-01',
+            completedAt: null,
+            estimatedDuration: '6ヶ月',
+            budget: {
+                allocated: 2500000, // 250万円
+                spent: 480000,     // 48万円
+                currency: 'JPY'
+            },
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町全域',
+                lat: 42.8329,
+                lng: 140.9689,
+                landmark: '町役場企画課',
+                scope: '喜茂別町全域および周辺観光地'
+            },
+            approach: '住民主体のコンテンツ作成を重視し、外部メディアとの協力により効率的な情報発信を目指す。地域の魅力を「農業×自然×温泉×人のつながり」として統一的にブランディング。',
+            currentPhase: 'ブランドアイデンティティ策定完了、コンテンツ制作フェーズ',
+            nextMilestones: [
+                {
+                    title: 'プロモーション動画完成',
+                    deadline: '2025-11-15',
+                    responsible: '佐藤美咲',
+                    status: '進行中'
+                },
+                {
+                    title: 'メディア取材調整',
+                    deadline: '2025-11-30',
+                    responsible: '林雅美',
+                    status: '未着手'
+                },
+                {
+                    title: '観光コース試行運用',
+                    deadline: '2025-12-20',
+                    responsible: '鈴木花子',
+                    status: '未着手'
+                }
+            ],
+            risks: [
+                {
+                    risk: '冬季の観光コンテンツ不足',
+                    impact: '高',
+                    probability: '中',
+                    mitigation: '雪景色を活かした体験プログラムの開発'
+                },
+                {
+                    risk: 'SNS運用の継続性',
+                    impact: '中',
+                    probability: '高',
+                    mitigation: '住民ボランティアによる運用体制構築'
+                }
+            ],
+            stakeholders: [
+                {
+                    name: '町役場企画課',
+                    role: '全体統括・予算管理',
+                    involvement: '高'
+                },
+                {
+                    name: '地域おこし協力隊',
+                    role: 'コンテンツ制作・SNS運用',
+                    involvement: '高'
+                },
+                {
+                    name: '観光事業者',
+                    role: '観光コース開発・運用',
+                    involvement: '中'
+                },
+                {
+                    name: 'メディア関係者',
+                    role: '広報・露出支援',
+                    involvement: '中'
+                }
+            ],
+            metrics: {
+                website: {
+                    visitors: 1250,
+                    target: 2000,
+                    period: '月間'
+                },
+                social: {
+                    followers: 650,
+                    target: 1000,
+                    engagement: '4.2%'
+                },
+                media: {
+                    mentions: 3,
+                    target: 5,
+                    period: '月間'
+                }
+            },
+            kptLogs: [
+                {
+                    type: 'Keep',
+                    content: '住民の協力的な姿勢と地域への愛着が強く、コンテンツ制作に積極的',
+                    date: '2025-10-15',
+                    author: '佐藤美咲'
+                },
+                {
+                    type: 'Keep',
+                    content: '既存の観光資源（温泉、農業体験）が予想以上に魅力的で差別化しやすい',
+                    date: '2025-10-20',
+                    author: '鈴木花子'
+                },
+                {
+                    type: 'Problem',
+                    content: 'ブランドメッセージが多様すぎて統一感に欠ける傾向がある',
+                    date: '2025-10-25',
+                    author: '林雅美'
+                },
+                {
+                    type: 'Problem',
+                    content: 'SNS投稿の頻度が不安定で、フォロワーのエンゲージメントが低下',
+                    date: '2025-10-30',
+                    author: '佐藤美咲'
+                },
+                {
+                    type: 'Try',
+                    content: 'ブランドガイドラインを作成して、メッセージの統一を図る',
+                    date: '2025-11-01',
+                    author: '林雅美'
+                },
+                {
+                    type: 'Try',
+                    content: '住民投稿キャンペーンを実施して、継続的なコンテンツ供給体制を構築',
+                    date: '2025-11-02',
+                    author: '佐藤美咲'
+                }
+            ],
+            documents: [
+                {
+                    title: 'ブランドアイデンティティガイドライン',
+                    type: '設計書',
+                    status: '完成',
+                    lastUpdated: '2025-10-15'
+                },
+                {
+                    title: 'コンテンツカレンダー',
+                    type: '運用資料',
+                    status: '更新中',
+                    lastUpdated: '2025-11-01'
+                },
+                {
+                    title: 'メディア連携先リスト',
+                    type: 'リスト',
+                    status: '更新中',
+                    lastUpdated: '2025-10-28'
+                }
+            ],
+            lessons: [
+                '地域の魅力は住民が一番知っているため、外部視点と内部視点のバランスが重要',
+                'SNSは投稿頻度よりも質とエンゲージメントを重視すべき',
+                'メディア連携は継続的な関係構築が成功の鍵となる'
+            ]
         }
     ],
     
@@ -334,9 +498,53 @@ const sampleData = {
             linkedPeople: [4],
             linkedProjects: [2],
             status: 'Todo',
-            deadline: '2025-11-10',
+            deadline: '2025-11-07',
             weeklyTarget: false,
+            createdAt: '2025-11-02'
+        },
+        {
+            id: 7,
+            content: 'ブランドガイドライン最終レビュー',
+            type: '確認',
+            linkedPeople: [7, 2],
+            linkedProjects: [4],
+            status: 'Doing',
+            deadline: '2025-11-06',
+            weeklyTarget: true,
+            createdAt: '2025-11-01'
+        },
+        {
+            id: 8,
+            content: 'プロモーション動画撮影スケジュール調整',
+            type: '調整',
+            linkedPeople: [2, 4],
+            linkedProjects: [4],
+            status: 'Todo',
+            deadline: '2025-11-10',
+            weeklyTarget: true,
             createdAt: '2025-11-03'
+        },
+        {
+            id: 9,
+            content: 'メディア取材用資料準備',
+            type: '準備',
+            linkedPeople: [7],
+            linkedProjects: [4],
+            status: 'Todo',
+            deadline: '2025-11-15',
+            weeklyTarget: false,
+            createdAt: '2025-11-02'
+        },
+        {
+            id: 10,
+            content: 'SNS投稿キャンペーン企画書作成',
+            type: '企画',
+            linkedPeople: [2],
+            linkedProjects: [4],
+            status: 'Done',
+            deadline: '2025-11-01',
+            weeklyTarget: true,
+            createdAt: '2025-10-28'
         },
         {
             id: 7,
