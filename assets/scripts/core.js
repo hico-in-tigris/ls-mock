@@ -1149,3 +1149,4 @@ window.navigateToProfile = navigateToProfile;
 window.navigateToRegion = navigateToRegion;
 window.navigateToIssues = navigateToIssues;
 window.sampleData = sampleData;
+window.appState = appState;
