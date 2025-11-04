@@ -2,6 +2,10 @@
 // LocalSuccess - Dashboard Module
 // ===============================
 
+// ===============================
+// LocalSuccess - Dashboard Module
+// ===============================
+
 function renderDashboard(container) {
     const today = new Date().toISOString().split('T')[0];
     
@@ -270,7 +274,8 @@ function renderDashboard(container) {
             </div>
         </div>
     `;
-}
+                
+                }
 
 // Helper functions for the dashboard
 
@@ -417,15 +422,223 @@ function editTask(taskId) {
     }
 }
 
-// Expose functions to global scope
-window.openAddTodayTask = openAddTodayTask;
-window.openAddNextTask = openAddNextTask;
-window.closeTaskModal = closeTaskModal;
-window.addNewTask = addNewTask;
-window.startTask = startTask;
-window.completeTask = completeTask;
-window.moveToToday = moveToToday;
-window.openReflectionModal = openReflectionModal;
-window.closeReflectionModal = closeReflectionModal;
-window.saveReflection = saveReflection;
-window.editTask = editTask;
+// Copy existing functions that might be needed
+function createFollowAction(personId) {
+    const person = getPersonById(personId);
+    const newAction = {
+        id: sampleData.actions.length + 1,
+        content: `${getMaskedName(person.name)}さんにフォローアップ連絡`,
+        type: '連絡',
+        linkedPeople: [personId],
+        linkedProjects: [],
+        status: 'Todo',
+        deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 3 days from now
+        weeklyTarget: true,
+        createdAt: new Date().toISOString().split('T')[0]
+    };
+    
+    sampleData.actions.push(newAction);
+    saveData();
+    
+    alert('フォローアップアクションが作成されました！');
+    renderCurrentRoute();
+}
+            </div>
+            
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Next Plans -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">Next Plan</h3>
+                        <p class="text-sm text-muted-foreground">直近のプロジェクト予定</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        ${nextPlans.map(project => `
+                            <div class="flex items-start space-x-3 p-3 rounded-lg bg-muted/50">
+                                <span class="badge status-plan text-xs">${project.status}</span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-sm">${project.title}</p>
+                                    <p class="text-xs text-muted-foreground">${project.purpose}</p>
+                                    <div class="flex items-center space-x-2 mt-2">
+                                        ${project.relatedPeople.map(id => {
+                                            const person = getPersonById(id);
+                                            return `<div class="avatar avatar-sm">${person.avatar}</div>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Follow-up Alerts -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">フォローアップ要</h3>
+                        <p class="text-sm text-muted-foreground">連絡が必要な人たち</p>
+                    </div>
+                    <div class="card-content space-y-3">
+                        ${peopleNeedingFollow.length > 0 ? peopleNeedingFollow.slice(0, 3).map(person => {
+                            const daysSinceContact = daysSince(person.lastContact);
+                            return `
+                                <div class="flex items-center justify-between p-3 rounded-lg border border-orange-200 bg-orange-50">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="avatar avatar-sm">${person.avatar}</div>
+                                        <div>
+                                            <p class="text-sm font-medium">${getMaskedName(person.name)}</p>
+                                            <p class="text-xs text-orange-600">${daysSinceContact}日前</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="createFollowAction(${person.id})" class="text-xs bg-orange-600 text-white px-2 py-1 rounded">
+                                        連絡
+                                    </button>
+                                </div>
+                            `;
+                        }).join('') : '<p class="text-sm text-muted-foreground">すべて最新です</p>'}
+                    </div>
+                </div>
+                
+                <!-- Recent Contacts -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">最近の連絡</h3>
+                        <p class="text-sm text-muted-foreground">直近の活動</p>
+                    </div>
+                    <div class="card-content space-y-3">
+                        ${recentContacts.map(person => {
+                            const daysSinceContact = daysSince(person.lastContact);
+                            return `
+                                <div class="flex items-center space-x-3 p-3 rounded-lg border border-green-200 bg-green-50">
+                                    <div class="avatar avatar-sm">${person.avatar}</div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium">${getMaskedName(person.name)}</p>
+                                        <p class="text-xs text-green-600">${daysSinceContact === 0 ? '今日' : daysSinceContact + '日前'}</p>
+                                    </div>
+                                    <button onclick="copyLastConversation(${person.id})" class="text-xs border border-green-300 px-2 py-1 rounded">
+                                        会話
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid gap-6 md:grid-cols-2 mt-6">
+                <!-- Today's Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">今日のアクション</h3>
+                        <p class="text-sm text-muted-foreground">本日期限のタスク</p>
+                    </div>
+                    <div class="card-content space-y-3">
+                        ${todayTasks.length > 0 ? todayTasks.map(action => `
+                            <div class="flex items-center space-x-3 p-3 rounded-lg border">
+                                <span class="badge action-${action.type} text-xs">${action.type}</span>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">${action.content}</p>
+                                    <p class="text-xs text-muted-foreground">期限: ${formatDate(action.deadline)}</p>
+                                </div>
+                                <span class="badge status-${action.status.toLowerCase()} text-xs">${action.status}</span>
+                            </div>
+                        `).join('') : '<p class="text-sm text-muted-foreground">今日期限のタスクはありません</p>'}
+                    </div>
+                </div>
+                
+                <!-- Today's Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">今日のアクション</h3>
+                        <p class="text-sm text-muted-foreground">本日期限のタスク</p>
+                    </div>
+                    <div class="card-content space-y-3">
+                        ${todayTasks.length > 0 ? todayTasks.map(action => `
+                            <div class="flex items-center space-x-3 p-3 rounded-lg border">
+                                <span class="badge action-${action.type} text-xs">${action.type}</span>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">${action.content}</p>
+                                    <p class="text-xs text-muted-foreground">期限: ${formatDate(action.deadline)}</p>
+                                </div>
+                                <span class="badge status-${action.status.toLowerCase()} text-xs">${action.status}</span>
+                            </div>
+                        `).join('') : '<p class="text-sm text-muted-foreground">今日期限のタスクはありません</p>'}
+                    </div>
+                </div>
+                
+                <!-- Overdue Follow-ups -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">期限切れフォロー</h3>
+                        <p class="text-sm text-muted-foreground">遅れているタスク</p>
+                    </div>
+                    <div class="card-content space-y-3">
+                        ${overdueTasks.length > 0 ? overdueTasks.slice(0, 3).map(action => `
+                            <div class="flex items-center space-x-3 p-3 rounded-lg border border-destructive/50 bg-destructive/5">
+                                <span class="badge badge-destructive text-xs">${action.type}</span>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">${action.content}</p>
+                                    <p class="text-xs text-destructive">期限: ${formatDate(action.deadline)}</p>
+                                </div>
+                            </div>
+                        `).join('') : '<p class="text-sm text-muted-foreground">期限切れのタスクはありません</p>'}
+                    </div>
+                </div>
+                
+                <!-- Activity Chart Placeholder -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">活動トレンド</h3>
+                        <p class="text-sm text-muted-foreground">過去30日間の活動状況</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-placeholder">
+                            <div class="text-center">
+                                <svg class="h-12 w-12 mx-auto text-muted-foreground mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M18.7 8l-5-5-4 4-4-4"/>
+                                </svg>
+                                <p class="text-sm text-muted-foreground">アクティビティチャート</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Follow-up functions integrated from follow.js
+function copyLastConversation(personId) {
+    const person = getPersonById(personId);
+    const mockConversation = `前回の${getMaskedName(person.name)}さんとの会話内容がクリップボードにコピーされました。`;
+    
+    navigator.clipboard.writeText(mockConversation).then(() => {
+        alert('前回の会話内容をクリップボードにコピーしました');
+    });
+}
+
+function createFollowAction(personId) {
+    const person = getPersonById(personId);
+    const newAction = {
+        id: sampleData.actions.length + 1,
+        content: `${getMaskedName(person.name)}さんにフォローアップ連絡`,
+        type: '連絡',
+        linkedPeople: [personId],
+        linkedProjects: [],
+        status: 'Todo',
+        deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 3 days from now
+        weeklyTarget: true,
+        createdAt: new Date().toISOString().split('T')[0]
+    };
+    
+    sampleData.actions.push(newAction);
+    saveData();
+    
+    alert('フォローアップアクションが作成されました！');
+    renderCurrentRoute();
+}
+
+// Expose to global scope
+window.renderDashboard = renderDashboard;
+window.copyLastConversation = copyLastConversation;
+window.createFollowAction = createFollowAction;
