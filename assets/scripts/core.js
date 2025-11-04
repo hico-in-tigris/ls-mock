@@ -1148,5 +1148,6 @@ window.toggleMasking = toggleMasking;
 window.navigateToProfile = navigateToProfile;
 window.navigateToRegion = navigateToRegion;
 window.navigateToIssues = navigateToIssues;
+window.renderCurrentRoute = renderCurrentRoute;
 window.sampleData = sampleData;
 window.appState = appState;

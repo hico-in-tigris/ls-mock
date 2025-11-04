@@ -27,86 +27,18 @@ function navigate(route) {
             'settings': 'Settings',
             'profile': 'Profile',
             'region': 'Region',
-            'issues': 'Issues'
+            'issues': 'Issues',
+            'map': 'Map'
         };
         currentPageMobile.textContent = pageNames[route] || 'Dashboard';
     }
     
     window.appState.currentRoute = route;
-    renderCurrentRoute();
-}
-
-function renderCurrentRoute() {
-    const mainContent = document.getElementById('main-content');
-    
-    switch (window.appState.currentRoute) {
-        case 'dashboard':
-            if (typeof renderDashboard === 'function') {
-                renderDashboard(mainContent);
-            } else {
-                console.error('renderDashboard function not found');
-            }
-            break;
-        case 'projects':
-            if (typeof renderProjects === 'function') {
-                renderProjects(mainContent);
-            } else {
-                console.error('renderProjects function not found');
-            }
-            break;
-        case 'people':
-            if (typeof renderPeople === 'function') {
-                renderPeople(mainContent);
-            } else {
-                console.error('renderPeople function not found');
-            }
-            break;
-        case 'actions':
-            if (typeof renderActions === 'function') {
-                renderActions(mainContent);
-            } else {
-                console.error('renderActions function not found');
-            }
-            break;
-        case 'summary':
-            if (typeof renderSummary === 'function') {
-                renderSummary(mainContent);
-            } else {
-                console.error('renderSummary function not found');
-            }
-            break;
-        case 'settings':
-            if (typeof renderSettings === 'function') {
-                renderSettings(mainContent);
-            } else {
-                console.error('renderSettings function not found');
-            }
-            break;
-        case 'profile':
-            if (typeof renderProfile === 'function') {
-                renderProfile(mainContent);
-            } else {
-                console.error('renderProfile function not found');
-            }
-            break;
-        case 'region':
-            if (typeof renderRegion === 'function') {
-                renderRegion(mainContent);
-            } else {
-                console.error('renderRegion function not found');
-            }
-            break;
-        case 'issues':
-            if (typeof renderIssues === 'function') {
-                renderIssues(mainContent);
-            } else {
-                console.error('renderIssues function not found');
-            }
-            break;
-        default:
-            if (typeof renderDashboard === 'function') {
-                renderDashboard(mainContent);
-            }
+    // Use core.js renderCurrentRoute function
+    if (typeof window.renderCurrentRoute === 'function') {
+        window.renderCurrentRoute();
+    } else {
+        console.error('renderCurrentRoute function not found in core.js');
     }
 }
 
@@ -255,7 +187,6 @@ function initializeApp() {
 
 // Export global functions
 window.navigate = navigate;
-window.renderCurrentRoute = renderCurrentRoute;
 window.toggleMobileMenu = toggleMobileMenu;
 window.toggleDemoGuide = toggleDemoGuide;
 window.nextDemoStep = nextDemoStep;
