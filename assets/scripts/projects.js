@@ -48,20 +48,23 @@ function renderProjects(container) {
                             </div>
                             <h3 class="font-medium mb-2">想いの整理</h3>
                             <p class="text-sm text-muted-foreground">アイデアから具体的な企画へ</p>
-                            <div class="mt-2 text-xs text-blue-600">メモ → 構造化</div>
                         </div>
+                        
                         <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('planning')">
                             <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
                                 <svg class="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
                                 </svg>
                             </div>
                             <h3 class="font-medium mb-2">企画構成</h3>
-                            <p class="text-sm text-muted-foreground">フレームワークで整理</p>
-                            <div class="mt-2 text-xs text-green-600">課題 → 解決策</div>
+                            <p class="text-sm text-muted-foreground">フレームワークで構造化</p>
                         </div>
-                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('stakeholders')">
+                        
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openStakeholderAnalysis()">
                             <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
                                 <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -72,258 +75,162 @@ function renderProjects(container) {
                             </div>
                             <h3 class="font-medium mb-2">関係者分析</h3>
                             <p class="text-sm text-muted-foreground">ステークホルダーマップ</p>
-                            <div class="mt-2 text-xs text-purple-600">影響度 × 関心度</div>
                         </div>
-                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('proposal')">
+                        
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openProposalCreation()">
                             <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-orange-100 flex items-center justify-center">
                                 <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14,2 14,8 20,8"/>
+                                    <polyline points="9,11 12,14 22,4"/>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                                 </svg>
                             </div>
                             <h3 class="font-medium mb-2">提案作成</h3>
-                            <p class="text-sm text-muted-foreground">資料の自動生成</p>
-                            <div class="mt-2 text-xs text-orange-600">企画書 → 提案資料</div>
+                            <p class="text-sm text-muted-foreground">プレゼン資料生成</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="flex gap-6">
-                <!-- Filters -->
-                <div class="w-64 space-y-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="font-medium">フィルタ</h3>
-                        </div>
-                        <div class="card-content space-y-4">
-                            <div>
-                                <label class="text-sm font-medium">ステータス</label>
-                                <div class="mt-2 space-y-2">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">Plan</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">Try</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">Done</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="text-sm font-medium">企画段階</label>
-                                <div class="mt-2 space-y-2">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">想い整理</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">企画構成</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">実行準備</span>
-                                    </label>
-                                </div>
-                            </div>
+
+            <!-- Active Projects -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">進行中のプロジェクト</h2>
+                    <p class="text-sm text-muted-foreground">現在取り組んでいるプロジェクト一覧</p>
+                </div>
+                <div class="card-content">
+                    <div id="active-projects-list" class="space-y-4">
+                        <div class="text-center py-12 text-muted-foreground">
+                            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            <p>まだプロジェクトがありません</p>
+                            <p class="text-sm">上のワークスペースから企画を始めてみましょう</p>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Project Cards -->
-                <div class="flex-1 space-y-4">
-                    ${sampleData.projects.map(project => `
-                        <div class="card cursor-pointer hover:shadow-md transition-shadow" onclick="openProjectDetail(${project.id})">
-                            <div class="card-content">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <div class="flex items-center space-x-2 mb-2">
-                                            <h3 class="font-semibold">${project.title}</h3>
-                                            <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
-                                        </div>
-                                        <p class="text-sm text-muted-foreground mb-3">${project.purpose}</p>
-                                        
-                                        <div class="flex items-center space-x-4 text-xs text-muted-foreground">
-                                            <div class="flex items-center space-x-1">
-                                                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-                                                </svg>
-                                                <span>KPI: ${project.kpi}</span>
-                                            </div>
-                                            <div class="flex items-center space-x-1">
-                                                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                                    <line x1="16" y1="2" x2="16" y2="6"/>
-                                                    <line x1="8" y1="2" x2="8" y2="6"/>
-                                                    <line x1="3" y1="10" x2="21" y2="10"/>
-                                                </svg>
-                                                <span>${formatDate(project.createdAt)}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center space-x-2 mt-3">
-                                            <span class="text-xs text-muted-foreground">関連:</span>
-                                            ${project.relatedPeople.map(id => {
-                                                const person = getPersonById(id);
-                                                return `<div class="avatar avatar-sm" title="${getMaskedName(person.name)}">${person.avatar}</div>`;
-                                            }).join('')}
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex flex-col space-y-2">
-                                        ${project.tags.map(tag => `<span class="tag ${tag.slice(1)}">${tag}</span>`).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Ideation Workspace Modal -->
-        <div id="ideation-workspace-modal" class="fixed inset-0 z-50 hidden">
-            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-6xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[90vh] overflow-y-auto">
-                <div id="ideation-workspace-content">
-                    <!-- Content will be loaded here -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Project Detail Modal -->
-        <div id="project-detail-modal" class="fixed inset-0 z-50 hidden">
-            <div class="fixed inset-0 bg-black/50" onclick="closeProjectDetail()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-4xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[90vh] overflow-y-auto">
-                <div id="project-detail-content">
-                    <!-- Content will be loaded here -->
                 </div>
             </div>
         </div>
     `;
+    
+    loadActiveProjects();
 }
 
-function openProjectDetail(projectId) {
-    const project = getProjectById(projectId);
-    const modal = document.getElementById('project-detail-modal');
-    const content = document.getElementById('project-detail-content');
+function openIdeationWorkspace(stage = 'ideation') {
+    const modal = document.getElementById('project-modal');
+    const content = document.getElementById('modal-content');
+    
+    content.innerHTML = renderIdeationWorkspace(stage);
+    modal.classList.remove('hidden');
+}
+
+function closeIdeationWorkspace() {
+    const modal = document.getElementById('project-modal');
+    modal.classList.add('hidden');
+}
+
+function renderIdeationWorkspace(stage = 'ideation') {
+    if (stage === 'ideation') {
+        return renderIdeationContent();
+    } else if (stage === 'planning') {
+        return renderPlanningContent();
+    }
+    
+    return renderIdeationContent();
+}
+
+function openProposalCreation() {
+    const modal = document.getElementById('project-modal');
+    const content = document.getElementById('modal-content');
     
     content.innerHTML = `
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h2 class="text-2xl font-bold">${project.title}</h2>
-                <div class="flex items-center space-x-2 mt-2">
-                    <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
-                    <span class="text-sm text-muted-foreground">KPI: ${project.kpi}</span>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">提案作成ワークスペース</h3>
+                    <p class="text-gray-600">企画を魅力的なプレゼンテーションに仕上げる</p>
                 </div>
+                <button onclick="closeIdeationWorkspace()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            <button onclick="closeProjectDetail()" class="text-muted-foreground hover:text-foreground">
-                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="grid gap-6 md:grid-cols-2">
-            <!-- Project Info -->
-            <div class="space-y-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold">プロジェクト概要</h3>
-                    </div>
-                    <div class="card-content space-y-4">
-                        <div>
-                            <h4 class="text-sm font-medium text-muted-foreground">目的</h4>
-                            <p class="text-sm">${project.purpose}</p>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-medium text-muted-foreground">スコープ</h4>
-                            <p class="text-sm">${project.scope}</p>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-medium text-muted-foreground">関連メンバー</h4>
-                            <div class="flex items-center space-x-2 mt-1">
-                                ${project.relatedPeople.map(id => {
-                                    const person = getPersonById(id);
-                                    return `
-                                        <div class="flex items-center space-x-1">
-                                            <div class="avatar avatar-sm">${person.avatar}</div>
-                                            <span class="text-xs">${getMaskedName(person.name)}</span>
-                                        </div>
-                                    `;
-                                }).join('')}
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 左パネル: テンプレート選択 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg border p-6">
+                        <h4 class="font-semibold text-lg mb-4">プレゼンテーションテンプレート</h4>
+                        
+                        <div class="space-y-4">
+                            <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition-colors cursor-pointer" onclick="selectProposalTemplate('business')">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                    <h5 class="font-medium">ビジネス提案書</h5>
+                                </div>
+                                <p class="text-sm text-gray-600">経営陣向けの本格的な事業提案テンプレート</p>
                             </div>
+                            
+                            <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 transition-colors cursor-pointer" onclick="selectProposalTemplate('project')">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                    <h5 class="font-medium">プロジェクト企画書</h5>
+                                </div>
+                                <p class="text-sm text-gray-600">社内プロジェクト向けの企画提案テンプレート</p>
+                            </div>
+                            
+                            <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 transition-colors cursor-pointer" onclick="selectProposalTemplate('simple')">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                                    <h5 class="font-medium">シンプル提案</h5>
+                                </div>
+                                <p class="text-sm text-gray-600">要点を簡潔にまとめた提案テンプレート</p>
+                            </div>
+                            
+                            <button onclick="generateProposal()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                提案書を生成
+                            </button>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Actions -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold">アクション</h3>
-                    </div>
-                    <div class="card-content space-y-2">
-                        ${project.status === 'Try' ? `
-                            <button onclick="promoteTryToPlan(${project.id})" class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                                <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M7 14l9-9"/>
-                                    <path d="M16 5h-9v9"/>
+                <!-- 右パネル: プレビュー -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg border p-6">
+                        <h4 class="font-semibold text-lg mb-4">プレビュー</h4>
+                        
+                        <div id="proposal-preview" class="space-y-4">
+                            <div class="text-center py-20 text-gray-500">
+                                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                Try → Plan に昇格
+                                <p>テンプレートを選択してプレビューを表示</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex space-x-3">
+                            <button onclick="downloadProposal()" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors" disabled>
+                                ダウンロード
                             </button>
-                        ` : ''}
-                        <button onclick="toggleProjectHistory(${project.id})" class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 12h18"/>
-                                <path d="M3 6h18"/>
-                                <path d="M3 18h18"/>
-                            </svg>
-                            変更履歴を表示
-                        </button>
+                            <button onclick="shareProposal()" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors" disabled>
+                                共有
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- KPT Logs -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="font-semibold">KPTログ</h3>
-                </div>
-                <div class="card-content">
-                    <div class="timeline">
-                        ${project.kptLogs.map(log => `
-                            <div class="timeline-item">
-                                <div class="flex items-start space-x-3">
-                                    <span class="badge ${log.type === 'Keep' ? 'badge-success' : log.type === 'Problem' ? 'badge-destructive' : 'badge-secondary'} text-xs">${log.type}</span>
-                                    <div class="flex-1">
-                                        <p class="text-sm">${log.content}</p>
-                                        <p class="text-xs text-muted-foreground mt-1">${formatDate(log.date)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
+            <!-- 生成された提案書 -->
+            <div class="mt-6">
+                <div class="bg-white rounded-lg border p-6">
+                    <h4 class="font-semibold text-lg mb-4">生成された提案書</h4>
+                    <div id="generated-proposal" class="space-y-3">
+                        <p class="text-gray-500 text-center py-8">提案書を生成すると、詳細な内容が表示されます</p>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Project Change History (initially hidden) -->
-        <div id="project-history-${project.id}" class="mt-6 hidden">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="font-semibold">プロジェクト変更履歴</h3>
-                    <p class="text-sm text-muted-foreground">このプロジェクトの変更点とバージョン履歴</p>
-                </div>
-                <div class="card-content">
-                    ${renderProjectHistory(project.id)}
                 </div>
             </div>
         </div>
@@ -332,242 +239,433 @@ function openProjectDetail(projectId) {
     modal.classList.remove('hidden');
 }
 
-function closeProjectDetail() {
-    document.getElementById('project-detail-modal').classList.add('hidden');
-}
-
-function toggleProjectHistory(projectId) {
-    const historySection = document.getElementById(`project-history-${projectId}`);
-    const button = event.target.closest('button');
-    
-    if (historySection.classList.contains('hidden')) {
-        historySection.classList.remove('hidden');
-        button.innerHTML = `
-            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 6L6 18"/>
-                <path d="M6 6l12 12"/>
-            </svg>
-            変更履歴を隠す
-        `;
-    } else {
-        historySection.classList.add('hidden');
-        button.innerHTML = `
-            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 12h18"/>
-                <path d="M3 6h18"/>
-                <path d="M3 18h18"/>
-            </svg>
-            変更履歴を表示
-        `;
+// Idea processing functions
+function addIdeaTag(tag) {
+    const textarea = document.getElementById('raw-ideas');
+    if (textarea) {
+        const currentText = textarea.value;
+        const newText = currentText + (currentText ? '\n\n' : '') + `[${tag}] `;
+        textarea.value = newText;
+        textarea.focus();
+        textarea.setSelectionRange(newText.length, newText.length);
     }
 }
 
-function renderProjectHistory(projectId) {
-    // サンプルデータから該当するプロジェクトの変更履歴を取得
-    // 実際のアプリケーションでは、プロジェクトIDに基づいて変更履歴を取得
-    const project = getProjectById(projectId);
+function extractKeywords() {
+    const rawIdeas = document.getElementById('raw-ideas').value;
+    if (!rawIdeas.trim()) {
+        alert('まず、アイデアを入力してください。');
+        return;
+    }
     
-    // デモ用のサンプル変更履歴データ
-    const sampleVersions = {
-        v1: {
-            version: 'v1.0',
-            date: '2024-01-15',
-            status: 'Try',
-            purpose: '都市部の若者の地方移住を促進する',
-            approach: '移住体験ツアーの企画と実施',
-            kpiSnapshot: {
-                '移住相談件数': '50件',
-                '移住決定者数': '5人',
-                '満足度': '85%'
-            }
-        },
-        v2: {
-            version: 'v2.0',
-            date: '2024-01-20',
-            status: 'Plan',
-            purpose: 'オンラインツールを活用して移住検討者の不安を軽減し、移住決定までの期間を短縮する',
-            approach: 'VRによる地域体験、オンライン移住相談、デジタル手続きサポート',
-            kpiSnapshot: {
-                '移住相談件数': '120件',
-                '移住決定者数': '15人',
-                '満足度': '92%'
-            },
-            changeReason: 'Try段階での実施結果を踏まえ、デジタル化によってより効率的で効果的なアプローチに変更。VR体験により遠方からでも地域を体験でき、オンライン相談で個別サポートを強化。'
-        }
+    // Simple keyword extraction simulation
+    const keywordsContainer = document.getElementById('extracted-keywords');
+    const lines = rawIdeas.split('\n').filter(line => line.trim());
+    
+    const categories = {
+        '課題': [],
+        '解決策': [],
+        '対象者': [],
+        '効果': []
     };
     
-    if (project.status === 'Try') {
-        return `
-            <div class="text-center py-8 text-muted-foreground">
-                <svg class="mx-auto h-12 w-12 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 16v-4"/>
-                    <path d="M12 8h.01"/>
-                </svg>
-                <p>Tryプロジェクトのため、まだ変更履歴はありません。</p>
-                <p class="text-sm mt-2">Planに昇格後、変更履歴が表示されます。</p>
-            </div>
-        `;
+    lines.forEach(line => {
+        if (line.includes('[課題]')) {
+            categories['課題'].push(line.replace('[課題]', '').trim());
+        } else if (line.includes('[解決策]')) {
+            categories['解決策'].push(line.replace('[解決策]', '').trim());
+        } else if (line.includes('[対象者]')) {
+            categories['対象者'].push(line.replace('[対象者]', '').trim());
+        } else if (line.includes('[効果]')) {
+            categories['効果'].push(line.replace('[効果]', '').trim());
+        }
+    });
+    
+    let html = '';
+    Object.keys(categories).forEach(category => {
+        if (categories[category].length > 0) {
+            html += `
+                <div class="mb-4">
+                    <h5 class="font-medium text-sm text-gray-700 mb-2">${category}</h5>
+                    <div class="flex flex-wrap gap-2">
+                        ${categories[category].map(item => `
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${item}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    if (html) {
+        keywordsContainer.innerHTML = html;
+    } else {
+        keywordsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">タグ付きテキストから要素を抽出します。[課題]、[解決策]、[対象者]、[効果]のタグを使用してください。</p>';
+    }
+}
+
+function applyKeywordsToStructure() {
+    const rawIdeas = document.getElementById('raw-ideas').value;
+    const lines = rawIdeas.split('\n');
+    
+    const categories = {
+        problem: [],
+        solution: [],
+        target: [],
+        impact: []
+    };
+    
+    lines.forEach(line => {
+        if (line.includes('[課題]')) {
+            categories.problem.push(line.replace('[課題]', '').trim());
+        } else if (line.includes('[解決策]')) {
+            categories.solution.push(line.replace('[解決策]', '').trim());
+        } else if (line.includes('[対象者]')) {
+            categories.target.push(line.replace('[対象者]', '').trim());
+        } else if (line.includes('[効果]')) {
+            categories.impact.push(line.replace('[効果]', '').trim());
+        }
+    });
+    
+    // Apply to structured fields
+    const problemField = document.getElementById('structured-problem');
+    const solutionField = document.getElementById('structured-solution');
+    const targetField = document.getElementById('structured-target');
+    const impactField = document.getElementById('structured-impact');
+    
+    if (problemField) problemField.value = categories.problem.join('\n');
+    if (solutionField) solutionField.value = categories.solution.join('\n');
+    if (targetField) targetField.value = categories.target.join('\n');
+    if (impactField) impactField.value = categories.impact.join('\n');
+}
+
+function proceedToNextStage(stage) {
+    if (stage === 'planning') {
+        openIdeationWorkspace('planning');
+    }
+}
+
+// Framework functions
+function selectFramework(type) {
+    const workspace = document.getElementById('framework-workspace');
+    const buttons = document.querySelectorAll('.framework-btn');
+    
+    // Reset button styles
+    buttons.forEach(btn => {
+        btn.classList.remove('border-blue-500', 'border-green-500', 'border-purple-500');
+        btn.classList.add('border-gray-200');
+    });
+    
+    // Highlight selected button
+    const selectedBtn = document.querySelector(`[data-framework="${type}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.remove('border-gray-200');
+        if (type === '5w1h') {
+            selectedBtn.classList.add('border-blue-500');
+        } else if (type === 'logic-tree') {
+            selectedBtn.classList.add('border-green-500');
+        } else if (type === 'business-canvas') {
+            selectedBtn.classList.add('border-purple-500');
+        }
     }
     
+    if (type === '5w1h') {
+        workspace.innerHTML = render5W1HFramework();
+    } else if (type === 'logic-tree') {
+        workspace.innerHTML = renderLogicTreeFramework();
+    } else if (type === 'business-canvas') {
+        workspace.innerHTML = renderBusinessCanvasFramework();
+    }
+}
+
+function render5W1HFramework() {
     return `
         <div class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h4 class="text-lg font-semibold">バージョン比較</h4>
-                <div class="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <span>v1.0 → v2.0</span>
-                </div>
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold text-blue-800">5W1H分析</h3>
+                <p class="text-sm text-gray-600">企画の要素を整理しましょう</p>
             </div>
             
-            <div class="grid gap-6 md:grid-cols-2">
-                <!-- Version 1 -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h5 class="font-semibold text-red-700">v1.0 (変更前)</h5>
-                        <span class="text-xs text-muted-foreground">${sampleVersions.v1.date}</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div>
-                            <h6 class="text-sm font-medium">ステータス</h6>
-                            <span class="badge status-try">${sampleVersions.v1.status}</span>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">目的</h6>
-                            <p class="text-sm text-muted-foreground">${sampleVersions.v1.purpose}</p>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">アプローチ</h6>
-                            <p class="text-sm text-muted-foreground">${sampleVersions.v1.approach}</p>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">KPI</h6>
-                            <div class="text-sm space-y-1">
-                                ${Object.entries(sampleVersions.v1.kpiSnapshot).map(([key, value]) => 
-                                    `<p class="text-red-700">${key}: ${value}</p>`
-                                ).join('')}
-                            </div>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Who（誰が・誰に）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="対象者、実施者"></textarea>
                 </div>
                 
-                <!-- Version 2 -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h5 class="font-semibold text-green-700">v2.0 (変更後)</h5>
-                        <span class="text-xs text-muted-foreground">${sampleVersions.v2.date}</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div>
-                            <h6 class="text-sm font-medium">ステータス</h6>
-                            <span class="badge status-plan">${sampleVersions.v2.status}</span>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">目的</h6>
-                            <p class="text-sm">${sampleVersions.v2.purpose}</p>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">アプローチ</h6>
-                            <p class="text-sm">${sampleVersions.v2.approach}</p>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-medium">KPI</h6>
-                            <div class="text-sm space-y-1">
-                                ${Object.entries(sampleVersions.v2.kpiSnapshot).map(([key, value]) => 
-                                    `<p class="text-green-700">${key}: ${value}</p>`
-                                ).join('')}
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">What（何を）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="何をするか、提供するか"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">When（いつ）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="実施時期、期間"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Where（どこで）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="場所、環境"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Why（なぜ）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="目的、理由"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">How（どのように）</label>
+                    <textarea class="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none" placeholder="方法、手段"></textarea>
                 </div>
             </div>
             
-            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h6 class="font-semibold text-blue-800 mb-2">変更理由</h6>
-                <p class="text-sm text-blue-700">${sampleVersions.v2.changeReason}</p>
+            <div class="text-center">
+                <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    分析結果を保存
+                </button>
             </div>
         </div>
     `;
 }
 
-function promoteTryToPlan(projectId) {
-    const project = getProjectById(projectId);
-    project.status = 'Plan';
+function renderLogicTreeFramework() {
+    return `
+        <div class="space-y-6">
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold text-green-800">ロジックツリー</h3>
+                <p class="text-sm text-gray-600">課題を構造的に分解します</p>
+            </div>
+            
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <div class="text-center py-20 text-gray-500">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <p>ロジックツリーエディタ</p>
+                    <p class="text-sm">インタラクティブなツリー構造エディタを開発中</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderBusinessCanvasFramework() {
+    return `
+        <div class="space-y-6">
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold text-purple-800">ビジネスモデルキャンバス</h3>
+                <p class="text-sm text-gray-600">事業モデルを可視化します</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">キーパートナー</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="重要なパートナー"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">キーアクティビティ</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="重要な活動"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">価値提案</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="提供価値"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">キーリソース</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="重要な資源"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">顧客関係</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="顧客との関係"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">顧客セグメント</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="顧客層"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">コスト構造</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="主要コスト"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">チャネル</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="販売チャネル"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-700 mb-2">収益の流れ</label>
+                    <textarea class="w-full h-24 p-2 border border-gray-300 rounded resize-none" placeholder="収益源"></textarea>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    キャンバスを保存
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function loadActiveProjects() {
+    // Load and display active projects from localStorage
+    const projects = JSON.parse(localStorage.getItem('activeProjects') || '[]');
+    const container = document.getElementById('active-projects-list');
     
-    // Add to diff history
-    const changeLog = {
-        projectId: projectId,
-        action: 'Try → Plan 昇格',
-        reason: project.kptLogs.find(log => log.type === 'Try')?.content || 'Try段階の実施結果を受けてPlanに昇格',
-        timestamp: new Date().toISOString(),
-        kpiSnapshot: sampleData.planVersions.v2.kpiSnapshot
-    };
-    
-    // Update demo step
-    if (appState.demoStep === 4) {
-        updateDemoStep(5);
+    if (projects.length === 0) {
+        return; // Keep the empty state message
     }
     
-    saveData();
-    closeProjectDetail();
-    renderCurrentRoute();
-    
-    alert('プロジェクトがPlanに昇格しました。Diffページで変更履歴を確認できます。');
+    container.innerHTML = projects.map(project => `
+        <div class="p-4 border rounded-lg hover:border-primary/50 transition-colors">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="font-medium">${project.title}</h3>
+                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${project.stage}</span>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">${project.description}</p>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-muted-foreground">更新: ${project.lastUpdated}</span>
+                <button onclick="openProject('${project.id}')" class="text-xs text-primary hover:text-primary/80">
+                    続きを見る →
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openProject(projectId) {
+    // Open specific project - to be implemented
+    console.log('Opening project:', projectId);
 }
 
 function generateAIOutline() {
-    const mockOutline = {
-        title: 'デジタル移住サポートプログラム',
-        purpose: 'オンラインツールを活用して移住検討者の不安を軽減し、移住決定までの期間を短縮する',
-        scope: 'VRによる地域体験、オンライン移住相談、デジタル手続きサポート',
-        steps: [
-            '1. VR地域体験コンテンツの制作（2ヶ月）',
-            '2. オンライン相談プラットフォーム構築（3ヶ月）',
-            '3. 手続きデジタル化とワンストップ化（4ヶ月）'
-        ]
-    };
-    
-    const newProject = {
-        id: sampleData.projects.length + 1,
-        title: mockOutline.title,
-        purpose: mockOutline.purpose,
-        scope: mockOutline.scope,
-        kpi: 'AI生成による効率化 +50%',
-        status: 'Plan',
-        tags: ['#移住相談', '#デジタル化'],
-        relatedPeople: [1, 3],
-        createdAt: new Date().toISOString().split('T')[0],
-        kptLogs: [
-            {
-                type: 'Try',
-                content: mockOutline.steps.join(', '),
-                date: new Date().toISOString().split('T')[0]
-            }
-        ]
-    };
-    
-    sampleData.projects.push(newProject);
-    saveData();
-    renderCurrentRoute();
-    
-    alert('AIがプロジェクトアウトラインを生成しました！新しいプロジェクトが追加されています。');
+    // AI outline generation - to be implemented
+    alert('AI企画アウトライン生成機能は近日公開予定です！');
 }
 
-// Ideation Workspace functions (placeholder)
-function openIdeationWorkspace(stage) {
-    alert(`企画ワークスペース「${stage || 'メイン'}」を開きます（実装予定）`);
-}
-
-function closeIdeationWorkspace() {
-    document.getElementById('ideation-workspace-modal').classList.add('hidden');
-}
-
-// Expose to global scope
-window.renderProjects = renderProjects;
-window.openProjectDetail = openProjectDetail;
-window.closeProjectDetail = closeProjectDetail;
-window.toggleProjectHistory = toggleProjectHistory;
-window.renderProjectHistory = renderProjectHistory;
-window.promoteTryToPlan = promoteTryToPlan;
-window.generateAIOutline = generateAIOutline;
+// Expose functions to global scope
 window.openIdeationWorkspace = openIdeationWorkspace;
 window.closeIdeationWorkspace = closeIdeationWorkspace;
+window.openProposalCreation = openProposalCreation;
+window.addIdeaTag = addIdeaTag;
+window.extractKeywords = extractKeywords;
+window.applyKeywordsToStructure = applyKeywordsToStructure;
+window.proceedToNextStage = proceedToNextStage;
+window.selectFramework = selectFramework;
+window.generateAIOutline = generateAIOutline;
+
+// Proposal creation functions
+function selectProposalTemplate(type) {
+    const templates = document.querySelectorAll('[onclick^="selectProposalTemplate"]');
+    templates.forEach(template => {
+        template.classList.remove('border-blue-500', 'border-green-500', 'border-purple-500');
+        template.classList.add('border-gray-200');
+    });
+    
+    const selectedTemplate = document.querySelector(`[onclick="selectProposalTemplate('${type}')"]`);
+    if (selectedTemplate) {
+        selectedTemplate.classList.remove('border-gray-200');
+        if (type === 'business') {
+            selectedTemplate.classList.add('border-blue-500');
+        } else if (type === 'project') {
+            selectedTemplate.classList.add('border-green-500');
+        } else if (type === 'simple') {
+            selectedTemplate.classList.add('border-purple-500');
+        }
+    }
+    
+    updateProposalPreview(type);
+}
+
+function updateProposalPreview(type) {
+    const preview = document.getElementById('proposal-preview');
+    
+    const templates = {
+        business: {
+            title: 'ビジネス提案書',
+            structure: ['エグゼクティブサマリー', '市場分析', '事業概要', '実行計画', '財務計画', 'リスク分析'],
+            color: 'blue'
+        },
+        project: {
+            title: 'プロジェクト企画書',
+            structure: ['プロジェクト概要', '目的・目標', '実行計画', 'リソース計画', 'スケジュール', '成果物'],
+            color: 'green'
+        },
+        simple: {
+            title: 'シンプル提案',
+            structure: ['提案概要', '課題と解決策', '実施方法', '期待効果'],
+            color: 'purple'
+        }
+    };
+    
+    const template = templates[type];
+    if (template) {
+        preview.innerHTML = `
+            <div class="border-l-4 border-${template.color}-500 pl-4">
+                <h5 class="font-medium text-${template.color}-800 mb-3">${template.title}</h5>
+                <div class="space-y-2">
+                    ${template.structure.map((section, index) => `
+                        <div class="flex items-center text-sm">
+                            <span class="w-6 h-6 bg-${template.color}-100 text-${template.color}-600 rounded-full flex items-center justify-center text-xs mr-3">
+                                ${index + 1}
+                            </span>
+                            ${section}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+}
+
+function generateProposal() {
+    const generatedProposal = document.getElementById('generated-proposal');
+    
+    generatedProposal.innerHTML = `
+        <div class="space-y-6">
+            <div class="text-center">
+                <div class="inline-block p-4 bg-green-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h5 class="text-lg font-medium text-green-800 mb-2">提案書生成完了</h5>
+                <p class="text-sm text-gray-600">選択されたテンプレートに基づいて提案書を生成しました</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-600 text-center">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    提案書の詳細生成機能は現在開発中です
+                </p>
+            </div>
+        </div>
+    `;
+    
+    // Enable buttons
+    const downloadBtn = document.querySelector('[onclick="downloadProposal()"]');
+    const shareBtn = document.querySelector('[onclick="shareProposal()"]');
+    if (downloadBtn) downloadBtn.disabled = false;
+    if (shareBtn) shareBtn.disabled = false;
+}
+
+function downloadProposal() {
+    alert('ダウンロード機能は近日公開予定です！');
+}
+
+function shareProposal() {
+    alert('共有機能は近日公開予定です！');
+}
+
+// Expose proposal functions to global scope
+window.selectProposalTemplate = selectProposalTemplate;
+window.generateProposal = generateProposal;
+window.downloadProposal = downloadProposal;
+window.shareProposal = shareProposal;
