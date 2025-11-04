@@ -1,0 +1,57 @@
+{
+  "regions": [
+    {
+      "name": "喜茂別町",
+      "code": "01391",
+      "population": 2100,
+      "agingRate": 39,
+      "industries": ["農業", "観光(ニセコ・ルスツ圏)"],
+      "tourismSpots": ["双子羊蹄の眺望", "尻別川", "近隣スキーリゾート"],
+      "summary": "北海道虻田郡喜茂別町。農業と広域観光の結節に位置し、冬季観光の集客波及や空き家の利活用などがテーマになりやすい。",
+      "refs": [
+        {"title":"町公式サイト(ダミー)","url":"https://example.com/kimobetsu"},
+        {"title":"観光案内(ダミー)","url":"https://example.com/kimobetsu-tourism"}
+      ]
+    },
+    {
+      "name": "真狩村",
+      "code": "01392",
+      "population": 2000,
+      "agingRate": 37,
+      "industries": ["農業", "観光"],
+      "tourismSpots": ["羊蹄山登山口", "湧水"],
+      "summary": "農業と観光の二軸。季節変動や担い手育成が論点。",
+      "refs": [{"title":"公式(ダミー)","url":"https://example.com/makkari"}]
+    },
+    {
+      "name": "留寿都村",
+      "code": "01393",
+      "population": 1900,
+      "agingRate": 33,
+      "industries": ["観光", "サービス"],
+      "tourismSpots": ["ルスツリゾート"],
+      "summary": "観光依存が高く、オフシーズンの稼働や地域回遊の創出が課題。",
+      "refs": [{"title":"公式(ダミー)","url":"https://example.com/rusutsu"}]
+    },
+    {
+      "name": "ニセコ町",
+      "code": "01394",
+      "population": 5200,
+      "agingRate": 29,
+      "industries": ["観光", "サービス", "農業"],
+      "tourismSpots": ["ニセコアンヌプリ", "温泉", "スキーリゾート"],
+      "summary": "国際的なスキーリゾートとして発展。多言語対応や地域コミュニティとの共生が課題。",
+      "refs": [{"title":"公式(ダミー)","url":"https://example.com/niseko"}]
+    },
+    {
+      "name": "倶知安町",
+      "code": "01395",
+      "population": 15000,
+      "agingRate": 31,
+      "industries": ["観光", "農業", "サービス"],
+      "tourismSpots": ["羊蹄山", "スキー場", "温泉"],
+      "summary": "ニセコエリアの中心都市。国際化が進む一方で、地域住民の生活インフラ維持が重要。",
+      "refs": [{"title":"公式(ダミー)","url":"https://example.com/kutchan"}]
+    }
+  ]
+}

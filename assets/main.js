@@ -491,6 +491,15 @@ function renderCurrentRoute() {
         case 'settings':
             renderSettings(mainContent);
             break;
+        case 'profile':
+            renderProfile(mainContent);
+            break;
+        case 'region':
+            renderRegion(mainContent);
+            break;
+        case 'issues':
+            renderIssues(mainContent);
+            break;
         default:
             renderDashboard(mainContent);
     }
@@ -1873,10 +1882,74 @@ function renderSettings(container) {
         <div class="animate-fade-in">
             <div class="mb-8">
                 <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
-                <p class="text-muted-foreground">システム設定とデータ管理</p>
+                <p class="text-muted-foreground">システム設定とユーザー設定</p>
             </div>
             
             <div class="space-y-6">
+                <!-- User Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">ユーザー設定</h3>
+                        <p class="text-sm text-muted-foreground">プロフィールと地域設定の管理</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="grid gap-4">
+                            <button onclick="navigateToProfile()" 
+                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <div class="text-left">
+                                        <h4 class="font-medium">プロフィール設定</h4>
+                                        <p class="text-sm text-gray-600">スキル、経験、志向の設定</p>
+                                    </div>
+                                </div>
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </button>
+                            
+                            <button onclick="navigateToRegion()" 
+                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    <div class="text-left">
+                                        <h4 class="font-medium">地域設定</h4>
+                                        <p class="text-sm text-gray-600">所属地域と地域情報の管理</p>
+                                    </div>
+                                </div>
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </button>
+                            
+                            <div class="ml-6 pl-4 border-l-2 border-gray-200">
+                                <button onclick="navigateToIssues()" 
+                                        class="flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="h-5 w-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 9v4l2 2"/>
+                                            <path d="M21 12c0 1.3-.9 2.4-2 2.7V18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3.3c-1.1-.3-2-1.4-2-2.7V7a1 1 0 0 1 1 1h14a1 1 0 0 1 1-1v5z"/>
+                                        </svg>
+                                        <div class="text-left">
+                                            <h4 class="font-medium">地域課題管理</h4>
+                                            <p class="text-sm text-gray-600">課題の推論と管理</p>
+                                        </div>
+                                    </div>
+                                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Privacy Settings -->
                 <div class="card">
                     <div class="card-header">
@@ -2745,9 +2818,820 @@ function convertToProject() {
     renderCurrentRoute();
 }
 
+// ============= Profile Page =============
+function renderProfile(container) {
+    const userProfile = getUserProfile();
+    
+    container.innerHTML = `
+        <div class="space-y-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">プロフィール設定</h1>
+                <p class="mt-1 text-sm text-gray-600">あなたのスキル、経験、志向を設定してください。地域の課題とのマッチングに活用されます。</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">基本情報</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">名前</label>
+                        <input type="text" id="profile-name" value="${userProfile.name || ''}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="山田 太郎">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">職業・立場</label>
+                        <select id="profile-role" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">選択してください</option>
+                            <option value="住民" ${userProfile.role === '住民' ? 'selected' : ''}>住民</option>
+                            <option value="協力隊" ${userProfile.role === '協力隊' ? 'selected' : ''}>地域おこし協力隊</option>
+                            <option value="役場" ${userProfile.role === '役場' ? 'selected' : ''}>役場職員</option>
+                            <option value="事業者" ${userProfile.role === '事業者' ? 'selected' : ''}>事業者</option>
+                            <option value="学生" ${userProfile.role === '学生' ? 'selected' : ''}>学生・研究者</option>
+                            <option value="移住希望" ${userProfile.role === '移住希望' ? 'selected' : ''}>移住希望者</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">スキル・経験</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">主なスキル（複数選択可）</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="skills-grid">
+                            ${renderSkillCheckboxes(userProfile.skills || [])}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">職歴・経験</label>
+                        <textarea id="profile-experience" rows="3" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                  placeholder="これまでの職歴や主な経験について記入してください">${userProfile.experience || ''}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">地域への想い・志向</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">関心のある分野</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="interests-grid">
+                            ${renderInterestCheckboxes(userProfile.interests || [])}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">地域への想い・目標</label>
+                        <textarea id="profile-aspirations" rows="4" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                  placeholder="地域に対してどのような貢献をしたいか、どんな暮らしを実現したいかを記入してください">${userProfile.aspirations || ''}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end">
+                <button onclick="saveProfile()" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    プロフィールを保存
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderSkillCheckboxes(selectedSkills) {
+    const skills = [
+        'プログラミング', 'デザイン', 'マーケティング', '農業', '観光', '教育',
+        '医療・福祉', '建築・土木', '会計・経理', 'イベント企画', '写真・動画', 'IT・システム',
+        '料理', '手工芸', '音楽', 'スポーツ指導', '翻訳・通訳', 'コンサルティング'
+    ];
+    
+    return skills.map(skill => `
+        <label class="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <input type="checkbox" value="${skill}" ${selectedSkills.includes(skill) ? 'checked' : ''} 
+                   class="text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <span class="text-sm text-gray-700">${skill}</span>
+        </label>
+    `).join('');
+}
+
+function renderInterestCheckboxes(selectedInterests) {
+    const interests = [
+        '移住促進', '観光振興', '農業振興', '空き家活用', '子育て支援', '高齢者支援',
+        '起業支援', 'コミュニティ形成', '文化継承', '環境保護', '防災・安全', 'デジタル化推進',
+        'イベント開催', '教育充実', '医療・福祉', '交通インフラ', '情報発信', '関係人口拡大'
+    ];
+    
+    return interests.map(interest => `
+        <label class="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <input type="checkbox" value="${interest}" ${selectedInterests.includes(interest) ? 'checked' : ''} 
+                   class="text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <span class="text-sm text-gray-700">${interest}</span>
+        </label>
+    `).join('');
+}
+
+function saveProfile() {
+    const profile = {
+        name: document.getElementById('profile-name').value,
+        role: document.getElementById('profile-role').value,
+        experience: document.getElementById('profile-experience').value,
+        aspirations: document.getElementById('profile-aspirations').value,
+        skills: Array.from(document.querySelectorAll('#skills-grid input:checked')).map(input => input.value),
+        interests: Array.from(document.querySelectorAll('#interests-grid input:checked')).map(input => input.value),
+        updatedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('user.profile', JSON.stringify(profile));
+    alert('プロフィールを保存しました！');
+}
+
+function getUserProfile() {
+    const stored = localStorage.getItem('user.profile');
+    return stored ? JSON.parse(stored) : {};
+}
+
+// ============= Region Page =============
+function renderRegion(container) {
+    const userRegion = getUserRegion();
+    const userIssues = getUserIssues();
+    
+    container.innerHTML = `
+        <div class="space-y-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">地域設定・課題管理</h1>
+                <p class="mt-1 text-sm text-gray-600">あなたの所属地域を設定し、地域特有の情報と課題を管理できます。</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">地域選択</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">都道府県</label>
+                        <select id="region-prefecture" onchange="updateRegionMunicipalities()" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">選択してください</option>
+                            <option value="北海道" ${userRegion.prefecture === '北海道' ? 'selected' : ''}>北海道</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">市町村</label>
+                        <select id="region-municipality" onchange="loadRegionDataAndRefreshIssues()" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 地域情報サマリー -->
+                <div id="region-summary" class="hidden mt-6 pt-6 border-t border-gray-200">
+                    <!-- 地域サマリーがここに表示される -->
+                </div>
+            </div>
+            
+            <div id="region-data-display" class="hidden space-y-4">
+                <!-- 詳細地域データがここに表示される -->
+            </div>
+            
+            <!-- 地域課題管理セクション -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">地域課題管理</h2>
+                        <p class="text-sm text-gray-600">地域設定に基づいて課題を推論し、管理できます。</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="inferIssuesInRegion()" 
+                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                                ${!userRegion.municipality ? 'disabled' : ''}>
+                            <svg class="inline w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12c0 1.3-.9 2.4-2 2.7V18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3.3c-1.1-.3-2-1.4-2-2.7V7a1 1 0 0 1 1 1h14a1 1 0 0 1 1-1v5z"/>
+                            </svg>
+                            課題を自動推論
+                        </button>
+                        <button onclick="addManualIssueInRegion()" 
+                                class="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                            手動追加
+                        </button>
+                    </div>
+                </div>
+                
+                ${!userRegion.municipality ? `
+                    <div class="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">地域を選択してください</h3>
+                        <p class="mt-1 text-sm text-gray-500">地域を選択すると、その地域の課題推論が可能になります。</p>
+                    </div>
+                ` : `
+                    <div id="region-issues-list" class="space-y-3">
+                        ${renderRegionIssuesList(userIssues)}
+                    </div>
+                    
+                    ${userIssues.length === 0 ? `
+                        <div class="text-center py-8">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">課題がありません</h3>
+                            <p class="mt-1 text-sm text-gray-500">「課題を自動推論」ボタンで地域課題を自動生成するか、手動で追加してください。</p>
+                        </div>
+                    ` : ''}
+                `}
+            </div>
+            
+            <div class="flex justify-end">
+                <button onclick="saveRegion()" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    地域設定を保存
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // 初期化
+    updateRegionMunicipalities();
+    if (userRegion.municipality) {
+        loadRegionData();
+    }
+}
+
+function updateRegionMunicipalities() {
+    const prefecture = document.getElementById('region-prefecture').value;
+    const municipalitySelect = document.getElementById('region-municipality');
+    
+    municipalitySelect.innerHTML = '<option value="">選択してください</option>';
+    
+    if (prefecture === '北海道') {
+        const municipalities = ['喜茂別町', '真狩村', 'ルスツ村', 'ニセコ町', '倶知安町'];
+        municipalities.forEach(municipality => {
+            const option = document.createElement('option');
+            option.value = municipality;
+            option.textContent = municipality;
+            municipalitySelect.appendChild(option);
+        });
+    }
+    
+    // 保存済みの値を復元
+    const userRegion = getUserRegion();
+    if (userRegion.municipality) {
+        municipalitySelect.value = userRegion.municipality;
+    }
+}
+
+async function loadRegionData() {
+    const municipality = document.getElementById('region-municipality').value;
+    if (!municipality) {
+        document.getElementById('region-data-display').classList.add('hidden');
+        document.getElementById('region-summary').classList.add('hidden');
+        return;
+    }
+    
+    try {
+        // 地域データを読み込み
+        const response = await fetch('./assets/data/regions.seed.json');
+        const regionsData = await response.json();
+        const regionData = regionsData.find(region => region.name === municipality);
+        
+        if (regionData) {
+            displayRegionSummary(regionData);
+            displayRegionData(regionData);
+            document.getElementById('region-summary').classList.remove('hidden');
+            document.getElementById('region-data-display').classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('地域データの読み込みに失敗:', error);
+    }
+}
+
+async function loadRegionDataAndRefreshIssues() {
+    await loadRegionData();
+    // 地域変更時に課題リストも更新
+    refreshRegionIssuesDisplay();
+}
+
+function displayRegionSummary(regionData) {
+    const summary = document.getElementById('region-summary');
+    
+    // 高齢化率に基づく評価
+    const agingAssessment = regionData.agingRate >= 40 ? 
+        { level: '超高齢社会', color: 'bg-red-100 text-red-800', icon: '⚠️' } :
+        regionData.agingRate >= 28 ? 
+        { level: '高齢社会', color: 'bg-yellow-100 text-yellow-800', icon: '⚡' } :
+        { level: '安定', color: 'bg-green-100 text-green-800', icon: '✅' };
+    
+    // 人口規模に基づく評価
+    const populationAssessment = regionData.population >= 10000 ? 
+        { level: '大規模', color: 'bg-blue-100 text-blue-800' } :
+        regionData.population >= 5000 ? 
+        { level: '中規模', color: 'bg-indigo-100 text-indigo-800' } :
+        { level: '小規模', color: 'bg-purple-100 text-purple-800' };
+    
+    summary.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-md font-semibold text-gray-900">📍 ${regionData.name} 概要</h3>
+            <div class="flex gap-2">
+                <span class="px-3 py-1 text-xs rounded-full ${populationAssessment.color}">
+                    ${populationAssessment.level}
+                </span>
+                <span class="px-3 py-1 text-xs rounded-full ${agingAssessment.color}">
+                    ${agingAssessment.icon} ${agingAssessment.level}
+                </span>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-900">${regionData.population.toLocaleString()}</div>
+                <div class="text-xs text-gray-600">人口</div>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-900">${regionData.agingRate}%</div>
+                <div class="text-xs text-gray-600">高齢化率</div>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-900">${regionData.industries.length}</div>
+                <div class="text-xs text-gray-600">主要産業</div>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-900">${regionData.tourismSpots.length}</div>
+                <div class="text-xs text-gray-600">観光地</div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <h4 class="text-sm font-medium text-gray-900 mb-2">🏭 主要産業</h4>
+                <div class="flex flex-wrap gap-1">
+                    ${regionData.industries.slice(0, 3).map(industry => 
+                        `<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${industry}</span>`
+                    ).join('')}
+                    ${regionData.industries.length > 3 ? `<span class="text-xs text-gray-500">+${regionData.industries.length - 3}件</span>` : ''}
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-sm font-medium text-gray-900 mb-2">🏞️ 観光・特色</h4>
+                <div class="flex flex-wrap gap-1">
+                    ${regionData.tourismSpots.slice(0, 3).map(spot => 
+                        `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${spot}</span>`
+                    ).join('')}
+                    ${regionData.tourismSpots.length > 3 ? `<span class="text-xs text-gray-500">+${regionData.tourismSpots.length - 3}件</span>` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mt-0.5">
+                    <svg class="h-4 w-4 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="ml-2 text-sm">
+                    <p class="text-blue-800">
+                        <strong>地域特性:</strong> 
+                        ${getRegionCharacteristics(regionData)}
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getRegionCharacteristics(regionData) {
+    const characteristics = [];
+    
+    if (regionData.agingRate >= 40) {
+        characteristics.push('人口減少・高齢化が進行');
+    }
+    
+    if (regionData.industries.includes('農業')) {
+        characteristics.push('農業基盤が充実');
+    }
+    
+    if (regionData.industries.includes('観光業')) {
+        characteristics.push('観光資源が豊富');
+    }
+    
+    if (regionData.tourismSpots.some(spot => spot.includes('スキー') || spot.includes('リゾート'))) {
+        characteristics.push('リゾート地として知名度が高い');
+    }
+    
+    if (regionData.population < 5000) {
+        characteristics.push('小規模コミュニティ');
+    }
+    
+    return characteristics.length > 0 ? characteristics.join('、') : '地域固有の特色を持つエリア';
+}
+
+function renderRegionIssuesList(issues) {
+    return issues.map(issue => `
+        <div class="border border-gray-200 rounded-lg p-4 ${issue.source === 'inferred' ? 'bg-blue-50' : 'bg-gray-50'}">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <h3 class="font-medium text-gray-900">${issue.title}</h3>
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            issue.source === 'inferred' 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : 'bg-gray-100 text-gray-800'
+                        }">
+                            ${issue.source === 'inferred' ? '自動推論' : '手動追加'}
+                        </span>
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            issue.priority === 'high' ? 'bg-red-100 text-red-800' :
+                            issue.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                        }">
+                            ${issue.priority === 'high' ? '高' : issue.priority === 'medium' ? '中' : '低'}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">${issue.description}</p>
+                    ${issue.tags && issue.tags.length > 0 ? `
+                        <div class="flex flex-wrap gap-1">
+                            ${issue.tags.map(tag => `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="createProjectFromIssueInRegion('${issue.id}')" 
+                            class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors">
+                        プロジェクト化
+                    </button>
+                    <button onclick="removeIssueInRegion('${issue.id}')" 
+                            class="text-red-500 hover:text-red-700">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function inferIssuesInRegion() {
+    const userProfile = getUserProfile();
+    const userRegion = getUserRegion();
+    
+    if (!userProfile.interests || !userRegion.municipality) {
+        alert('プロフィール設定を完了してから課題推論を実行してください。');
+        return;
+    }
+    
+    // region-inference.jsの関数を使用
+    if (typeof inferRegionIssues === 'function') {
+        const inferredIssues = inferRegionIssues(userProfile, userRegion);
+        
+        // 既存の課題と重複を避けて追加
+        const existingIssues = getUserIssues();
+        const newIssues = inferredIssues.filter(newIssue => 
+            !existingIssues.some(existing => existing.title === newIssue.title)
+        );
+        
+        if (newIssues.length > 0) {
+            const updatedIssues = [...existingIssues, ...newIssues];
+            localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+            refreshRegionIssuesDisplay();
+            alert(`${newIssues.length}件の課題が推論されました！`);
+        } else {
+            alert('新しい課題は見つかりませんでした。既存の課題と重複している可能性があります。');
+        }
+    } else {
+        alert('課題推論機能の読み込みに失敗しました。');
+    }
+}
+
+function addManualIssueInRegion() {
+    const title = prompt('課題のタイトルを入力してください:');
+    if (!title) return;
+    
+    const description = prompt('課題の詳細を入力してください:') || '';
+    const priority = prompt('優先度を入力してください (high/medium/low):', 'medium') || 'medium';
+    
+    const newIssue = {
+        id: Date.now().toString(),
+        title: title,
+        description: description,
+        priority: priority,
+        source: 'manual',
+        tags: [],
+        createdAt: new Date().toISOString()
+    };
+    
+    const existingIssues = getUserIssues();
+    const updatedIssues = [...existingIssues, newIssue];
+    localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+    refreshRegionIssuesDisplay();
+}
+
+function removeIssueInRegion(issueId) {
+    if (confirm('この課題を削除しますか？')) {
+        const existingIssues = getUserIssues();
+        const updatedIssues = existingIssues.filter(issue => issue.id !== issueId);
+        localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+        refreshRegionIssuesDisplay();
+    }
+}
+
+function createProjectFromIssueInRegion(issueId) {
+    const issues = getUserIssues();
+    const issue = issues.find(i => i.id === issueId);
+    
+    if (issue && typeof createPlanFromIssue === 'function') {
+        const projectPlan = createPlanFromIssue(issue);
+        alert(`課題「${issue.title}」からプロジェクトプランが生成されました！\n\n${projectPlan.title}\n\n企画ワークスペースで詳細を確認・編集できます。`);
+        
+        // 企画ワークスペースを開く
+        openIdeationWorkspace();
+    } else {
+        alert('プロジェクト生成機能の読み込みに失敗しました。');
+    }
+}
+
+function refreshRegionIssuesDisplay() {
+    const issuesList = document.getElementById('region-issues-list');
+    if (issuesList) {
+        const userIssues = getUserIssues();
+        issuesList.innerHTML = renderRegionIssuesList(userIssues);
+    }
+}
+
+function displayRegionData(regionData) {
+    const display = document.getElementById('region-data-display');
+    
+    display.innerHTML = `
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">${regionData.name} 地域情報</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-md font-medium text-gray-900 mb-3">基本情報</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">人口:</span>
+                            <span class="font-medium">${regionData.population.toLocaleString()}人</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">高齢化率:</span>
+                            <span class="font-medium">${regionData.agingRate}%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-md font-medium text-gray-900 mb-3">主要産業</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${regionData.industries.map(industry => 
+                            `<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${industry}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h3 class="text-md font-medium text-gray-900 mb-3">観光・特色</h3>
+                <div class="flex flex-wrap gap-2">
+                    ${regionData.tourismSpots.map(spot => 
+                        `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${spot}</span>`
+                    ).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveRegion() {
+    const region = {
+        prefecture: document.getElementById('region-prefecture').value,
+        municipality: document.getElementById('region-municipality').value,
+        updatedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('user.region', JSON.stringify(region));
+    alert('地域設定を保存しました！');
+}
+
+function getUserRegion() {
+    const stored = localStorage.getItem('user.region');
+    return stored ? JSON.parse(stored) : {};
+}
+
+// ============= Issues Page =============
+function renderIssues(container) {
+    const userIssues = getUserIssues();
+    
+    container.innerHTML = `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">地域課題</h1>
+                    <p class="mt-1 text-sm text-gray-600">あなたのプロフィールと地域データから推測される課題と、手動で追加した課題を管理できます。</p>
+                </div>
+                <button onclick="inferIssues()" 
+                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <svg class="inline w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12c0 1.3-.9 2.4-2 2.7V18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3.3c-1.1-.3-2-1.4-2-2.7V7a1 1 0 0 1 1 1h14a1 1 0 0 1 1-1v5z"/>
+                    </svg>
+                    課題を自動推論
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">課題一覧</h2>
+                    <button onclick="addManualIssue()" 
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                        手動追加
+                    </button>
+                </div>
+                
+                <div id="issues-list" class="space-y-3">
+                    ${renderIssuesList(userIssues)}
+                </div>
+                
+                ${userIssues.length === 0 ? `
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">課題がありません</h3>
+                        <p class="mt-1 text-sm text-gray-500">「課題を自動推論」ボタンで地域課題を自動生成するか、手動で追加してください。</p>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function renderIssuesList(issues) {
+    return issues.map(issue => `
+        <div class="border border-gray-200 rounded-lg p-4 ${issue.source === 'inferred' ? 'bg-blue-50' : 'bg-gray-50'}">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <h3 class="font-medium text-gray-900">${issue.title}</h3>
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            issue.source === 'inferred' 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : 'bg-gray-100 text-gray-800'
+                        }">
+                            ${issue.source === 'inferred' ? '自動推論' : '手動追加'}
+                        </span>
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            issue.priority === 'high' ? 'bg-red-100 text-red-800' :
+                            issue.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                        }">
+                            ${issue.priority === 'high' ? '高' : issue.priority === 'medium' ? '中' : '低'}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">${issue.description}</p>
+                    ${issue.tags && issue.tags.length > 0 ? `
+                        <div class="flex flex-wrap gap-1">
+                            ${issue.tags.map(tag => `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="createProjectFromIssue('${issue.id}')" 
+                            class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors">
+                        プロジェクト化
+                    </button>
+                    <button onclick="removeIssue('${issue.id}')" 
+                            class="text-red-500 hover:text-red-700">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function inferIssues() {
+    const userProfile = getUserProfile();
+    const userRegion = getUserRegion();
+    
+    if (!userProfile.interests || !userRegion.municipality) {
+        alert('プロフィールと地域設定を完了してから課題推論を実行してください。');
+        return;
+    }
+    
+    // region-inference.jsの関数を使用
+    if (typeof inferRegionIssues === 'function') {
+        const inferredIssues = inferRegionIssues(userProfile, userRegion);
+        
+        // 既存の課題と重複を避けて追加
+        const existingIssues = getUserIssues();
+        const newIssues = inferredIssues.filter(newIssue => 
+            !existingIssues.some(existing => existing.title === newIssue.title)
+        );
+        
+        if (newIssues.length > 0) {
+            const updatedIssues = [...existingIssues, ...newIssues];
+            localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+            renderCurrentRoute(); // ページを再描画
+            alert(`${newIssues.length}件の課題が推論されました！`);
+        } else {
+            alert('新しい課題は見つかりませんでした。既存の課題と重複している可能性があります。');
+        }
+    } else {
+        alert('課題推論機能の読み込みに失敗しました。');
+    }
+}
+
+function addManualIssue() {
+    const title = prompt('課題のタイトルを入力してください:');
+    if (!title) return;
+    
+    const description = prompt('課題の詳細を入力してください:') || '';
+    const priority = prompt('優先度を入力してください (high/medium/low):', 'medium') || 'medium';
+    
+    const newIssue = {
+        id: Date.now().toString(),
+        title: title,
+        description: description,
+        priority: priority,
+        source: 'manual',
+        tags: [],
+        createdAt: new Date().toISOString()
+    };
+    
+    const existingIssues = getUserIssues();
+    const updatedIssues = [...existingIssues, newIssue];
+    localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+    renderCurrentRoute();
+}
+
+function removeIssue(issueId) {
+    if (confirm('この課題を削除しますか？')) {
+        const existingIssues = getUserIssues();
+        const updatedIssues = existingIssues.filter(issue => issue.id !== issueId);
+        localStorage.setItem('user.issues', JSON.stringify(updatedIssues));
+        renderCurrentRoute();
+    }
+}
+
+function createProjectFromIssue(issueId) {
+    const issues = getUserIssues();
+    const issue = issues.find(i => i.id === issueId);
+    
+    if (issue && typeof createPlanFromIssue === 'function') {
+        const projectPlan = createPlanFromIssue(issue);
+        alert(`課題「${issue.title}」からプロジェクトプランが生成されました！\n\n${projectPlan.title}\n\n企画ワークスペースで詳細を確認・編集できます。`);
+        
+        // 企画ワークスペースを開く
+        openIdeationWorkspace();
+    } else {
+        alert('プロジェクト生成機能の読み込みに失敗しました。');
+    }
+}
+
+function getUserIssues() {
+    const stored = localStorage.getItem('user.issues');
+    return stored ? JSON.parse(stored) : [];
+}
+
+// Navigation functions for settings page
+function navigateToProfile() {
+    window.location.hash = '#/profile';
+}
+
+function navigateToRegion() {
+    window.location.hash = '#/region';
+}
+
+function navigateToIssues() {
+    window.location.hash = '#/issues';
+}
+
 // Expose functions to global scope
 window.openIdeationWorkspace = openIdeationWorkspace;
 window.closeIdeationWorkspace = closeIdeationWorkspace;
 window.structureIdeas = structureIdeas;
 window.addStakeholder = addStakeholder;
 window.convertToProject = convertToProject;
+window.saveProfile = saveProfile;
+window.updateRegionMunicipalities = updateRegionMunicipalities;
+window.loadRegionData = loadRegionData;
+window.loadRegionDataAndRefreshIssues = loadRegionDataAndRefreshIssues;
+window.saveRegion = saveRegion;
+window.inferIssues = inferIssues;
+window.addManualIssue = addManualIssue;
+window.removeIssue = removeIssue;
+window.createProjectFromIssue = createProjectFromIssue;
+window.inferIssuesInRegion = inferIssuesInRegion;
+window.addManualIssueInRegion = addManualIssueInRegion;
+window.removeIssueInRegion = removeIssueInRegion;
+window.createProjectFromIssueInRegion = createProjectFromIssueInRegion;
+window.refreshRegionIssuesDisplay = refreshRegionIssuesDisplay;
+window.navigateToProfile = navigateToProfile;
+window.navigateToRegion = navigateToRegion;
+window.navigateToIssues = navigateToIssues;
