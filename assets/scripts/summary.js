@@ -2,73 +2,529 @@
 // LocalSuccess - Summary Module
 // ===============================
 
+// Sample reflection data
+const reflectionData = {
+    daily: [
+        {
+            date: '2024-01-20',
+            actions: [
+                { time: '09:00', action: '田中さんとの打診会議', result: '移住相談のニーズ確認完了', type: 'meeting' },
+                { time: '14:00', action: 'プロジェクト企画書更新', result: 'VR体験機能の詳細を追加', type: 'work' },
+                { time: '16:30', action: '地域課題調査', result: '3件の新しい課題を発見', type: 'research' }
+            ],
+            reflection: {
+                good: '田中さんからの具体的なフィードバックが得られた',
+                challenge: 'VR体験の技術的な実装方法を明確にする必要',
+                next: '明日はVR技術パートナーと相談予定'
+            }
+        },
+        {
+            date: '2024-01-19',
+            actions: [
+                { time: '10:00', action: '移住体験ツアー企画', result: '初回プランを作成', type: 'planning' },
+                { time: '15:00', action: '地域住民インタビュー', result: '5名からフィードバック収集', type: 'research' }
+            ],
+            reflection: {
+                good: '住民の生の声を聞くことができた',
+                challenge: 'ツアー内容をもっと具体化が必要',
+                next: '体験内容の詳細設計を進める'
+            }
+        }
+    ],
+    weekly: [
+        {
+            week: '2024年1月第3週',
+            period: '2024-01-15 〜 2024-01-21',
+            dailySummary: '5日間で12のアクションを実施',
+            achievements: [
+                '移住相談システムの基本設計完了',
+                'VR体験プロトタイプの企画策定',
+                '地域住民からの初期フィードバック収集'
+            ],
+            challenges: [
+                'VR技術の実装方法が未確定',
+                '移住希望者のニーズ調査が不十分'
+            ],
+            nextWeekPlan: [
+                'VR技術パートナーとの連携開始',
+                '移住希望者アンケート実施',
+                'プロトタイプ開発着手'
+            ],
+            kpiProgress: {
+                '移住相談件数': { target: 50, actual: 12, progress: '24%' },
+                '移住決定者数': { target: 5, actual: 1, progress: '20%' },
+                '満足度': { target: 85, actual: 78, progress: '92%' }
+            }
+        }
+    ],
+    monthly: [
+        {
+            month: '2024年1月',
+            period: '2024-01-01 〜 2024-01-31',
+            weeklySummary: '4週間で計48のアクションを実施',
+            majorAchievements: [
+                '移住サポートプログラムの基盤構築',
+                'デジタル移住相談システムの企画完成',
+                '地域課題データベースの初期構築'
+            ],
+            mainChallenges: [
+                'VRによる地域体験システムの技術選定',
+                '移住希望者との継続的な関係構築方法',
+                '地域住民の協力体制の強化'
+            ],
+            nextMonthFocus: [
+                'VR体験システムのプロトタイプ開発',
+                '移住希望者向けオンライン相談の本格運用',
+                '地域住民との連携強化プログラム開始'
+            ],
+            kpiSummary: {
+                '移住相談件数': { target: 50, actual: 32, growth: '+128%' },
+                '移住決定者数': { target: 5, actual: 3, growth: '+200%' },
+                '満足度': { target: 85, actual: 81, growth: '+8%' }
+            },
+            projectStatus: {
+                try: { count: 2, promoted: 1 },
+                plan: { count: 1, completed: 0 }
+            }
+        }
+    ],
+    yearly: [
+        {
+            year: '2024年',
+            period: '2024-01-01 〜 2024-12-31',
+            monthlySummary: '12ヶ月間で計576のアクションを実施',
+            annualAchievements: [
+                'デジタル移住サポートプログラムの完全運用開始',
+                'VRによる地域体験システムの実装と普及',
+                '移住希望者向け包括的サポート体制の確立',
+                '地域課題解決プラットフォームの構築'
+            ],
+            yearlyLessons: [
+                'デジタル技術と人的サポートの組み合わせが重要',
+                '地域住民との信頼関係が成功の鍵',
+                '継続的なフィードバック収集とシステム改善が必要'
+            ],
+            nextYearVision: [
+                '他地域への展開モデルの確立',
+                'AI活用による個別最適化サポート',
+                '移住後の定着支援システムの強化'
+            ],
+            annualKPI: {
+                '移住相談件数': { target: 200, actual: 245, achievement: '122%' },
+                '移住決定者数': { target: 20, actual: 28, achievement: '140%' },
+                '移住後定着率': { target: 80, actual: 89, achievement: '111%' },
+                '地域満足度': { target: 85, actual: 91, achievement: '107%' }
+            }
+        }
+    ]
+};
+
 function renderSummary(container) {
     container.innerHTML = `
         <div class="animate-fade-in">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold tracking-tight">Summary</h1>
+                <h1 class="text-3xl font-bold tracking-tight">ふりかえり</h1>
                 <p class="text-muted-foreground">活動の振り返りと次期計画への反映</p>
             </div>
             
-            <div class="space-y-6">
-                <!-- Summary Input -->
+            <!-- Period Selector -->
+            <div class="mb-6">
+                <div class="flex space-x-2 border-b border-border">
+                    <button onclick="switchReflectionPeriod('daily')" 
+                            class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-primary text-primary" 
+                            data-period="daily">
+                        日次
+                    </button>
+                    <button onclick="switchReflectionPeriod('weekly')" 
+                            class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-transparent text-muted-foreground" 
+                            data-period="weekly">
+                        週次
+                    </button>
+                    <button onclick="switchReflectionPeriod('monthly')" 
+                            class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-transparent text-muted-foreground" 
+                            data-period="monthly">
+                        月次
+                    </button>
+                    <button onclick="switchReflectionPeriod('yearly')" 
+                            class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-transparent text-muted-foreground" 
+                            data-period="yearly">
+                        年次
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Reflection Content -->
+            <div id="reflection-content">
+                ${renderDailyReflection()}
+            </div>
+        </div>
+    `;
+}
+
+function renderDailyReflection() {
+    const latestDaily = reflectionData.daily[0];
+    return `
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">日次ふりかえり</h2>
+                <div class="text-sm text-muted-foreground">${latestDaily.date}</div>
+            </div>
+            
+            <!-- Daily Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">今日のアクション</h3>
+                </div>
+                <div class="card-content">
+                    <div class="space-y-3">
+                        ${latestDaily.actions.map(action => `
+                            <div class="flex items-start space-x-3 p-3 border rounded-lg">
+                                <div class="flex-shrink-0 w-12 text-sm text-muted-foreground">${action.time}</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <h4 class="font-medium">${action.action}</h4>
+                                        <span class="badge badge-${action.type === 'meeting' ? 'primary' : action.type === 'work' ? 'secondary' : action.type === 'research' ? 'success' : 'default'}">${action.type}</span>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground mt-1">${action.result}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Daily Reflection -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">今日のふりかえり</h3>
+                </div>
+                <div class="card-content space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-green-700">✓ よかったこと</label>
+                        <div class="mt-1 p-3 bg-green-50 rounded-md text-sm">${latestDaily.reflection.good}</div>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-orange-700">△ 課題・改善点</label>
+                        <div class="mt-1 p-3 bg-orange-50 rounded-md text-sm">${latestDaily.reflection.challenge}</div>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-blue-700">→ 明日やること</label>
+                        <div class="mt-1 p-3 bg-blue-50 rounded-md text-sm">${latestDaily.reflection.next}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add New Action -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">新しいアクションを追加</h3>
+                </div>
+                <div class="card-content space-y-4">
+                    <div class="grid gap-4 md:grid-cols-3">
+                        <input type="time" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" placeholder="時間">
+                        <input type="text" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" placeholder="アクション内容">
+                        <select class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm">
+                            <option value="meeting">会議</option>
+                            <option value="work">作業</option>
+                            <option value="research">調査</option>
+                            <option value="planning">企画</option>
+                        </select>
+                    </div>
+                    <textarea class="w-full p-2 border rounded-md text-sm" rows="2" placeholder="結果・成果"></textarea>
+                    <button onclick="addDailyAction()" class="bg-primary text-primary-foreground px-4 py-2 rounded-md">
+                        アクションを追加
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderWeeklyReflection() {
+    const latestWeekly = reflectionData.weekly[0];
+    return `
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">週次ふりかえり</h2>
+                <div class="text-sm text-muted-foreground">${latestWeekly.week} (${latestWeekly.period})</div>
+            </div>
+            
+            <!-- Weekly Summary -->
+            <div class="grid gap-6 md:grid-cols-2">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="font-semibold">今期の振り返り</h3>
+                        <h3 class="font-semibold">今週の成果</h3>
                     </div>
-                    <div class="card-content space-y-4">
-                        <div>
-                            <label class="text-sm font-medium">よかったこと</label>
-                            <textarea class="w-full mt-1 p-2 border rounded-md" rows="3" 
-                                      placeholder="今期うまくいったことを記録してください..."
-                                      value="${sampleData.summary.current.good}"></textarea>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">もっとできること</label>
-                            <textarea class="w-full mt-1 p-2 border rounded-md" rows="3"
-                                      placeholder="改善できる点や課題を記録してください..."
-                                      value="${sampleData.summary.current.more}"></textarea>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">次にやること</label>
-                            <textarea class="w-full mt-1 p-2 border rounded-md" rows="3"
-                                      placeholder="次期に向けた具体的なアクションを記録してください..."
-                                      value="${sampleData.summary.current.next}"></textarea>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="saveSummary()" class="bg-primary text-primary-foreground px-4 py-2 rounded-md">
-                                保存
-                            </button>
-                            <button onclick="promoteSelectedToNext()" class="border border-gray-300 px-4 py-2 rounded-md">
-                                次期プランに反映
-                            </button>
-                        </div>
+                    <div class="card-content">
+                        <p class="text-sm text-muted-foreground mb-3">${latestWeekly.dailySummary}</p>
+                        <ul class="space-y-2">
+                            ${latestWeekly.achievements.map(achievement => `
+                                <li class="flex items-start space-x-2">
+                                    <span class="text-green-600 mt-0.5">✓</span>
+                                    <span class="text-sm">${achievement}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
                     </div>
                 </div>
                 
-                <!-- Project Status -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="font-semibold">プロジェクト状況</h3>
+                        <h3 class="font-semibold">今週の課題</h3>
                     </div>
                     <div class="card-content">
-                        <div class="space-y-3">
-                            ${sampleData.projects.map(project => `
-                                <div class="flex items-center justify-between p-3 border rounded-lg">
-                                    <div>
-                                        <h4 class="font-medium">${project.title}</h4>
-                                        <p class="text-sm text-muted-foreground">${project.kpi}</p>
+                        <ul class="space-y-2">
+                            ${latestWeekly.challenges.map(challenge => `
+                                <li class="flex items-start space-x-2">
+                                    <span class="text-orange-600 mt-0.5">△</span>
+                                    <span class="text-sm">${challenge}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- KPI Progress -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">KPI進捗</h3>
+                </div>
+                <div class="card-content">
+                    <div class="grid gap-4 md:grid-cols-3">
+                        ${Object.entries(latestWeekly.kpiProgress).map(([kpi, data]) => `
+                            <div class="p-3 border rounded-lg">
+                                <h4 class="font-medium text-sm">${kpi}</h4>
+                                <div class="mt-2">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span>${data.actual} / ${data.target}</span>
+                                        <span class="font-medium">${data.progress}</span>
                                     </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="badge status-${project.status.toLowerCase()}">${project.status}</span>
-                                        ${project.status === 'Try' ? `
-                                            <input type="checkbox" class="rounded border-border">
-                                            <label class="text-sm">次期に昇格</label>
-                                        ` : ''}
+                                    <div class="mt-1 w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: ${data.progress}"></div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Week Plan -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">来週の計画</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="space-y-2">
+                        ${latestWeekly.nextWeekPlan.map(plan => `
+                            <li class="flex items-start space-x-2">
+                                <span class="text-blue-600 mt-0.5">→</span>
+                                <span class="text-sm">${plan}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderMonthlyReflection() {
+    const latestMonthly = reflectionData.monthly[0];
+    return `
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">月次ふりかえり</h2>
+                <div class="text-sm text-muted-foreground">${latestMonthly.month} (${latestMonthly.period})</div>
+            </div>
+            
+            <!-- Monthly Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">月間サマリー</h3>
+                </div>
+                <div class="card-content">
+                    <p class="text-muted-foreground mb-4">${latestMonthly.weeklySummary}</p>
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div>
+                            <h4 class="font-medium text-green-700 mb-3">🎯 主要な成果</h4>
+                            <ul class="space-y-2">
+                                ${latestMonthly.majorAchievements.map(achievement => `
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-green-600 mt-0.5">✓</span>
+                                        <span class="text-sm">${achievement}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
                         </div>
+                        <div>
+                            <h4 class="font-medium text-orange-700 mb-3">🚧 主要な課題</h4>
+                            <ul class="space-y-2">
+                                ${latestMonthly.mainChallenges.map(challenge => `
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-orange-600 mt-0.5">△</span>
+                                        <span class="text-sm">${challenge}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Monthly KPI -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">月間KPI実績</h3>
+                </div>
+                <div class="card-content">
+                    <div class="grid gap-4 md:grid-cols-3">
+                        ${Object.entries(latestMonthly.kpiSummary).map(([kpi, data]) => `
+                            <div class="p-4 border rounded-lg">
+                                <h4 class="font-medium">${kpi}</h4>
+                                <div class="mt-2">
+                                    <div class="text-2xl font-bold">${data.actual}</div>
+                                    <div class="text-sm text-muted-foreground">目標: ${data.target}</div>
+                                    <div class="text-sm font-medium text-green-600">${data.growth}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">プロジェクト状況</h3>
+                </div>
+                <div class="card-content">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="p-4 border rounded-lg">
+                            <h4 class="font-medium">Try プロジェクト</h4>
+                            <div class="mt-2">
+                                <span class="text-2xl font-bold">${latestMonthly.projectStatus.try.count}</span>
+                                <span class="text-sm text-muted-foreground ml-2">件実施</span>
+                                <div class="text-sm text-green-600">うち${latestMonthly.projectStatus.try.promoted}件をPlanに昇格</div>
+                            </div>
+                        </div>
+                        <div class="p-4 border rounded-lg">
+                            <h4 class="font-medium">Plan プロジェクト</h4>
+                            <div class="mt-2">
+                                <span class="text-2xl font-bold">${latestMonthly.projectStatus.plan.count}</span>
+                                <span class="text-sm text-muted-foreground ml-2">件実施中</span>
+                                <div class="text-sm text-blue-600">${latestMonthly.projectStatus.plan.completed}件完了</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Month Focus -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">来月の重点事項</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="space-y-2">
+                        ${latestMonthly.nextMonthFocus.map(focus => `
+                            <li class="flex items-start space-x-2">
+                                <span class="text-blue-600 mt-0.5">→</span>
+                                <span class="text-sm">${focus}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderYearlyReflection() {
+    const latestYearly = reflectionData.yearly[0];
+    return `
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">年次ふりかえり</h2>
+                <div class="text-sm text-muted-foreground">${latestYearly.year} (${latestYearly.period})</div>
+            </div>
+            
+            <!-- Annual Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">年間総括</h3>
+                </div>
+                <div class="card-content">
+                    <p class="text-muted-foreground mb-6">${latestYearly.monthlySummary}</p>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-medium text-green-700 mb-3">🏆 年間主要成果</h4>
+                            <div class="grid gap-3 md:grid-cols-2">
+                                ${latestYearly.annualAchievements.map(achievement => `
+                                    <div class="flex items-start space-x-2 p-3 bg-green-50 rounded-lg">
+                                        <span class="text-green-600 mt-0.5">✓</span>
+                                        <span class="text-sm">${achievement}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-blue-700 mb-3">💡 年間で得た学び</h4>
+                            <div class="space-y-2">
+                                ${latestYearly.yearlyLessons.map(lesson => `
+                                    <div class="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg">
+                                        <span class="text-blue-600 mt-0.5">💡</span>
+                                        <span class="text-sm">${lesson}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Annual KPI Achievement -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">年間KPI達成状況</h3>
+                </div>
+                <div class="card-content">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        ${Object.entries(latestYearly.annualKPI).map(([kpi, data]) => `
+                            <div class="p-4 border rounded-lg">
+                                <h4 class="font-medium">${kpi}</h4>
+                                <div class="mt-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold">${data.actual}</span>
+                                        <span class="text-lg font-semibold ${data.achievement >= '100%' ? 'text-green-600' : 'text-orange-600'}">${data.achievement}</span>
+                                    </div>
+                                    <div class="text-sm text-muted-foreground">目標: ${data.target}</div>
+                                    <div class="mt-2 w-full bg-gray-200 rounded-full h-3">
+                                        <div class="bg-${data.achievement >= '100%' ? 'green' : 'orange'}-600 h-3 rounded-full" style="width: ${Math.min(parseFloat(data.achievement), 100)}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Year Vision -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">来年のビジョン</h3>
+                </div>
+                <div class="card-content">
+                    <div class="space-y-2">
+                        ${latestYearly.nextYearVision.map(vision => `
+                            <div class="flex items-start space-x-2 p-3 border rounded-lg">
+                                <span class="text-purple-600 mt-0.5">🚀</span>
+                                <span class="text-sm">${vision}</span>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             </div>
@@ -76,16 +532,53 @@ function renderSummary(container) {
     `;
 }
 
+// Period switching and action functions
+function switchReflectionPeriod(period) {
+    // Update tab appearance
+    document.querySelectorAll('.reflection-tab').forEach(tab => {
+        tab.classList.remove('border-primary', 'text-primary');
+        tab.classList.add('border-transparent', 'text-muted-foreground');
+    });
+    
+    const activeTab = document.querySelector(`[data-period="${period}"]`);
+    if (activeTab) {
+        activeTab.classList.remove('border-transparent', 'text-muted-foreground');
+        activeTab.classList.add('border-primary', 'text-primary');
+    }
+    
+    // Update content
+    const contentContainer = document.getElementById('reflection-content');
+    switch(period) {
+        case 'daily':
+            contentContainer.innerHTML = renderDailyReflection();
+            break;
+        case 'weekly':
+            contentContainer.innerHTML = renderWeeklyReflection();
+            break;
+        case 'monthly':
+            contentContainer.innerHTML = renderMonthlyReflection();
+            break;
+        case 'yearly':
+            contentContainer.innerHTML = renderYearlyReflection();
+            break;
+    }
+}
+
+function addDailyAction() {
+    alert('日次アクションが追加されました（実装予定）');
+}
+
 function saveSummary() {
-    // In a real implementation, this would save the textarea values
-    alert('サマリーが保存されました');
+    alert('ふりかえりが保存されました');
 }
 
 function promoteSelectedToNext() {
-    alert('選択されたプロジェクトが次期プランに反映されました');
+    alert('選択された項目が次期プランに反映されました');
 }
 
 // Expose to global scope
 window.renderSummary = renderSummary;
+window.switchReflectionPeriod = switchReflectionPeriod;
+window.addDailyAction = addDailyAction;
 window.saveSummary = saveSummary;
 window.promoteSelectedToNext = promoteSelectedToNext;
