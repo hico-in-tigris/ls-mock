@@ -45,7 +45,7 @@ function renderStakeholderContent() {
                                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
                                     </svg>
-                                    人脈から選択
+                                    ネットワークから選択
                                 </button>
                             </div>
                             
@@ -382,7 +382,7 @@ function showNetworkStakeholderSelector() {
         <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">人脈から関係者を選択</h3>
+                    <h3 class="text-lg font-semibold">ネットワークから関係者を選択</h3>
                     <button onclick="closeNetworkSelector()" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -428,7 +428,7 @@ function addPersonAsStakeholder(person, isRecommended = false) {
         role: person.role,
         influence: 'medium',
         interest: 'medium',
-        notes: isRecommended ? '推奨関係者として追加' : '人脈から追加'
+        notes: isRecommended ? '推奨関係者として追加' : 'ネットワークから追加'
     };
     
     stakeholders.push(stakeholder);

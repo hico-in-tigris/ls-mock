@@ -714,14 +714,6 @@ function renderAddPersonModal() {
                             <label class="block text-sm font-medium mb-2">住所</label>
                             <input type="text" id="new-person-address" class="w-full p-2 border border-input rounded-md" placeholder="例: 北海道虻田郡喜茂別町字喜茂別123">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">緯度</label>
-                            <input type="number" step="any" id="new-person-lat" class="w-full p-2 border border-input rounded-md" placeholder="42.8314">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">経度</label>
-                            <input type="number" step="any" id="new-person-lng" class="w-full p-2 border border-input rounded-md" placeholder="140.9678">
-                        </div>
                     </div>
                     <div class="mt-4">
                         <label class="block text-sm font-medium mb-2">ランドマーク・目印</label>
@@ -1550,16 +1542,16 @@ function getCategoryPeople(category) {
 function getCategoryInfo(category) {
     const categories = {
         active: {
-            title: 'アクティブな人脈',
+            title: 'アクティブなネットワーク',
             description: '30日以内に連絡を取った人たち',
-            emptyMessage: 'アクティブな人脈がありません。定期的な連絡を心がけましょう。',
+            emptyMessage: 'アクティブなネットワークがありません。定期的な連絡を心がけましょう。',
             bgColor: 'bg-blue-200',
             icon: `<svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>`
         },
         strong: {
-            title: '強いつながりの人脈',
+            title: '強いつながりのネットワーク',
             description: '2週間以内に連絡を取った関係の深い人たち',
             emptyMessage: '強いつながりがありません。定期的なコミュニケーションで関係を深めましょう。',
             bgColor: 'bg-green-200',
@@ -1568,7 +1560,7 @@ function getCategoryInfo(category) {
             </svg>`
         },
         needsFollow: {
-            title: 'フォローが必要な人脈',
+            title: 'フォローが必要なネットワーク',
             description: '2週間以上連絡を取っていない人たち',
             emptyMessage: 'フォローが必要な人はいません。素晴らしい関係管理です！',
             bgColor: 'bg-orange-200',
@@ -1577,9 +1569,9 @@ function getCategoryInfo(category) {
             </svg>`
         },
         recent: {
-            title: '新規・最近の人脈',
+            title: '新規・最近のネットワーク',
             description: '1週間以内に連絡を取った新しいつながり',
-            emptyMessage: '最近の新しいつながりがありません。新しい人脈作りを検討しましょう。',
+            emptyMessage: '最近の新しいつながりがありません。新しいネットワーク作りを検討しましょう。',
             bgColor: 'bg-purple-200',
             icon: `<svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
@@ -1627,7 +1619,7 @@ function suggestNetworkingOpportunities(category) {
     
     const suggestions = [
         'イベント企画への協力依頼',
-        '新しい人脈の紹介をお願い',
+        '新しいネットワークの紹介をお願い',
         'プロジェクトへの参加打診',
         '意見交換・相談の機会設定',
         'コラボレーション企画の提案'

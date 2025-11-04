@@ -20,7 +20,7 @@ function renderMap(container) {
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">地域マップ</h1>
-                    <p class="text-muted-foreground">人脈とプロジェクトの位置を地図上で可視化・管理</p>
+                    <p class="text-muted-foreground">ネットワークとプロジェクトの位置を地図上で可視化・管理</p>
                 </div>
                 <div class="flex space-x-2">
                     <button onclick="exportLocationData()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent h-9 px-4 py-2">
@@ -46,7 +46,7 @@ function renderMap(container) {
                                     <input type="checkbox" id="toggle-people" ${showPeople ? 'checked' : ''} onchange="togglePeopleLayer()" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                     <span class="flex items-center">
                                         <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                                        人脈 (${getPeopleWithLocation().length})
+                                        ネットワーク (${getPeopleWithLocation().length})
                                     </span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer">
@@ -88,7 +88,7 @@ function renderMap(container) {
                     <div class="card-content">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-green-700">地域内人脈</p>
+                                <p class="text-sm font-medium text-green-700">地域内ネットワーク</p>
                                 <p class="text-2xl font-bold text-green-900">${getPeopleWithLocation().filter(p => p.location.area === '地域内').length}人</p>
                             </div>
                             <div class="w-8 h-8 bg-green-200 rounded-lg flex items-center justify-center">
@@ -104,7 +104,7 @@ function renderMap(container) {
                     <div class="card-content">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-blue-700">地域外人脈</p>
+                                <p class="text-sm font-medium text-blue-700">地域外ネットワーク</p>
                                 <p class="text-2xl font-bold text-blue-900">${getPeopleWithLocation().filter(p => p.location.area === '地域外').length}人</p>
                             </div>
                             <div class="w-8 h-8 bg-blue-200 rounded-lg flex items-center justify-center">
@@ -254,7 +254,7 @@ function createSimpleMap() {
                     <div class="space-y-2 text-xs">
                         <div class="flex items-center space-x-2">
                             <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
-                            <span>人脈</span>
+                            <span>ネットワーク</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <div class="w-4 h-4 bg-orange-500 rounded"></div>

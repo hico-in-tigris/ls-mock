@@ -1,6 +1,6 @@
 /**
  * 統一マップコンポーネント
- * 人脈とプロジェクトの両方を地図上で管理
+ * ネットワークとプロジェクトの両方を地図上で管理
  */
 
 // マップのデフォルト設定
@@ -52,7 +52,7 @@ function renderMapComponent(containerId, options = {}) {
                     <div class="flex items-center space-x-4">
                         <h3 class="text-lg font-semibold">地域マップ</h3>
                         <div class="flex items-center space-x-2 text-sm text-muted-foreground">
-                            ${showPeople ? `<span>人脈: ${filteredPeople.length}件</span>` : ''}
+                            ${showPeople ? `<span>ネットワーク: ${filteredPeople.length}件</span>` : ''}
                             ${showProjects ? `<span>プロジェクト: ${filteredProjects.length}件</span>` : ''}
                         </div>
                     </div>
@@ -86,11 +86,11 @@ function renderMapComponent(containerId, options = {}) {
                     ${showPeople ? `
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span>地域内人脈 (${filteredPeople.filter(p => p.location.area === '地域内').length})</span>
+                            <span>地域内ネットワーク (${filteredPeople.filter(p => p.location.area === '地域内').length})</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                            <span>地域外人脈 (${filteredPeople.filter(p => p.location.area === '地域外').length})</span>
+                            <span>地域外ネットワーク (${filteredPeople.filter(p => p.location.area === '地域外').length})</span>
                         </div>
                     ` : ''}
                     ${showProjects ? `
