@@ -461,6 +461,7 @@ function initRouter() {
     function handleHashChange() {
         const hash = window.location.hash.slice(1); // Remove #
         const route = hash.replace('/', '') || 'dashboard';
+        console.log('[Router] Hash change:', hash, '→ Route:', route);
         appState.currentRoute = route;
         renderCurrentRoute();
         updateActiveNav();
@@ -504,7 +505,17 @@ function renderCurrentRoute() {
             renderDashboard(container);
             break;
         case 'summary':
-            renderSummary(container);
+            try {
+                if (typeof renderSummary !== 'function') {
+                    console.error('[Router] renderSummary is not defined');
+                    container.innerHTML = '<div class="p-6 text-red-500">Error: Summary page failed to load</div>';
+                    return;
+                }
+                renderSummary(container);
+            } catch (error) {
+                console.error('[Router] Error rendering summary:', error);
+                container.innerHTML = '<div class="p-6 text-red-500">Error: Summary page failed to load</div>';
+            }
             break;
         case 'settings':
             renderSettings(container);

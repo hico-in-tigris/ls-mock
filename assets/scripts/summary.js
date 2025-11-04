@@ -2,11 +2,11 @@
 // LocalSuccess - Summary Module (Main)
 // ===============================
 
-function renderSummary() {
+function renderSummary(container) {
     // Load saved data
     loadReflectionData();
     
-    return `
+    container.innerHTML = `
         <div class="max-w-6xl mx-auto p-6 space-y-6">
             <div class="flex items-center justify-between">
                 <div>
