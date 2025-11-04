@@ -7,7 +7,7 @@ function renderIdeationContent() {
         <div class="p-6">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold mb-2">想いの整理ワークスペース</h2>
+                    <h2 class="text-2xl font-bold mb-2">アイデア整理ワークスペース</h2>
                     <p class="text-muted-foreground">アイデアから具体的な企画へ</p>
                 </div>
                 <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
@@ -272,7 +272,7 @@ function saveIdeationData() {
     // Show save confirmation
     const message = document.createElement('div');
     message.className = 'fixed top-4 right-4 bg-green-100 border border-green-200 text-green-800 px-4 py-2 rounded-lg z-50';
-    message.textContent = '想いの整理を保存しました';
+    message.textContent = 'アイデア整理を保存しました';
     document.body.appendChild(message);
     
     setTimeout(() => {

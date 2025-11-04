@@ -128,44 +128,40 @@ function generateAIOutline() {
 }
 
 function openProjectList() {
-    // Show project list modal
-    let modal = document.getElementById('project-list-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'project-list-modal';
-        modal.className = 'fixed inset-0 z-50 hidden';
-        modal.innerHTML = `
-            <div class="fixed inset-0 bg-black/50" onclick="closeProjectList()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-4xl bg-background shadow-lg border border-border rounded-lg max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold">全プロジェクト一覧</h2>
-                        <button onclick="closeProjectList()" class="text-muted-foreground hover:text-foreground">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="project-list-content">
-                        <div class="text-center py-12">
-                            <p class="text-muted-foreground">プロジェクト一覧機能は開発中です</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
+    // 現在のプロジェクト一覧を取得（実際にはデータベースから取得）
+    const projects = getCurrentProjects();
     
-    modal.classList.remove('hidden');
+    // 新しいモーダルコンポーネントを使用
+    const modalManager = createProjectListModal(projects);
+    modalManager.open();
 }
 
 function closeProjectList() {
-    const modal = document.getElementById('project-list-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
+    // 新しいモーダルコンポーネントのcloseModal関数を使用
+    closeModal('project-list-modal');
+}
+
+// 現在のプロジェクト一覧を取得するダミー関数
+function getCurrentProjects() {
+    // 実際の実装では、ローカルストレージやAPIからプロジェクトデータを取得
+    return [
+        {
+            id: 1,
+            title: "地域活性化プロジェクト",
+            description: "地域の観光資源を活用した地域活性化のための包括的なプロジェクト",
+            progress: 65,
+            tags: ["観光", "地域活性化", "まちづくり"],
+            status: "進行中"
+        },
+        {
+            id: 2,
+            title: "スマート農業導入計画",
+            description: "IoTとAIを活用した持続可能な農業システムの構築",
+            progress: 30,
+            tags: ["農業", "IoT", "AI", "DX"],
+            status: "計画中"
+        }
+    ];
 }
 
 function openStakeholderAnalysis() {

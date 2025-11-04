@@ -28,7 +28,7 @@ function renderGoalSettingContent() {
                             <line x1="9" y1="9" x2="9.01" y2="9"/>
                             <line x1="15" y1="9" x2="15.01" y2="9"/>
                         </svg>
-                        想いの整理
+                        アイデア整理
                     </button>
                     <button onclick="openIdeationWorkspace('planning')" class="flex items-center px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
                         <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

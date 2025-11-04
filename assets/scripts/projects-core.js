@@ -36,18 +36,16 @@ function renderProjects(container) {
                     <!-- Wizard Progress Bar -->
                     <div class="mb-8">
                         <div class="flex items-center justify-center">
-                            <!-- Step 1: 想いの整理 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('ideation')">
+                            <!-- Step 1: アイデア整理 -->
+                            <div class="flex flex-col items-center group hover:scale-105 transition-transform duration-200 cursor-pointer" onclick="selectWizardStep('ideation')">
                                 <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
                                     <span class="wizard-step-number-1">1</span>
-                                    <svg class="w-6 h-6 wizard-check-icon-1 hidden" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    <svg class="wizard-check-icon-1 hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </div>
-                                <span class="text-sm text-center">想いの整理</span>
-                            </div>
-                            
-                            <!-- Arrow 1 -->
+                                <span class="text-sm text-center">アイデア整理</span>
+                            </div>                            <!-- Arrow 1 -->
                             <div class="flex-1 border-t-2 border-gray-300 mx-4"></div>
                             
                             <!-- Step 2: 企画構成 -->
@@ -115,7 +113,7 @@ function renderProjects(container) {
                                 <line x1="15" y1="9" x2="15.01" y2="9"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2 text-blue-800">ステップ1: 想いの整理</h3>
+                        <h3 class="text-lg font-semibold mb-2 text-blue-800">ステップ1: アイデア整理</h3>
                         <p class="text-blue-600 mb-4">アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。</p>
                         <div class="flex justify-center gap-3">
                             <button class="design-btn px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" data-mode="ideation">
@@ -389,110 +387,8 @@ function viewProject(projectId) {
     }
     
     console.log('Found project:', project);
-    // Show project details in modal or navigate to detail page
-    showProjectDetailModal(project);
-}
-
-function showProjectDetailModal(project) {
-    console.log('showProjectDetailModal called with:', project);
-    
-    // Remove existing modal if any
-    const existingModal = document.querySelector('.fixed.inset-0');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-    modal.innerHTML = `
-        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h2 class="text-2xl font-bold">${project.title}</h2>
-                        <p class="text-gray-600 mt-1">${project.description}</p>
-                    </div>
-                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6 space-y-6">
-                ${project.progress ? `
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">進捗状況</h3>
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-1">
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full" style="width: ${project.progress}%"></div>
-                                </div>
-                            </div>
-                            <span class="text-xl font-bold text-indigo-600">${project.progress}%</span>
-                        </div>
-                    </div>
-                ` : ''}
-                
-                ${project.goals && Object.keys(project.goals).length > 0 ? `
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">SMART目標</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${project.goals.specific ? `<div class="p-3 bg-blue-50 rounded-lg"><strong>具体的:</strong> ${project.goals.specific}</div>` : ''}
-                            ${project.goals.measurable ? `<div class="p-3 bg-green-50 rounded-lg"><strong>測定可能:</strong> ${project.goals.measurable}</div>` : ''}
-                            ${project.goals.achievable ? `<div class="p-3 bg-yellow-50 rounded-lg"><strong>達成可能:</strong> ${project.goals.achievable}</div>` : ''}
-                            ${project.goals.relevant ? `<div class="p-3 bg-purple-50 rounded-lg"><strong>関連性:</strong> ${project.goals.relevant}</div>` : ''}
-                            ${project.goals.timebound ? `<div class="p-3 bg-red-50 rounded-lg"><strong>期限:</strong> ${project.goals.timebound}</div>` : ''}
-                        </div>
-                    </div>
-                ` : ''}
-                
-                ${project.kpis && project.kpis.length > 0 ? `
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">重要業績評価指標 (KPI)</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            ${project.kpis.map(kpi => `
-                                <div class="text-center p-4 border border-gray-200 rounded-lg">
-                                    <div class="text-2xl font-bold text-indigo-600">${kpi.target}${kpi.unit === 'percent' ? '%' : kpi.unit === 'number' ? '' : kpi.unit}</div>
-                                    <div class="text-sm text-gray-600">${kpi.name}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-3">タグ</h3>
-                    <div class="flex flex-wrap gap-2">
-                        ${project.tags.map(tag => `
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${tag}</span>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                    <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                        閉じる
-                    </button>
-                    <button onclick="editProject(${project.id})" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                        編集する
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    console.log('Adding modal to document body');
-    document.body.appendChild(modal);
-    console.log('Modal added successfully');
-    
-    // Add click event to close modal when clicking outside
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
+    // Show project details in modal using new modal component
+    createProjectDetailModal(project);
 }
 
 function editProject(projectId) {

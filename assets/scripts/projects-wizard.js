@@ -4,11 +4,11 @@
 
 function updateWizardProgress(currentStep) {
     const steps = [
-        { name: 'ideation', number: 1, title: '想いの整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
-        { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: 'フレームワークを使って企画を構造化し、全体像を明確にしましょう。' },
-        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: 'SMART目標とKPIを設定して、成功指標を明確化しましょう。' },
-        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトの関係者を特定し、影響力や関心度を分析しましょう。' },
-        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: '分析結果をもとに、説得力のある提案書を作成しましょう。' }
+        { name: 'ideation', number: 1, title: 'アイデア整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
+        { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: '想いを具体的な企画として構成し、フレームワークを使って体系化しましょう。' },
+        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
+        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
+        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめて、説得力のある提案資料を作成しましょう。' }
     ];
     
     const currentStepIndex = steps.findIndex(step => step.name === currentStep);
@@ -111,7 +111,7 @@ function updateStepDetail(stepData) {
         <p class="text-${stepData.color}-600 mb-4">${stepData.description}</p>
         <div class="flex justify-center gap-3">
             <button class="design-btn px-6 py-2 bg-${stepData.color}-600 text-white rounded-md hover:bg-${stepData.color}-700 transition-colors" data-mode="${stepData.name}">
-                設計する
+                開始する
             </button>
             ${stepData.name === 'proposal' ? `
                 <button onclick="createProjectFromWizard()" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold">
@@ -119,7 +119,7 @@ function updateStepDetail(stepData) {
                 </button>
             ` : nextStepName ? `
                 <button onclick="proceedToNextStep('${stepData.name}')" class="px-6 py-2 border border-${stepData.color}-600 text-${stepData.color}-600 rounded-md hover:bg-${stepData.color}-50 transition-colors">
-                    次へ
+                    次のステップへ
                 </button>
             ` : ''}
         </div>
@@ -129,11 +129,11 @@ function updateStepDetail(stepData) {
 // Select wizard step without opening modal
 function selectWizardStep(stepName) {
     const steps = [
-        { name: 'ideation', number: 1, title: '想いの整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
-        { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: 'フレームワークを使って企画を構造化し、全体像を明確にしましょう。' },
-        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: 'SMART目標とKPIを設定して、成功指標を明確化しましょう。' },
-        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトの関係者を特定し、影響力や関心度を分析しましょう。' },
-        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: '分析結果をもとに、説得力のある提案書を作成しましょう。' }
+        { name: 'ideation', number: 1, title: 'アイデア整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
+        { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: '想いを具体的な企画として構成し、フレームワークを使って体系化しましょう。' },
+        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
+        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
+        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめて、説得力のある提案資料を作成しましょう。' }
     ];
     
     const selectedStep = steps.find(step => step.name === stepName);
@@ -161,45 +161,33 @@ function proceedToNextStep(currentStepName) {
         // Move to next step
         selectWizardStep(nextStepName);
         
-        // Show confirmation message
-        const stepTitles = {
-            'ideation': '想いの整理',
-            'planning': '企画構成',
-            'goal-setting': '目標設定',
-            'stakeholder': '関係者分析',
-            'proposal': '提案作成'
-        };
-        
-        const currentTitle = stepTitles[currentStepName];
-        const nextTitle = stepTitles[nextStepName];
-        
-        showStepTransitionMessage(currentTitle, nextTitle);
+        // Show confirmation message (projects.js style)
+        showStepTransitionMessage(currentStepName, nextStepName);
     }
 }
 
 // Show step transition message
 function showStepTransitionMessage(fromStep, toStep) {
-    const message = document.createElement('div');
-    message.className = 'fixed top-4 right-4 bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-lg shadow-lg z-50 max-w-sm';
-    message.innerHTML = `
-        <div class="flex items-start">
-            <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <div>
-                <div class="font-medium">${fromStep}完了</div>
-                <div class="text-sm">${toStep}に進みました</div>
-            </div>
+    const stepTitles = {
+        'ideation': 'アイデア整理',
+        'planning': '企画構成',
+        'goal-setting': '目標設定',
+        'stakeholder': '関係者分析',
+        'proposal': '提案作成'
+    };
+
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-blue-100 border border-blue-200 text-blue-800 px-6 py-3 rounded-lg z-50 transition-all duration-300';
+    notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+            <span>「${stepTitles[fromStep]}」から「${stepTitles[toStep]}」に進みます</span>
         </div>
     `;
+    document.body.appendChild(notification);
     
-    document.body.appendChild(message);
-    
-    // Auto remove after 3 seconds
     setTimeout(() => {
-        if (message.parentNode) {
-            document.body.removeChild(message);
-        }
+        notification.remove();
     }, 3000);
 }
 

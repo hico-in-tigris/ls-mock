@@ -26,7 +26,7 @@ function renderProjects(container) {
     ];
 
     const wizardSteps = [
-        { title: '想いの整理', onClick: 'selectWizardStep("ideation")' },
+        { title: 'アイデア整理', onClick: 'selectWizardStep("ideation")' },
         { title: '企画構成', onClick: 'selectWizardStep("planning")' },
         { title: '目標設定', onClick: 'selectWizardStep("goal-setting")' },
         { title: '関係者分析', onClick: 'selectWizardStep("stakeholder")' },
@@ -36,7 +36,7 @@ function renderProjects(container) {
     container.innerHTML = `
         <div class="animate-fade-in">
             ${createHeaderCard({
-                title: 'Projects',
+                title: 'プロジェクト',
                 description: '企画から実行まで、プロジェクトライフサイクル全体をサポート',
                 actions: headerButtons.join('')
             })}
@@ -56,11 +56,11 @@ function renderProjects(container) {
                             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
                                 ${Icons.lightbulb}
                             </div>
-                            <h3 class="text-lg font-semibold mb-2 text-blue-800">ステップ1: 想いの整理</h3>
+                            <h3 class="text-lg font-semibold mb-2 text-blue-800">ステップ1: アイデア整理</h3>
                             <p class="text-blue-600 mb-4">アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。</p>
                             <div class="flex justify-center gap-3">
                                 ${createButton({
-                                    text: '想いを整理する',
+                                    text: 'アイデアを整理する',
                                     variant: 'primary',
                                     onClick: 'openIdeationWorkspace("ideation")'
                                 })}
@@ -96,44 +96,13 @@ function renderProjects(container) {
     `;
 }
 
-// プロジェクトワークスペース開閉機能
+// プロジェクトワークスペース開閉機能（新しいモーダルコンポーネントを使用）
 function openIdeationWorkspace(stage = 'ideation') {
-    let modal = document.getElementById('project-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'project-modal';
-        modal.className = 'fixed inset-0 z-50 hidden';
-        modal.innerHTML = `
-            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
-                <div id="modal-content"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    const content = document.getElementById('modal-content');
-    const renderedContent = renderIdeationWorkspace(stage);
-    
-    content.innerHTML = renderedContent;
-    modal.classList.remove('hidden');
-    
-    // Update wizard progress and initialize content after modal opens
-    setTimeout(() => {
-        updateWizardProgress(stage);
-        
-        // Initialize stakeholder matrix if on stakeholder stage
-        if (stage === 'stakeholder') {
-            generateStakeholderMatrix();
-        }
-    }, 100);
+    openProjectWorkspaceModal(stage);
 }
 
 function closeIdeationWorkspace() {
-    const modal = document.getElementById('project-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
+    closeProjectWorkspaceModal();
 }
 
 function renderIdeationWorkspace(stage = 'ideation') {
@@ -155,7 +124,7 @@ function renderIdeationWorkspace(stage = 'ideation') {
 // ウィザード制御機能
 function updateWizardProgress(currentStep) {
     const stepMapping = {
-        'ideation': { number: 1, title: '想いの整理', icon: Icons.lightbulb, color: 'blue' },
+        'ideation': { number: 1, title: 'アイデア整理', icon: Icons.lightbulb, color: 'blue' },
         'planning': { number: 2, title: '企画構成', icon: Icons.puzzle, color: 'green' },
         'goal-setting': { number: 3, title: '目標設定', icon: Icons.target, color: 'purple' },
         'stakeholder': { number: 4, title: '関係者分析', icon: Icons.users, color: 'orange' },
@@ -258,7 +227,7 @@ function getNextStepName(currentStepName) {
 
 function showStepTransitionMessage(fromStep, toStep) {
     const stepTitles = {
-        'ideation': '想いの整理',
+        'ideation': 'アイデア整理',
         'planning': '企画構成',
         'goal-setting': '目標設定',
         'stakeholder': '関係者分析',

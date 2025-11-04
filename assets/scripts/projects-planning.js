@@ -28,7 +28,7 @@ function renderPlanningContent() {
                             <line x1="9" y1="9" x2="9.01" y2="9"/>
                             <line x1="15" y1="9" x2="15.01" y2="9"/>
                         </svg>
-                        想いの整理
+                        アイデア整理
                     </button>
                     <div class="text-green-600 font-medium px-3 py-2 bg-green-50 rounded-md border border-green-200">
                         <svg class="w-4 h-4 inline mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -147,7 +147,7 @@ function selectFramework(type) {
 
 function render5W1HFramework(ideationData) {
     const autoFillNotice = ideationData ? 
-        '<div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-blue-800 font-medium">想いの整理データから自動入力されました</span></div></div>' : '';
+        '<div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-blue-800 font-medium">アイデア整理データから自動入力されました</span></div></div>' : '';
     
     return `
         <div class="space-y-6">
@@ -209,7 +209,7 @@ function render5W1HFramework(ideationData) {
 
 function renderLogicTreeFramework(ideationData) {
     const autoFillNotice = ideationData ? 
-        '<div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-green-800 font-medium">想いの整理データから課題を分解構造化しました</span></div></div>' : '';
+        '<div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-green-800 font-medium">アイデア整理データから課題を分解構造化しました</span></div></div>' : '';
     
     return `
         <div class="space-y-6">
@@ -279,7 +279,7 @@ function renderLogicTreeFramework(ideationData) {
 
 function renderBusinessCanvasFramework(ideationData) {
     const autoFillNotice = ideationData ? 
-        '<div class="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-purple-800 font-medium">想いの整理データからビジネスモデルを構築しました</span></div></div>' : '';
+        '<div class="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg"><div class="flex items-center"><svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm text-purple-800 font-medium">アイデア整理データからビジネスモデルを構築しました</span></div></div>' : '';
     
     return `
         <div class="space-y-6">
