@@ -280,8 +280,13 @@ function openProjectDetail(projectId) {
                                 Try → Plan に昇格
                             </button>
                         ` : ''}
-                        <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                            履歴を表示
+                        <button onclick="toggleProjectHistory(${project.id})" class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12h18"/>
+                                <path d="M3 6h18"/>
+                                <path d="M3 18h18"/>
+                            </svg>
+                            変更履歴を表示
                         </button>
                     </div>
                 </div>
@@ -309,6 +314,19 @@ function openProjectDetail(projectId) {
                 </div>
             </div>
         </div>
+        
+        <!-- Project Change History (initially hidden) -->
+        <div id="project-history-${project.id}" class="mt-6 hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">プロジェクト変更履歴</h3>
+                    <p class="text-sm text-muted-foreground">このプロジェクトの変更点とバージョン履歴</p>
+                </div>
+                <div class="card-content">
+                    ${renderProjectHistory(project.id)}
+                </div>
+            </div>
+        </div>
     `;
     
     modal.classList.remove('hidden');
@@ -316,6 +334,159 @@ function openProjectDetail(projectId) {
 
 function closeProjectDetail() {
     document.getElementById('project-detail-modal').classList.add('hidden');
+}
+
+function toggleProjectHistory(projectId) {
+    const historySection = document.getElementById(`project-history-${projectId}`);
+    const button = event.target.closest('button');
+    
+    if (historySection.classList.contains('hidden')) {
+        historySection.classList.remove('hidden');
+        button.innerHTML = `
+            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18"/>
+                <path d="M6 6l12 12"/>
+            </svg>
+            変更履歴を隠す
+        `;
+    } else {
+        historySection.classList.add('hidden');
+        button.innerHTML = `
+            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18"/>
+                <path d="M3 6h18"/>
+                <path d="M3 18h18"/>
+            </svg>
+            変更履歴を表示
+        `;
+    }
+}
+
+function renderProjectHistory(projectId) {
+    // サンプルデータから該当するプロジェクトの変更履歴を取得
+    // 実際のアプリケーションでは、プロジェクトIDに基づいて変更履歴を取得
+    const project = getProjectById(projectId);
+    
+    // デモ用のサンプル変更履歴データ
+    const sampleVersions = {
+        v1: {
+            version: 'v1.0',
+            date: '2024-01-15',
+            status: 'Try',
+            purpose: '都市部の若者の地方移住を促進する',
+            approach: '移住体験ツアーの企画と実施',
+            kpiSnapshot: {
+                '移住相談件数': '50件',
+                '移住決定者数': '5人',
+                '満足度': '85%'
+            }
+        },
+        v2: {
+            version: 'v2.0',
+            date: '2024-01-20',
+            status: 'Plan',
+            purpose: 'オンラインツールを活用して移住検討者の不安を軽減し、移住決定までの期間を短縮する',
+            approach: 'VRによる地域体験、オンライン移住相談、デジタル手続きサポート',
+            kpiSnapshot: {
+                '移住相談件数': '120件',
+                '移住決定者数': '15人',
+                '満足度': '92%'
+            },
+            changeReason: 'Try段階での実施結果を踏まえ、デジタル化によってより効率的で効果的なアプローチに変更。VR体験により遠方からでも地域を体験でき、オンライン相談で個別サポートを強化。'
+        }
+    };
+    
+    if (project.status === 'Try') {
+        return `
+            <div class="text-center py-8 text-muted-foreground">
+                <svg class="mx-auto h-12 w-12 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                <p>Tryプロジェクトのため、まだ変更履歴はありません。</p>
+                <p class="text-sm mt-2">Planに昇格後、変更履歴が表示されます。</p>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h4 class="text-lg font-semibold">バージョン比較</h4>
+                <div class="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <span>v1.0 → v2.0</span>
+                </div>
+            </div>
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Version 1 -->
+                <div class="border rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="font-semibold text-red-700">v1.0 (変更前)</h5>
+                        <span class="text-xs text-muted-foreground">${sampleVersions.v1.date}</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <h6 class="text-sm font-medium">ステータス</h6>
+                            <span class="badge status-try">${sampleVersions.v1.status}</span>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">目的</h6>
+                            <p class="text-sm text-muted-foreground">${sampleVersions.v1.purpose}</p>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">アプローチ</h6>
+                            <p class="text-sm text-muted-foreground">${sampleVersions.v1.approach}</p>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">KPI</h6>
+                            <div class="text-sm space-y-1">
+                                ${Object.entries(sampleVersions.v1.kpiSnapshot).map(([key, value]) => 
+                                    `<p class="text-red-700">${key}: ${value}</p>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Version 2 -->
+                <div class="border rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="font-semibold text-green-700">v2.0 (変更後)</h5>
+                        <span class="text-xs text-muted-foreground">${sampleVersions.v2.date}</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <h6 class="text-sm font-medium">ステータス</h6>
+                            <span class="badge status-plan">${sampleVersions.v2.status}</span>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">目的</h6>
+                            <p class="text-sm">${sampleVersions.v2.purpose}</p>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">アプローチ</h6>
+                            <p class="text-sm">${sampleVersions.v2.approach}</p>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium">KPI</h6>
+                            <div class="text-sm space-y-1">
+                                ${Object.entries(sampleVersions.v2.kpiSnapshot).map(([key, value]) => 
+                                    `<p class="text-green-700">${key}: ${value}</p>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h6 class="font-semibold text-blue-800 mb-2">変更理由</h6>
+                <p class="text-sm text-blue-700">${sampleVersions.v2.changeReason}</p>
+            </div>
+        </div>
+    `;
 }
 
 function promoteTryToPlan(projectId) {
@@ -394,6 +565,8 @@ function closeIdeationWorkspace() {
 window.renderProjects = renderProjects;
 window.openProjectDetail = openProjectDetail;
 window.closeProjectDetail = closeProjectDetail;
+window.toggleProjectHistory = toggleProjectHistory;
+window.renderProjectHistory = renderProjectHistory;
 window.promoteTryToPlan = promoteTryToPlan;
 window.generateAIOutline = generateAIOutline;
 window.openIdeationWorkspace = openIdeationWorkspace;

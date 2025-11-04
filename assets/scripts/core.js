@@ -447,7 +447,6 @@ function initRouter() {
                 'people': 'People',
                 'actions': 'Actions',
                 'follow': 'Follow',
-                'diff': 'Diff',
                 'summary': 'Summary',
                 'settings': 'Settings',
                 'profile': 'Profile',
@@ -499,10 +498,10 @@ function renderCurrentRoute() {
             renderActions(container);
             break;
         case 'follow':
-            renderFollow(container);
-            break;
-        case 'diff':
-            renderDiff(container);
+            // Follow functionality has been integrated into dashboard
+            appState.currentRoute = 'dashboard';
+            window.location.hash = '#/dashboard';
+            renderDashboard(container);
             break;
         case 'summary':
             renderSummary(container);
