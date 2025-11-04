@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Maps API (デモ用: 実際のAPIキーが必要) -->
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script> -->
+    
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
@@ -200,6 +203,15 @@
                         <path d="M3 12h6m6 0h6"/>
                     </svg>
                     アクション
+                </a>
+                
+                <!-- Map -->
+                <a href="#/map" class="nav-link flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground" data-route="map">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    マップ
                 </a>
                 
                 <!-- Separator -->
@@ -406,6 +418,8 @@
     <script src="assets/scripts/region-inference.js"></script>
     <script src="assets/scripts/workspace-layouts.js"></script>
     <script src="assets/scripts/stakeholder-analysis.js"></script>
+    <script src="assets/scripts/map.js"></script>
+    <script src="assets/scripts/map-page.js"></script>
     
     <!-- Legacy file (will be removed) -->
     <script src="assets/main.js"></script>

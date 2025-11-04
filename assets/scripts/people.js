@@ -209,6 +209,22 @@ function renderPeople(container) {
                                 </button>
                                 <button onclick="setViewMode('network')" class="px-3 py-2 ${currentViewMode === 'network' ? 'bg-accent' : 'hover:bg-accent'} rounded-r-md">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <circle cx="6" cy="6" r="3"/>
+                                        <circle cx="18" cy="6" r="3"/>
+                                        <circle cx="6" cy="18" r="3"/>
+                                        <circle cx="18" cy="18" r="3"/>
+                                        <line x1="9" y1="9" x2="15" y2="15"/>
+                                        <line x1="9" y1="15" x2="15" y2="9"/>
+                                    </svg>
+                                </button>
+                                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                                    </svg>
+                                </button>
+                                <button onclick="setViewMode('network')" class="px-3 py-2 ${currentViewMode === 'network' ? 'bg-accent' : 'hover:bg-accent'} rounded-r-md">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                                         <circle cx="9" cy="7" r="4"/>
                                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -1329,3 +1345,30 @@ window.showCategoryDetail = showCategoryDetail;
 window.closeCategoryDetail = closeCategoryDetail;
 window.createBulkFollowTasks = createBulkFollowTasks;
 window.suggestNetworkingOpportunities = suggestNetworkingOpportunities;
+window.addLocationToPerson = addLocationToPerson;
+
+function addLocationToPerson(personId) {
+    const person = sampleData.people.find(p => p.id === personId);
+    if (!person) return;
+    
+    const location = prompt(`${getMaskedName(person.name)}さんの位置情報を入力してください。\n\n形式: 地域内/地域外, 住所, 目印\n例: 地域内, 北海道虻田郡喜茂別町字喜茂別123, 喜茂別駅から徒歩5分`);
+    
+    if (location) {
+        const parts = location.split(',').map(s => s.trim());
+        if (parts.length >= 3) {
+            person.location = {
+                area: parts[0],
+                address: parts[1],
+                landmark: parts[2],
+                lat: 42.8329 + (Math.random() - 0.5) * 0.1, // Random position around Kimobetsu
+                lng: 140.9689 + (Math.random() - 0.5) * 0.1
+            };
+            
+            saveData();
+            refreshPeopleContent();
+            alert('位置情報を登録しました！');
+        } else {
+            alert('正しい形式で入力してください。');
+        }
+    }
+}

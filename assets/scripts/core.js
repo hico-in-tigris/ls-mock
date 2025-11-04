@@ -23,7 +23,14 @@ const sampleData = {
             email: 'tanaka@example.com',
             phone: '090-1234-5678',
             notes: '都市部からの移住希望。空き家活用に興味を持っている。子育て環境を重視。',
-            avatar: 'T'
+            avatar: 'T',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字喜茂別123',
+                lat: 42.8314,
+                lng: 140.9678,
+                landmark: '喜茂別駅から徒歩5分'
+            }
         },
         {
             id: 2,
@@ -34,7 +41,14 @@ const sampleData = {
             email: 'sato@example.com',
             phone: '090-2345-6789',
             notes: '地域おこし協力隊2年目。イベント企画が得意で、観光振興に取り組んでいる。',
-            avatar: 'S'
+            avatar: 'S',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字川上456',
+                lat: 42.8256,
+                lng: 140.9812,
+                landmark: '町役場から車で3分'
+            }
         },
         {
             id: 3,
@@ -45,7 +59,14 @@ const sampleData = {
             email: 'yamada@kimobetsu.gov',
             phone: '0136-33-2211',
             notes: '町役場まちづくり課。移住相談窓口担当。農業振興にも詳しい。',
-            avatar: 'Y'
+            avatar: 'Y',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字喜茂別13-1（町役場）',
+                lat: 42.8329,
+                lng: 140.9689,
+                landmark: '喜茂別町役場'
+            }
         },
         {
             id: 4,
@@ -56,7 +77,14 @@ const sampleData = {
             email: 'suzuki@local-biz.com',
             phone: '090-3456-7890',
             notes: '地元の民宿経営者。観光客誘致と地域イベントに積極的。',
-            avatar: 'Su'
+            avatar: 'Su',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字尻別789',
+                lat: 42.8198,
+                lng: 140.9534,
+                landmark: '温泉街入口'
+            }
         },
         {
             id: 5,
@@ -67,7 +95,14 @@ const sampleData = {
             email: 'takahashi@univ.ac.jp',
             phone: '090-4567-8901',
             notes: '農学部学生。地域の農業体験プログラムに参加中。',
-            avatar: 'Ta'
+            avatar: 'Ta',
+            location: {
+                area: '地域外',
+                address: '北海道札幌市北区北9条西9丁目（北海道大学）',
+                lat: 43.0742,
+                lng: 141.3469,
+                landmark: '北海道大学農学部'
+            }
         },
         {
             id: 6,
@@ -78,7 +113,50 @@ const sampleData = {
             email: 'watanabe@example.com',
             phone: '090-5678-9012',
             notes: '地元農家。空き家の活用について相談を受けることが多い。',
-            avatar: 'W'
+            avatar: 'W',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字金山321',
+                lat: 42.8445,
+                lng: 140.9601,
+                landmark: '金山農場'
+            }
+        },
+        {
+            id: 7,
+            name: '林 雅美',
+            role: 'メディア',
+            tags: ['#広報', '#メディア'],
+            lastContact: '2025-10-18',
+            email: 'hayashi@hokkaido-tv.com',
+            phone: '011-232-5678',
+            notes: '北海道テレビのディレクター。地域活性化の取材に積極的。',
+            avatar: 'H',
+            location: {
+                area: '地域外',
+                address: '北海道札幌市中央区大通西1丁目（HTB本社）',
+                lat: 43.0642,
+                lng: 141.3469,
+                landmark: 'HTB本社ビル'
+            }
+        },
+        {
+            id: 8,
+            name: '森田 博',
+            role: '研究者',
+            tags: ['#移住相談', '#研究'],
+            lastContact: '2025-10-12',
+            email: 'morita@research.ac.jp',
+            phone: '03-5841-3456',
+            notes: '東京大学教授。地方創生の研究をしており、喜茂別町をフィールドとして調査。',
+            avatar: 'M',
+            location: {
+                area: '地域外',
+                address: '東京都文京区本郷7-3-1（東京大学）',
+                lat: 35.7128,
+                lng: 139.7628,
+                landmark: '東京大学本郷キャンパス'
+            }
         }
     ],
     
@@ -93,6 +171,14 @@ const sampleData = {
             tags: ['#移住相談', '#UI改善'],
             relatedPeople: [1, 3],
             createdAt: '2025-10-01',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字喜茂別13-1（町役場）',
+                lat: 42.8329,
+                lng: 140.9689,
+                landmark: '町役場まちづくり課',
+                scope: '喜茂別町全域'
+            },
             kptLogs: [
                 {
                     type: 'Keep',
@@ -120,6 +206,14 @@ const sampleData = {
             status: 'Plan',
             tags: ['#イベント', '#コミュニティ'],
             relatedPeople: [2, 4],
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字喜茂別中央公園',
+                lat: 42.8304,
+                lng: 140.9712,
+                landmark: '中央公園イベント広場',
+                scope: '町内各所（巡回イベント）'
+            },
             createdAt: '2025-09-15',
             kptLogs: [
                 {
@@ -149,6 +243,14 @@ const sampleData = {
             tags: ['#空き家', '#移住相談'],
             relatedPeople: [1, 6],
             createdAt: '2025-08-01',
+            location: {
+                area: '地域内',
+                address: '北海道虻田郡喜茂別町字金山地区',
+                lat: 42.8445,
+                lng: 140.9601,
+                landmark: '金山地区空き家群',
+                scope: '町内空き家全般'
+            },
             kptLogs: [
                 {
                     type: 'Keep',
@@ -446,6 +548,7 @@ function initRouter() {
                 'projects': 'プロジェクト',
                 'people': '人脈',
                 'actions': 'アクション',
+                'map': 'マップ',
                 'follow': 'Follow',
                 'summary': 'ふりかえり',
                 'settings': '設定',
@@ -497,6 +600,9 @@ function renderCurrentRoute() {
             break;
         case 'actions':
             renderActions(container);
+            break;
+        case 'map':
+            renderMap(container);
             break;
         case 'follow':
             // Follow functionality has been integrated into dashboard
