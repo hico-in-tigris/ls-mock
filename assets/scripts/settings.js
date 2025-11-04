@@ -4,10 +4,12 @@
 
 function renderSettings(container) {
     container.innerHTML = `
-        <div class="animate-fade-in">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
-                <p class="text-muted-foreground">システム設定とユーザー設定</p>
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">設定</h1>
+                    <p class="text-muted-foreground">システム設定とユーザー設定</p>
+                </div>
             </div>
             
             <div class="space-y-6">

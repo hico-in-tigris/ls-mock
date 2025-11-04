@@ -7,7 +7,7 @@ function renderSummary(container) {
     loadReflectionData();
     
     container.innerHTML = `
-        <div class="max-w-6xl mx-auto p-6 space-y-6">
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold">ふりかえり</h1>

@@ -8,10 +8,10 @@ function renderActions(container) {
     const doneActions = sampleData.actions.filter(a => a.status === 'Done');
     
     container.innerHTML = `
-        <div class="animate-fade-in">
-            <div class="flex justify-between items-center mb-8">
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+            <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold tracking-tight">Actions</h1>
+                    <h1 class="text-2xl font-bold">アクション</h1>
                     <p class="text-muted-foreground">タスクとアクションの管理</p>
                 </div>
                 <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
@@ -23,7 +23,7 @@ function renderActions(container) {
                 </button>
             </div>
             
-                        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <!-- Todo -->
                 ${createHeaderCard(
                     'Todo',

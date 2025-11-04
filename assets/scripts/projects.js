@@ -34,7 +34,7 @@ function renderProjects(container) {
     ];
 
     container.innerHTML = `
-        <div class="animate-fade-in">
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
             ${createHeaderCard({
                 title: 'プロジェクト',
                 description: '企画から実行まで、プロジェクトライフサイクル全体をサポート',

@@ -17,24 +17,62 @@
  * @returns {string} カードのHTML
  */
 function createCard({ header, content, footer, className = '' }) {
+    // ヘッダーは文字列または { title, description, actions } のオブジェクトを受け付ける
+    let headerHtml = '';
+    if (header) {
+        if (typeof header === 'string') {
+            headerHtml = `<div class="card-header">${header}</div>`;
+        } else if (typeof header === 'object') {
+            const { title, description, actions } = header;
+            headerHtml = `
+                <div class="card-header">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            ${title ? `<h3 class="text-lg font-semibold">${title}</h3>` : ''}
+                            ${description ? `<p class="text-sm text-muted-foreground">${description}</p>` : ''}
+                        </div>
+                        ${actions ? `<div class="flex space-x-2">${actions}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        } else {
+            headerHtml = `<div class="card-header">${String(header)}</div>`;
+        }
+    }
+
     return `
-        <div class="card ${className}">
-            ${header ? `<div class="card-header">${header}</div>` : ''}
-            ${content ? `<div class="card-content">${content}</div>` : ''}
-            ${footer ? `<div class="card-footer">${footer}</div>` : ''}
+        <div class="card border border-border rounded-lg bg-background shadow-sm ${className}">
+            ${headerHtml ? headerHtml.replace('class="card-header"', 'class="card-header px-6 py-4 border-b border-border"') : ''}
+            ${content ? `<div class=\"card-content p-6 space-y-4\">${content}</div>` : ''}
+            ${footer ? `<div class=\"card-footer px-6 py-4 border-t border-border\">${footer}</div>` : ''}
         </div>
     `;
 }
 
 /**
- * ヘッダー付きカード
+ * ヘッダーカード（旧版：後方互換性のため残す）
  * @param {string} title - タイトル
  * @param {string} subtitle - サブタイトル（オプション）
  * @param {string} content - コンテンツ
- * @param {string} className - 追加のCSSクラス（オプション）
+ * @param {string} className - 追加のクラス名
  * @returns {string} カードのHTML
  */
 function createHeaderCard(title, subtitle, content, className = '') {
+    // オブジェクト形式で呼ばれた場合の対応
+    if (typeof title === 'object') {
+        const { title: pageTitle, description, actions } = title;
+        return `
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">${pageTitle}</h1>
+                    <p class="text-muted-foreground">${description}</p>
+                </div>
+                ${actions ? `<div class="flex space-x-2">${actions}</div>` : ''}
+            </div>
+        `;
+    }
+    
+    // 従来の形式
     const header = `
         <h3 class="text-lg font-semibold">${title}</h3>
         ${subtitle ? `<p class="text-sm text-muted-foreground">${subtitle}</p>` : ''}
@@ -205,9 +243,11 @@ function createTabs(tabs) {
 function createFormField({ label, type = 'text', id, placeholder = '', value = '', required = false, className = '' }) {
     return `
         <div class="space-y-2 ${className}">
+            ${label ? `
             <label for="${id}" class="text-sm font-medium leading-none">
                 ${label}${required ? ' <span class="text-red-500">*</span>' : ''}
             </label>
+            ` : ''}
             <input 
                 type="${type}"
                 id="${id}"
@@ -236,9 +276,11 @@ function createFormField({ label, type = 'text', id, placeholder = '', value = '
 function createTextArea({ label, id, placeholder = '', value = '', rows = 3, required = false, className = '' }) {
     return `
         <div class="space-y-2 ${className}">
+            ${label ? `
             <label for="${id}" class="text-sm font-medium leading-none">
                 ${label}${required ? ' <span class="text-red-500">*</span>' : ''}
             </label>
+            ` : ''}
             <textarea 
                 id="${id}"
                 name="${id}"

@@ -15,11 +15,11 @@ const KIMOBETSU_CENTER = {
 
 function renderMap(container) {
     container.innerHTML = `
-        <div class="animate-fade-in">
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
             <!-- Header -->
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
                 <div>
-                    <h1 class="text-3xl font-bold tracking-tight">地域マップ</h1>
+                    <h1 class="text-2xl font-bold">地域マップ</h1>
                     <p class="text-muted-foreground">ネットワークとプロジェクトの位置を地図上で可視化・管理</p>
                 </div>
                 <div class="flex space-x-2">

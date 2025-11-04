@@ -8,11 +8,13 @@ function renderRegion(container) {
     const regionIssues = getRegionIssues();
     
     container.innerHTML = `
-        <div class="animate-fade-in">
-            ${createHeaderCard({
-                title: '地域設定・情報管理',
-                description: '地域の基本情報、特性、課題を一元管理し、効果的な地域活動を推進します'
-            })}
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">地域設定・情報管理</h1>
+                    <p class="text-muted-foreground">地域の基本情報、特性、課題を一元管理し、効果的な地域活動を推進します</p>
+                </div>
+            </div>
             
             <!-- Region Basic Settings -->
             ${createCard({
@@ -26,13 +28,12 @@ function renderRegion(container) {
                             label: '都道府県',
                             children: createSelect({
                                 id: 'region-prefecture',
-                                placeholder: '選択してください',
                                 options: [
-                                    { value: '北海道', label: '北海道' },
-                                    { value: '青森県', label: '青森県' },
-                                    { value: '岩手県', label: '岩手県' }
+                                    { value: '', text: '選択してください', selected: !userRegion.prefecture },
+                                    { value: '北海道', text: '北海道', selected: userRegion.prefecture === '北海道' },
+                                    { value: '青森県', text: '青森県', selected: userRegion.prefecture === '青森県' },
+                                    { value: '岩手県', text: '岩手県', selected: userRegion.prefecture === '岩手県' }
                                 ],
-                                selectedValue: userRegion.prefecture || '',
                                 onChange: 'updateRegionMunicipalities()'
                             })
                         })}
@@ -40,14 +41,17 @@ function renderRegion(container) {
                             label: '市町村',
                             children: createSelect({
                                 id: 'region-municipality',
-                                placeholder: userRegion.prefecture ? '選択してください' : '都道府県を選択してください',
-                                options: userRegion.prefecture === '北海道' ? [
-                                    { value: '喜茂別町', label: '喜茂別町' },
-                                    { value: '真狩村', label: '真狩村' },
-                                    { value: '留寿都村', label: '留寿都村' },
-                                    { value: 'ニセコ町', label: 'ニセコ町' }
-                                ] : [],
-                                selectedValue: userRegion.municipality || ''
+                                options: userRegion.prefecture === '北海道'
+                                    ? [
+                                        { value: '', text: '市町村を選択してください', selected: !userRegion.municipality },
+                                        { value: '喜茂別町', text: '喜茂別町', selected: userRegion.municipality === '喜茂別町' },
+                                        { value: '真狩村', text: '真狩村', selected: userRegion.municipality === '真狩村' },
+                                        { value: '留寿都村', text: '留寿都村', selected: userRegion.municipality === '留寿都村' },
+                                        { value: 'ニセコ町', text: 'ニセコ町', selected: userRegion.municipality === 'ニセコ町' }
+                                    ]
+                                    : [
+                                        { value: '', text: userRegion.prefecture ? '選択してください' : '都道府県を選択してください', selected: true }
+                                    ]
                             })
                         })}
                     </div>
@@ -155,54 +159,39 @@ function renderRegion(container) {
                                 onClick: 'inferIssuesInRegion()'
                             })}
                             ${createButton({
-                                text: '+ 新しい課題',
+                                text: '+ 手動追加',
                                 variant: 'primary',
                                 size: 'sm',
-                                onClick: 'addNewIssue()'
+                                onClick: 'addManualIssueInRegion()'
                             })}
                         </div>
                     `
                 },
                 content: `
-                            </button>
-                            <button onclick="addManualIssueInRegion()" 
-                                    class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                                手動追加
-                            </button>
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap gap-2">
+                            <button class="px-3 py-1 text-xs rounded border ${getIssueFilter() === 'all' ? 'bg-gray-900 text-white' : 'hover:bg-accent'}" onclick="filterIssuesByCategory('all')">すべて</button>
+                            <button class="px-3 py-1 text-xs rounded border ${getIssueFilter() === 'demographic' ? 'bg-red-600 text-white' : 'hover:bg-accent'}" onclick="filterIssuesByCategory('demographic')">人口・高齢化</button>
+                            <button class="px-3 py-1 text-xs rounded border ${getIssueFilter() === 'economy' ? 'bg-green-600 text-white' : 'hover:bg-accent'}" onclick="filterIssuesByCategory('economy')">経済・産業</button>
+                            <button class="px-3 py-1 text-xs rounded border ${getIssueFilter() === 'infrastructure' ? 'bg-blue-600 text-white' : 'hover:bg-accent'}" onclick="filterIssuesByCategory('infrastructure')">インフラ・交通</button>
+                            <button class="px-3 py-1 text-xs rounded border ${getIssueFilter() === 'community' ? 'bg-purple-600 text-white' : 'hover:bg-accent'}" onclick="filterIssuesByCategory('community')">コミュニティ</button>
+                        </div>
+                        <div id="region-issues-list">
+                            ${regionIssues.length === 0 
+                                ? createEmptyState('まだ課題が登録されていません。', null, { text: '+ 手動追加', onClick: 'addManualIssueInRegion()', className: 'text-primary' })
+                                : renderRegionIssuesList(regionIssues)}
                         </div>
                     </div>
-                </div>
-                <div class="card-content">
-                    <!-- Issues Categories -->
-                                    },
-                content: \`
-                    \${regionIssues.length === 0 ? 'まだ課題が登録されていません。' : renderRegionIssuesList(regionIssues)}
-                \`
+                `
             })}
             
-            \${createCard({
+            ${createCard({
                 header: {
                     title: '推奨アクション',
                     description: '地域の課題・特性に基づく具体的な活動提案'
                 },
-                content: \`\${renderRegionRecommendations(userRegion, regionIssues)}\`
+                content: `${renderRegionRecommendations(userRegion, regionIssues)}`
             })}
-        </div>
-    \`;
-            </div>
-            
-            <!-- Action Items -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="text-xl font-semibold">推奨アクション</h2>
-                    <p class="text-sm text-muted-foreground">地域の課題・特性に基づく具体的な活動提案</p>
-                </div>
-                <div class="card-content">
-                    <div id="region-recommendations">
-                        ${renderRegionRecommendations(userRegion, regionIssues)}
-                    </div>
-                </div>
-            </div>
         </div>
     `;
 }
@@ -358,7 +347,7 @@ function renderRegionIssuesList(issues) {
                                     ${issue.source === 'inference' ? 'AI推定' : '手動追加'}
                                 </span>
                             </div>
-                            <p class="text-sm text-gray-600 mb-3">${issue.reason || issue.description}</p>
+                            <p class="text-sm text-gray-600 mb-3">${issue.reason || issue.description || ''}</p>
                             
                             <!-- Priority and Status -->
                             <div class="flex items-center space-x-4 text-xs">
@@ -517,7 +506,9 @@ function loadRegionDataAndRefreshIssues() {
 
 function inferIssuesInRegion() {
     const userRegion = getUserRegion();
-    const userProfile = getUserProfile();
+    const userProfile = (typeof getUserProfile === 'function') 
+        ? getUserProfile() 
+        : (function(){ try { return JSON.parse(localStorage.getItem('userProfile') || '{}'); } catch(e) { return {}; } })();
     
     if (!userRegion.municipality) {
         showRegionNotification('先に地域を選択してください', 'warning');
@@ -599,13 +590,57 @@ function createProjectFromIssueInRegion(issueId) {
     // Navigate to projects page with pre-filled data
     localStorage.setItem('project.draft', JSON.stringify({
         title: issue.title + '解決プロジェクト',
-        purpose: issue.description,
+        purpose: issue.description || issue.reason || '',
         scope: '地域課題「' + issue.title + '」の解決',
         sourceIssue: issueId
     }));
     
     window.location.hash = '#/projects';
     showRegionNotification('プロジェクト草案を作成しました', 'success');
+}
+
+function editIssueInRegion(issueId) {
+    const issues = getRegionIssues();
+    const index = issues.findIndex(i => i.id == issueId);
+    if (index === -1) return;
+
+    const issue = { ...issues[index] };
+    const newTitle = prompt('タイトルを編集:', issue.title);
+    if (newTitle === null) return; // キャンセル
+    const newDescription = prompt('説明を編集:', issue.description || issue.reason || '');
+    if (newDescription === null) return; // キャンセル
+
+    issue.title = newTitle.trim() || issue.title;
+    issue.description = (newDescription || '').trim();
+    issue.reason = issue.description;
+
+    issues[index] = issue;
+    localStorage.setItem('region.issues', JSON.stringify(issues));
+
+    // リストのみ再描画
+    const issuesList = document.getElementById('region-issues-list');
+    if (issuesList) {
+        issuesList.innerHTML = renderRegionIssuesList(issues);
+    } else {
+        renderRegion(document.getElementById('main-content'));
+    }
+    showRegionNotification('課題を更新しました', 'success');
+}
+
+function updateIssuePriority(issueId, priority) {
+    const issues = getRegionIssues();
+    const index = issues.findIndex(i => i.id == issueId);
+    if (index === -1) return;
+    issues[index].priority = priority;
+    localStorage.setItem('region.issues', JSON.stringify(issues));
+}
+
+function updateIssueStatus(issueId, status) {
+    const issues = getRegionIssues();
+    const index = issues.findIndex(i => i.id == issueId);
+    if (index === -1) return;
+    issues[index].status = status;
+    localStorage.setItem('region.issues', JSON.stringify(issues));
 }
 
 // Filter and Category Functions
@@ -781,6 +816,9 @@ window.inferIssuesInRegion = inferIssuesInRegion;
 window.addManualIssueInRegion = addManualIssueInRegion;
 window.removeIssueInRegion = removeIssueInRegion;
 window.createProjectFromIssueInRegion = createProjectFromIssueInRegion;
+window.editIssueInRegion = editIssueInRegion;
+window.updateIssuePriority = updateIssuePriority;
+window.updateIssueStatus = updateIssueStatus;
 window.filterIssuesByCategory = filterIssuesByCategory;
 window.addIndustry = addIndustry;
 window.removeIndustry = removeIndustry;

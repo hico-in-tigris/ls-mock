@@ -13,11 +13,11 @@ function renderPeople(container) {
     const relationshipStats = getRelationshipStats();
     
     container.innerHTML = `
-        <div class="animate-fade-in">
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
             <!-- Header -->
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
                 <div>
-                    <h1 class="text-3xl font-bold tracking-tight">ネットワーク</h1>
+                    <h1 class="text-2xl font-bold">ネットワーク</h1>
                     <p class="text-muted-foreground">地域の関係者とのつながりを戦略的に管理</p>
                     <div class="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
                         <span>総人数: ${sampleData.people.length}人</span>
@@ -45,7 +45,7 @@ function renderPeople(container) {
             </div>
             
             <!-- Quick Stats Cards -->
-            <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-5 mb-6">
+            <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
                 ${createStatsCard({
                     title: 'アクティブ',
                     value: relationshipStats.active,
@@ -91,17 +91,9 @@ function renderPeople(container) {
                     </svg>`
                 })}
             </div>
-                                <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Filters and Search -->
-            <div class="card mb-6">
+            <div class="card">
                 <div class="card-content">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                         <!-- Search -->
@@ -175,22 +167,6 @@ function renderPeople(container) {
                                         <line x1="8" y1="6" x2="21" y2="6"/>
                                         <line x1="8" y1="12" x2="21" y2="12"/>
                                         <line x1="8" y1="18" x2="21" y2="18"/>
-                                        <line x1="3" y1="6" x2="3.01" y2="6"/>
-                                        <line x1="3" y1="12" x2="3.01" y2="12"/>
-                                        <line x1="3" y1="18" x2="3.01" y2="18"/>
-                                    </svg>
-                                </button>
-                                <button onclick="setViewMode('network')" class="px-3 py-2 ${currentViewMode === 'network' ? 'bg-accent' : 'hover:bg-accent'} rounded-r-md">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="3"/>
-                                        <circle cx="6" cy="6" r="3"/>
-                                        <circle cx="18" cy="6" r="3"/>
-                                        <circle cx="6" cy="18" r="3"/>
-                                        <circle cx="18" cy="18" r="3"/>
-                                        <line x1="9" y1="9" x2="15" y2="15"/>
-                                        <line x1="9" y1="15" x2="15" y2="9"/>
-                                    </svg>
-                                </button>
                                         <line x1="3" y1="6" x2="3.01" y2="6"/>
                                         <line x1="3" y1="12" x2="3.01" y2="12"/>
                                         <line x1="3" y1="18" x2="3.01" y2="18"/>

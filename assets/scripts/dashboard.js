@@ -20,10 +20,12 @@ function renderDashboard(container) {
     const todayReflections = JSON.parse(localStorage.getItem('todayReflections') || '[]');
     
     container.innerHTML = `
-        <div class="animate-fade-in">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold tracking-tight">今日のダッシュボード</h1>
-                <p class="text-muted-foreground">${new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
+        <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">今日のダッシュボード</h1>
+                    <p class="text-muted-foreground">${new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
+                </div>
             </div>
             
             <div class="grid gap-6 lg:grid-cols-3">
