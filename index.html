@@ -373,8 +373,35 @@
     </div>
 
     <!-- JavaScript -->
-        <!-- Scripts -->
+    <!-- Core Module -->
+    <script src="assets/scripts/core.js"></script>
+    
+    <!-- Feature Modules -->
+    <script src="assets/scripts/dashboard.js"></script>
+    <script src="assets/scripts/projects.js"></script>
+    <script src="assets/scripts/people.js"></script>
+    <script src="assets/scripts/actions.js"></script>
+    <script src="assets/scripts/follow.js"></script>
+    <script src="assets/scripts/diff.js"></script>
+    <script src="assets/scripts/summary.js"></script>
+    <script src="assets/scripts/settings.js"></script>
+    <script src="assets/scripts/profile.js"></script>
+    <script src="assets/scripts/region.js"></script>
+    <script src="assets/scripts/issues.js"></script>
+    
+    <!-- Additional Scripts -->
     <script src="assets/scripts/region-inference.js"></script>
+    
+    <!-- Legacy file (will be removed) -->
     <script src="assets/main.js"></script>
+    
+    <!-- Initialize the application -->
+    <script>
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();  // Load saved data from localStorage
+            initRouter(); // Initialize routing system
+        });
+    </script>
 </body>
 </html>
