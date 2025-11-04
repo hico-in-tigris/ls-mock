@@ -660,14 +660,85 @@ function renderProjects(container) {
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Projects</h1>
-                    <p class="text-muted-foreground">プロジェクトの管理と進捗追跡</p>
+                    <p class="text-muted-foreground">企画から実行まで、プロジェクトライフサイクル全体をサポート</p>
                 </div>
-                <button onclick="generateAIOutline()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    AIアウトライン生成
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="openIdeationWorkspace()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                            <line x1="9" y1="9" x2="9.01" y2="9"/>
+                            <line x1="15" y1="9" x2="15.01" y2="9"/>
+                        </svg>
+                        企画ワークスペース
+                    </button>
+                    <button onclick="generateAIOutline()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        新規プロジェクト
+                    </button>
+                </div>
+            </div>
+
+            <!-- Project Planning Pipeline -->
+            <div class="card mb-8">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">プロジェクト企画パイプライン</h2>
+                    <p class="text-sm text-muted-foreground">想いから実行まで、段階的にプロジェクトを形にしていきます</p>
+                </div>
+                <div class="card-content">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('ideation')">
+                            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-medium mb-2">想いの整理</h3>
+                            <p class="text-sm text-muted-foreground">アイデアから具体的な企画へ</p>
+                            <div class="mt-2 text-xs text-blue-600">メモ → 構造化</div>
+                        </div>
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('planning')">
+                            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-medium mb-2">企画構成</h3>
+                            <p class="text-sm text-muted-foreground">フレームワークで整理</p>
+                            <div class="mt-2 text-xs text-green-600">課題 → 解決策</div>
+                        </div>
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('stakeholders')">
+                            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-medium mb-2">関係者分析</h3>
+                            <p class="text-sm text-muted-foreground">ステークホルダーマップ</p>
+                            <div class="mt-2 text-xs text-purple-600">影響度 × 関心度</div>
+                        </div>
+                        <div class="text-center p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer" onclick="openIdeationWorkspace('proposal')">
+                            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-orange-100 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-medium mb-2">提案作成</h3>
+                            <p class="text-sm text-muted-foreground">資料の自動生成</p>
+                            <div class="mt-2 text-xs text-orange-600">企画書 → 提案資料</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="flex gap-6">
@@ -697,15 +768,19 @@ function renderProjects(container) {
                             </div>
                             
                             <div>
-                                <label class="text-sm font-medium">KPI設定</label>
+                                <label class="text-sm font-medium">企画段階</label>
                                 <div class="mt-2 space-y-2">
                                     <label class="flex items-center space-x-2">
                                         <input type="checkbox" class="rounded border-border" checked>
-                                        <span class="text-sm">KPIあり</span>
+                                        <span class="text-sm">想い整理</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="rounded border-border">
-                                        <span class="text-sm">KPIなし</span>
+                                        <input type="checkbox" class="rounded border-border" checked>
+                                        <span class="text-sm">企画構成</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-border" checked>
+                                        <span class="text-sm">実行準備</span>
                                     </label>
                                 </div>
                             </div>
@@ -761,6 +836,16 @@ function renderProjects(container) {
                             </div>
                         </div>
                     `).join('')}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ideation Workspace Modal -->
+        <div id="ideation-workspace-modal" class="fixed inset-0 z-50 hidden">
+            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-6xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[90vh] overflow-y-auto">
+                <div id="ideation-workspace-content">
+                    <!-- Content will be loaded here -->
                 </div>
             </div>
         </div>
@@ -2170,3 +2255,499 @@ window.toggleMasking = toggleMasking;
 window.exportData = exportData;
 window.importData = importData;
 window.confirmResetData = confirmResetData;
+
+// ============= Ideation Workspace =============
+function openIdeationWorkspace(mode = 'ideation') {
+    const modal = document.getElementById('ideation-workspace-modal');
+    if (!modal) {
+        console.error('Ideation workspace modal not found');
+        return;
+    }
+    const content = document.getElementById('ideation-workspace-content');
+    
+    content.innerHTML = getIdeationWorkspaceContent(mode);
+    modal.classList.remove('hidden');
+}
+
+function closeIdeationWorkspace() {
+    const modal = document.getElementById('ideation-workspace-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function getIdeationWorkspaceContent(mode) {
+    switch(mode) {
+        case 'ideation':
+            return getIdeationModeContent();
+        case 'planning':
+            return getPlanningModeContent();
+        case 'stakeholders':
+            return getStakeholderModeContent();
+        case 'proposal':
+            return getProposalModeContent();
+        default:
+            return getIdeationModeContent();
+    }
+}
+
+function getIdeationModeContent() {
+    return `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">想いの整理ワークスペース</h2>
+                    <p class="text-muted-foreground">アイデアやメモから具体的な企画を構造化していきます</p>
+                </div>
+                <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Raw Ideas Input -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">💭 自由な想い・アイデア</h3>
+                        <p class="text-sm text-muted-foreground">思いついたことを自由に書き出してください</p>
+                    </div>
+                    <div class="card-content">
+                        <textarea 
+                            class="w-full h-64 p-3 border border-input rounded-md resize-none"
+                            placeholder="例：
+• 地域の若者が地元に残れる仕組みが欲しい
+• IT系の仕事を地方でもできるようにしたい  
+• 地域のおばあちゃんたちの知識を活用したい
+• 廃校を使って何かできないか..."
+                            id="raw-ideas"
+                        ></textarea>
+                    </div>
+                </div>
+                
+                <!-- Structured Ideas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">🎯 整理された想い</h3>
+                        <p class="text-sm text-muted-foreground">AIが構造化された形に整理します</p>
+                    </div>
+                    <div class="card-content">
+                        <div id="structured-ideas" class="space-y-4 min-h-64">
+                            <div class="text-center text-muted-foreground py-12">
+                                左側にアイデアを入力すると、AIが自動的に整理します
+                            </div>
+                        </div>
+                        <button onclick="structureIdeas()" class="w-full mt-4 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            AIで想いを整理する
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-2">
+                <button onclick="openIdeationWorkspace('planning')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    次：企画構成へ →
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function getPlanningModeContent() {
+    return `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">企画構成ワークスペース</h2>
+                    <p class="text-muted-foreground">フレームワークを使って企画を具体化します</p>
+                </div>
+                <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Problem-Solution Framework -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">🎯 課題-解決フレームワーク</h3>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">📍 地域の課題</label>
+                            <textarea class="w-full h-20 p-3 border border-input rounded-md resize-none" placeholder="どんな課題を解決したいですか？"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">💡 解決策・アプローチ</label>
+                            <textarea class="w-full h-20 p-3 border border-input rounded-md resize-none" placeholder="どのような方法で解決しますか？"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">🎁 期待される価値</label>
+                            <textarea class="w-full h-20 p-3 border border-input rounded-md resize-none" placeholder="誰にどんな価値を提供しますか？"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 5W1H Framework -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">📝 5W1Hフレームワーク</h3>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Who（誰が）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="実行者・対象者">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">What（何を）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="具体的な内容">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">When（いつ）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="実施時期">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Where（どこで）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="実施場所">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Why（なぜ）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="目的・理由">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">How（どのように）</label>
+                                <input type="text" class="w-full p-2 border border-input rounded-md" placeholder="実施方法">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between">
+                <button onclick="openIdeationWorkspace('ideation')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    ← 前：想いの整理
+                </button>
+                <button onclick="openIdeationWorkspace('stakeholders')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    次：関係者分析へ →
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function getStakeholderModeContent() {
+    return `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">関係者分析ワークスペース</h2>
+                    <p class="text-muted-foreground">ステークホルダーを整理し、巻き込み戦略を立てます</p>
+                </div>
+                <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Stakeholder List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">👥 関係者リスト</h3>
+                        <p class="text-sm text-muted-foreground">プロジェクトに関わる人・組織を洗い出します</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="space-y-3" id="stakeholder-list">
+                            <div class="flex items-center space-x-3 p-3 border border-input rounded-md">
+                                <input type="text" class="flex-1 border-none outline-none" placeholder="関係者名・組織名">
+                                <select class="border border-input rounded px-2 py-1 text-sm">
+                                    <option>支援者</option>
+                                    <option>協力者</option>
+                                    <option>対象者</option>
+                                    <option>承認者</option>
+                                    <option>反対者</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="addStakeholder()" class="w-full mt-3 text-sm text-primary hover:underline">+ 関係者を追加</button>
+                    </div>
+                </div>
+                
+                <!-- Stakeholder Matrix -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">📊 影響度×関心度マトリックス</h3>
+                        <p class="text-sm text-muted-foreground">関係者の位置づけを可視化します</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="relative w-full h-64 border border-input rounded-md bg-gradient-to-tr from-red-50 via-yellow-50 to-green-50">
+                            <!-- Matrix Labels -->
+                            <div class="absolute -left-2 top-2 text-xs text-muted-foreground transform -rotate-90 origin-left">影響度高</div>
+                            <div class="absolute -left-2 bottom-2 text-xs text-muted-foreground transform -rotate-90 origin-left">影響度低</div>
+                            <div class="absolute left-2 -bottom-6 text-xs text-muted-foreground">関心度低</div>
+                            <div class="absolute right-2 -bottom-6 text-xs text-muted-foreground">関心度高</div>
+                            
+                            <!-- Grid Lines -->
+                            <div class="absolute inset-0">
+                                <div class="absolute left-1/2 top-0 w-px h-full bg-border"></div>
+                                <div class="absolute top-1/2 left-0 w-full h-px bg-border"></div>
+                            </div>
+                            
+                            <!-- Sample Stakeholders -->
+                            <div class="absolute top-4 right-4 w-3 h-3 bg-green-500 rounded-full cursor-pointer" title="市長（高影響・高関心）"></div>
+                            <div class="absolute top-12 left-8 w-3 h-3 bg-yellow-500 rounded-full cursor-pointer" title="商工会（高影響・低関心）"></div>
+                            <div class="absolute bottom-8 right-8 w-3 h-3 bg-blue-500 rounded-full cursor-pointer" title="地域住民（低影響・高関心）"></div>
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span>重要パートナー</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <span>説得が必要</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span>情報提供</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                <span>最小限監視</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- People Connection -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="font-semibold">🔗 Peopleとの連携</h3>
+                    <p class="text-sm text-muted-foreground">登録済みの人物と関係者を紐付けます</p>
+                </div>
+                <div class="card-content">
+                    <div class="flex flex-wrap gap-2">
+                        ${sampleData.people.slice(0, 8).map(person => `
+                            <div class="flex items-center space-x-2 p-2 border border-input rounded-md hover:bg-accent cursor-pointer">
+                                <div class="avatar avatar-sm">${person.avatar}</div>
+                                <span class="text-sm">${getMaskedName(person.name)}</span>
+                                <button class="text-xs text-primary hover:underline">+関係者として追加</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between">
+                <button onclick="openIdeationWorkspace('planning')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    ← 前：企画構成
+                </button>
+                <button onclick="openIdeationWorkspace('proposal')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    次：提案作成へ →
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function getProposalModeContent() {
+    return `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">提案作成ワークスペース</h2>
+                    <p class="text-muted-foreground">これまでの内容から提案資料を自動生成します</p>
+                </div>
+                <button onclick="closeIdeationWorkspace()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Proposal Template -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">📄 提案書テンプレート</h3>
+                        <p class="text-sm text-muted-foreground">自動生成された提案内容</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="space-y-4 text-sm">
+                            <div class="border-l-4 border-primary pl-3">
+                                <h4 class="font-medium text-primary">1. プロジェクト概要</h4>
+                                <p class="text-muted-foreground mt-1">地域の若者が地元で活躍できるIT支援プラットフォームの構築</p>
+                            </div>
+                            <div class="border-l-4 border-primary pl-3">
+                                <h4 class="font-medium text-primary">2. 課題と背景</h4>
+                                <p class="text-muted-foreground mt-1">・若者の地域離れによる人口減少<br>・IT系スキルを活かす場の不足<br>・高齢者の豊富な知識の活用不足</p>
+                            </div>
+                            <div class="border-l-4 border-primary pl-3">
+                                <h4 class="font-medium text-primary">3. 解決策</h4>
+                                <p class="text-muted-foreground mt-1">・リモートワーク支援センターの設立<br>・世代間交流プログラムの実施<br>・地域課題解決型プロジェクトの推進</p>
+                            </div>
+                            <div class="border-l-4 border-primary pl-3">
+                                <h4 class="font-medium text-primary">4. 期待効果</h4>
+                                <p class="text-muted-foreground mt-1">・若者の地域定着率30%向上<br>・新規IT関連事業の創出<br>・世代間交流の活発化</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex space-x-2">
+                            <button class="flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2">
+                                <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                </svg>
+                                PDF出力
+                            </button>
+                            <button class="flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                                <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <rect x="8" y="8" width="8" height="8" rx="1" ry="1"/>
+                                </svg>
+                                スライド生成
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Next Steps -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">🚀 次のステップ</h3>
+                        <p class="text-sm text-muted-foreground">提案後のアクション計画</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3 p-3 border border-input rounded-md">
+                                <input type="checkbox" class="mt-1">
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">市長への提案書提出</div>
+                                    <div class="text-xs text-muted-foreground">期限：2024/11/15</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 p-3 border border-input rounded-md">
+                                <input type="checkbox" class="mt-1">
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">商工会での説明会開催</div>
+                                    <div class="text-xs text-muted-foreground">期限：2024/11/20</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 p-3 border border-input rounded-md">
+                                <input type="checkbox" class="mt-1">
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">実証実験計画の詳細設計</div>
+                                    <div class="text-xs text-muted-foreground">期限：2024/12/01</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="convertToProject()" class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2">
+                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            プロジェクトとして登録
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-start">
+                <button onclick="openIdeationWorkspace('stakeholders')" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    ← 前：関係者分析
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Helper functions for ideation workspace
+function structureIdeas() {
+    const rawIdeas = document.getElementById('raw-ideas');
+    const structuredDiv = document.getElementById('structured-ideas');
+    
+    if (!rawIdeas || !rawIdeas.value.trim()) {
+        alert('まず左側にアイデアを入力してください');
+        return;
+    }
+    
+    // Simulate AI processing
+    structuredDiv.innerHTML = `
+        <div class="space-y-4">
+            <div class="border border-input rounded-md p-4">
+                <h4 class="font-medium text-primary mb-2">🎯 核となる想い</h4>
+                <p class="text-sm">地域の若者が地元で活躍し、高齢者の知識と連携できる仕組みづくり</p>
+            </div>
+            <div class="border border-input rounded-md p-4">
+                <h4 class="font-medium text-green-600 mb-2">💡 具体的なアイデア</h4>
+                <ul class="text-sm space-y-1">
+                    <li>• IT系リモートワーク支援センター</li>
+                    <li>• 世代間交流ワークショップ</li>
+                    <li>• 廃校活用のコワーキングスペース</li>
+                </ul>
+            </div>
+            <div class="border border-input rounded-md p-4">
+                <h4 class="font-medium text-purple-600 mb-2">🎁 期待される効果</h4>
+                <ul class="text-sm space-y-1">
+                    <li>• 若者の地域定着率向上</li>
+                    <li>• 高齢者の知識活用</li>
+                    <li>• 地域経済の活性化</li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+function addStakeholder() {
+    const list = document.getElementById('stakeholder-list');
+    if (!list) return;
+    
+    const newItem = document.createElement('div');
+    newItem.className = 'flex items-center space-x-3 p-3 border border-input rounded-md';
+    newItem.innerHTML = `
+        <input type="text" class="flex-1 border-none outline-none" placeholder="関係者名・組織名">
+        <select class="border border-input rounded px-2 py-1 text-sm">
+            <option>支援者</option>
+            <option>協力者</option>
+            <option>対象者</option>
+            <option>承認者</option>
+            <option>反対者</option>
+        </select>
+        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    `;
+    list.appendChild(newItem);
+}
+
+function convertToProject() {
+    alert('企画内容がプロジェクトとして登録されました！\n\n自動的にプロジェクト一覧に追加され、関連するアクションアイテムも生成されます。');
+    closeIdeationWorkspace();
+    // Here you would actually create the project and actions
+    renderCurrentRoute();
+}
+
+// Expose functions to global scope
+window.openIdeationWorkspace = openIdeationWorkspace;
+window.closeIdeationWorkspace = closeIdeationWorkspace;
+window.structureIdeas = structureIdeas;
+window.addStakeholder = addStakeholder;
+window.convertToProject = convertToProject;
