@@ -442,18 +442,18 @@ function initRouter() {
         const mobileIndicator = document.getElementById('current-page-mobile');
         if (mobileIndicator && currentLink) {
             const routeNames = {
-                'dashboard': 'Dashboard',
-                'projects': 'Projects',
-                'people': 'People',
-                'actions': 'Actions',
+                'dashboard': 'ダッシュボード',
+                'projects': 'プロジェクト',
+                'people': '人脈',
+                'actions': 'アクション',
                 'follow': 'Follow',
-                'summary': 'Summary',
-                'settings': 'Settings',
-                'profile': 'Profile',
+                'summary': 'ふりかえり',
+                'settings': '設定',
+                'profile': 'プロフィール',
                 'region': 'Region',
                 'issues': 'Issues'
             };
-            mobileIndicator.textContent = routeNames[appState.currentRoute] || 'Dashboard';
+            mobileIndicator.textContent = routeNames[appState.currentRoute] || 'ダッシュボード';
         }
     }
     
@@ -533,5 +533,224 @@ function toggleMobileMenu() {
     }
 }
 
+// ============= User Menu =============
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        // Close menu when clicking outside
+        document.addEventListener('click', closeUserMenuOnOutsideClick);
+    } else {
+        dropdown.classList.add('hidden');
+        document.removeEventListener('click', closeUserMenuOnOutsideClick);
+    }
+}
+
+function closeUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.classList.add('hidden');
+    document.removeEventListener('click', closeUserMenuOnOutsideClick);
+}
+
+function closeUserMenuOnOutsideClick(event) {
+    const userMenu = document.getElementById('user-menu');
+    if (!userMenu.contains(event.target)) {
+        closeUserMenu();
+    }
+}
+
+function logout() {
+    alert('ログアウト機能は実装予定です');
+    closeUserMenu();
+}
+
+// ============= Profile Rendering =============
+function renderProfile(container) {
+    container.innerHTML = `
+        <div class="container px-4 py-6">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Profile Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight">プロフィール</h1>
+                    <p class="text-muted-foreground">アカウント情報とユーザー設定の管理</p>
+                </div>
+                
+                <!-- Basic Profile Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="text-xl font-bold">基本情報</h2>
+                        <p class="text-muted-foreground">アカウントの基本情報</p>
+                    </div>
+                    <div class="card-content space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="h-20 w-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
+                                T
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold">管理者</h3>
+                                <p class="text-muted-foreground">admin@localsuccess.jp</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div>
+                                <label class="text-sm font-medium">名前</label>
+                                <input type="text" value="管理者" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                            </div>
+                            
+                            <div>
+                                <label class="text-sm font-medium">メールアドレス</label>
+                                <input type="email" value="admin@localsuccess.jp" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                            </div>
+                            
+                            <div>
+                                <label class="text-sm font-medium">役職</label>
+                                <input type="text" value="システム管理者" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                            </div>
+                            
+                            <div>
+                                <label class="text-sm font-medium">所属地域</label>
+                                <input type="text" value="Kimobetsu Lab" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="saveProfile()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                                保存
+                            </button>
+                            <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                                キャンセル
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Settings (from Settings page) -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">ユーザー設定</h3>
+                        <p class="text-sm text-muted-foreground">プロフィールと地域設定の管理</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="grid gap-4">
+                            <button onclick="navigateToProfile()" 
+                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <div class="text-left">
+                                        <h4 class="font-medium">プロフィール設定</h4>
+                                        <p class="text-sm text-gray-600">スキル、経験、志向の設定</p>
+                                    </div>
+                                </div>
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </button>
+                            
+                            <button onclick="navigateToRegion()" 
+                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    <div class="text-left">
+                                        <h4 class="font-medium">地域設定</h4>
+                                        <p class="text-sm text-gray-600">所属地域と地域情報の管理</p>
+                                    </div>
+                                </div>
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </button>
+                            
+                            <div class="ml-6 pl-4 border-l-2 border-gray-200">
+                                <button onclick="navigateToIssues()" 
+                                        class="flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="h-5 w-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 9v4l2 2"/>
+                                            <path d="M21 12c0 1.3-.9 2.4-2 2.7V18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3.3c-1.1-.3-2-1.4-2-2.7V7a1 1 0 0 1 1 1h14a1 1 0 0 1 1-1v5z"/>
+                                        </svg>
+                                        <div class="text-left">
+                                            <h4 class="font-medium">地域課題管理</h4>
+                                            <p class="text-sm text-gray-600">課題の推論と管理</p>
+                                        </div>
+                                    </div>
+                                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Privacy Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">プライバシー設定</h3>
+                        <p class="text-sm text-muted-foreground">投資家向けデモ時の個人情報保護</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">匿名化表示</h4>
+                                <p class="text-sm text-muted-foreground">人物名を「Aさん」「Bさん」で表示</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" ${appState.masking ? 'checked' : ''} class="sr-only peer" onchange="toggleMasking()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="p-3 rounded-lg bg-muted/50">
+                            <p class="text-sm">
+                                <strong>現在の表示:</strong> ${appState.masking ? '匿名化モード（個人情報は非表示）' : '通常表示（個人情報表示）'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveProfile() {
+    alert('プロフィールが保存されました');
+}
+
+// ============= Settings Functions =============
+function toggleMasking() {
+    appState.masking = !appState.masking;
+    saveData();
+    renderCurrentRoute(); // Re-render current page with new masking setting
+}
+
+function navigateToProfile() {
+    // Already on profile page, could scroll to top or show message
+    window.scrollTo(0, 0);
+    alert('現在プロフィールページです');
+}
+
+function navigateToRegion() {
+    window.location.hash = '#/region';
+}
+
+function navigateToIssues() {
+    window.location.hash = '#/issues';
+}
+
 // Expose to global scope
 window.toggleMobileMenu = toggleMobileMenu;
+window.toggleUserMenu = toggleUserMenu;
+window.closeUserMenu = closeUserMenu;
+window.logout = logout;
+window.saveProfile = saveProfile;
+window.toggleMasking = toggleMasking;
+window.navigateToProfile = navigateToProfile;
+window.navigateToRegion = navigateToRegion;
+window.navigateToIssues = navigateToIssues;
