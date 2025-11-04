@@ -7,15 +7,28 @@ const reflectionData = {
     daily: [
         {
             date: '2024-01-20',
+            selectedProject: 1, // デジタル移住サポートプログラム
             actions: [
-                { time: '09:00', action: '田中さんとの打診会議', result: '移住相談のニーズ確認完了', type: 'meeting' },
-                { time: '14:00', action: 'プロジェクト企画書更新', result: 'VR体験機能の詳細を追加', type: 'work' },
-                { time: '16:30', action: '地域課題調査', result: '3件の新しい課題を発見', type: 'research' }
+                { time: '09:00', action: '田中さんとの打診会議', result: '移住相談のニーズ確認完了', type: 'meeting', projectId: 1 },
+                { time: '14:00', action: 'プロジェクト企画書更新', result: 'VR体験機能の詳細を追加', type: 'work', projectId: 1 },
+                { time: '16:30', action: '地域課題調査', result: '3件の新しい課題を発見', type: 'research', projectId: 2 }
             ],
             reflection: {
                 good: '田中さんからの具体的なフィードバックが得られた',
                 challenge: 'VR体験の技術的な実装方法を明確にする必要',
                 next: '明日はVR技術パートナーと相談予定'
+            },
+            projectReflections: {
+                1: {
+                    good: '田中さんからの具体的なフィードバックが得られ、移住相談のニーズが明確になった',
+                    challenge: 'VR体験の技術的な実装方法を明確にする必要がある',
+                    next: '明日はVR技術パートナーと相談予定'
+                },
+                2: {
+                    good: '新しい地域課題を3件発見できた',
+                    challenge: '課題の優先度付けが必要',
+                    next: '課題の詳細分析を実施'
+                }
             }
         },
         {
@@ -119,12 +132,33 @@ const reflectionData = {
     ]
 };
 
-function renderSummary(container) {
-    container.innerHTML = `
-        <div class="animate-fade-in">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold tracking-tight">ふりかえり</h1>
-                <p class="text-muted-foreground">活動の振り返りと次期計画への反映</p>
+function renderSummary() {
+    // Load saved data
+    loadReflectionData();
+    
+    return `
+        <div class="max-w-6xl mx-auto p-6 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">ふりかえり</h1>
+                    <p class="text-muted-foreground">定期的なふりかえりで継続的な改善を図りましょう</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="saveSummary()" class="btn btn-outline">
+                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17,21 17,13 7,13 7,21"/>
+                            <polyline points="7,3 7,8 15,8"/>
+                        </svg>
+                        保存
+                    </button>
+                    <button onclick="promoteSelectedToNext()" class="btn btn-primary">
+                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,11 12,14 22,4"/>
+                        </svg>
+                        次期プランに反映
+                    </button>
+                </div>
             </div>
             
             <!-- Period Selector -->
@@ -153,6 +187,42 @@ function renderSummary(container) {
                 </div>
             </div>
             
+            <!-- Project Selector (only for daily) -->
+            <div id="project-selector" class="mb-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-semibold">プロジェクト選択</h3>
+                        <p class="text-sm text-muted-foreground">ふりかえりを行うプロジェクトを選択してください</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="grid gap-3 md:grid-cols-2">
+                            ${sampleData.projects.map(project => `
+                                <button onclick="selectProject(${project.id})" 
+                                        class="project-selector-btn flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors ${reflectionData.daily[0].selectedProject === project.id ? 'border-primary bg-primary/5' : 'border-border'}" 
+                                        data-project-id="${project.id}">
+                                    <div class="text-left">
+                                        <h4 class="font-medium">${project.title}</h4>
+                                        <p class="text-sm text-muted-foreground">${project.kpi}</p>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 status-${project.status.toLowerCase()}">${project.status}</span>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        ${reflectionData.daily[0].selectedProject === project.id ? 
+                                            '<svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>' : 
+                                            '<svg class="h-5 w-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>'
+                                        }
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                            <p class="text-sm text-blue-700">
+                                <strong>💡 ヒント:</strong> プロジェクトを選択すると、そのプロジェクトに関連するアクションとふりかえりが表示されます。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Reflection Content -->
             <div id="reflection-content">
                 ${renderDailyReflection()}
@@ -163,6 +233,9 @@ function renderSummary(container) {
 
 function renderDailyReflection() {
     const latestDaily = reflectionData.daily[0];
+    const selectedProject = getProject(latestDaily.selectedProject);
+    const projectActions = getProjectActions(latestDaily.selectedProject);
+    
     return `
         <div class="space-y-6">
             <div class="flex items-center justify-between">
@@ -170,25 +243,109 @@ function renderDailyReflection() {
                 <div class="text-sm text-muted-foreground">${latestDaily.date}</div>
             </div>
             
-            <!-- Daily Actions -->
+            ${selectedProject ? `
+            <!-- Selected Project Info -->
+            <div class="card border-primary bg-primary/5">
+                <div class="card-content">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">${selectedProject.title}</h3>
+                            <p class="text-sm text-muted-foreground">${selectedProject.kpi}</p>
+                        </div>
+                        <div class="ml-auto">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium status-${selectedProject.status.toLowerCase()}">${selectedProject.status}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+            
+            <!-- Project Actions -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="font-semibold">今日のアクション</h3>
+                    <h3 class="font-semibold">
+                        ${selectedProject ? `${selectedProject.title}の` : ''}今日のアクション
+                    </h3>
+                    <p class="text-sm text-muted-foreground">
+                        ${projectActions.length > 0 ? `${projectActions.length}件のアクションがあります` : '今日はまだアクションがありません'}
+                    </p>
                 </div>
-                <div class="card-content">
-                    <div class="space-y-3">
-                        ${latestDaily.actions.map(action => `
-                            <div class="flex items-start space-x-3 p-3 border rounded-lg">
-                                <div class="flex-shrink-0 w-12 text-sm text-muted-foreground">${action.time}</div>
-                                <div class="flex-1">
-                                    <div class="flex items-center space-x-2">
-                                        <h4 class="font-medium">${action.action}</h4>
-                                        <span class="badge badge-${action.type === 'meeting' ? 'primary' : action.type === 'work' ? 'secondary' : action.type === 'research' ? 'success' : 'default'}">${action.type}</span>
+                <div class="card-content space-y-4">
+                    ${projectActions.length > 0 ? `
+                        <div class="space-y-3 mb-4">
+                            ${projectActions.map(action => `
+                                <div class="flex items-start space-x-3 p-3 border rounded-lg">
+                                    <div class="flex-shrink-0 w-12 text-sm text-muted-foreground">${action.time}</div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-medium">${action.action}</h4>
+                                            <span class="badge badge-${action.type === 'meeting' ? 'primary' : action.type === 'work' ? 'secondary' : action.type === 'research' ? 'success' : 'default'}">${action.type}</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground mt-1">${action.result}</p>
                                     </div>
-                                    <p class="text-sm text-muted-foreground mt-1">${action.result}</p>
                                 </div>
+                            `).join('')}
+                        </div>
+                        <hr class="my-4">
+                    ` : ''}
+                    
+                    <!-- Add Action Form -->
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <h4 class="font-medium">新しいアクションを追加</h4>
+                        </div>
+                        
+                        ${!selectedProject ? `
+                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>⚠️ プロジェクトを選択してください</strong><br>
+                                    アクションを追加するには、まず上でプロジェクトを選択する必要があります。
+                                </p>
                             </div>
-                        `).join('')}
+                        ` : ''}
+                        
+                        <div class="grid gap-4 md:grid-cols-3">
+                            <div>
+                                <label class="text-sm font-medium">時間</label>
+                                <input id="action-time" type="time" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="時間" ${!selectedProject ? 'disabled' : ''}>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium">アクション内容</label>
+                                <input id="action-content" type="text" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="実施したアクション" ${!selectedProject ? 'disabled' : ''}>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium">種類</label>
+                                <select id="action-type" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" ${!selectedProject ? 'disabled' : ''}>
+                                    <option value="meeting">会議</option>
+                                    <option value="work">作業</option>
+                                    <option value="research">調査</option>
+                                    <option value="planning">企画</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">結果・成果</label>
+                            <textarea id="action-result" class="mt-1 w-full p-3 border border-input bg-background rounded-md text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" rows="2" placeholder="どのような結果や成果が得られましたか？" ${!selectedProject ? 'disabled' : ''}></textarea>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="addDailyAction()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2" ${!selectedProject ? 'disabled' : ''}>
+                                <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                アクションを追加
+                            </button>
+                            <button onclick="clearActionForm()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2" ${!selectedProject ? 'disabled' : ''}>
+                                クリア
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -197,7 +354,9 @@ function renderDailyReflection() {
             <div class="card">
                 <div class="card-header">
                     <h3 class="font-semibold">今日のふりかえり</h3>
-                    <p class="text-sm text-muted-foreground">今日の活動を振り返って記録しましょう</p>
+                    <p class="text-sm text-muted-foreground">
+                        ${selectedProject ? `${selectedProject.title}での` : ''}今日の活動を振り返って記録しましょう
+                    </p>
                 </div>
                 <div class="card-content space-y-4">
                     <div>
@@ -226,51 +385,6 @@ function renderDailyReflection() {
                                 <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
                             </svg>
                             リセット
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Add New Action -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="font-semibold">新しいアクションを追加</h3>
-                    <p class="text-sm text-muted-foreground">今日実施したアクションを記録しましょう</p>
-                </div>
-                <div class="card-content space-y-4">
-                    <div class="grid gap-4 md:grid-cols-3">
-                        <div>
-                            <label class="text-sm font-medium">時間</label>
-                            <input id="action-time" type="time" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="時間">
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">アクション内容</label>
-                            <input id="action-content" type="text" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="実施したアクション">
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">種類</label>
-                            <select id="action-type" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                                <option value="meeting">会議</option>
-                                <option value="work">作業</option>
-                                <option value="research">調査</option>
-                                <option value="planning">企画</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">結果・成果</label>
-                        <textarea id="action-result" class="mt-1 w-full p-3 border border-input bg-background rounded-md text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" rows="2" placeholder="どのような結果や成果が得られましたか？"></textarea>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="addDailyAction()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            アクションを追加
-                        </button>
-                        <button onclick="clearActionForm()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                            クリア
                         </button>
                     </div>
                 </div>
@@ -585,25 +699,18 @@ function switchReflectionPeriod(period) {
         activeTab.classList.add('border-primary', 'text-primary');
     }
     
-    // Update content
-    const contentContainer = document.getElementById('reflection-content');
-    switch(period) {
-        case 'daily':
-            contentContainer.innerHTML = renderDailyReflection();
-            break;
-        case 'weekly':
-            contentContainer.innerHTML = renderWeeklyReflection();
-            break;
-        case 'monthly':
-            contentContainer.innerHTML = renderMonthlyReflection();
-            break;
-        case 'yearly':
-            contentContainer.innerHTML = renderYearlyReflection();
-            break;
-    }
+    // Render content for selected period using the new function
+    renderReflectionContent(period);
 }
 
 function addDailyAction() {
+    const selectedProject = reflectionData.daily[0].selectedProject;
+    
+    if (!selectedProject) {
+        alert('プロジェクトを選択してください');
+        return;
+    }
+    
     const time = document.getElementById('action-time')?.value;
     const content = document.getElementById('action-content')?.value;
     const type = document.getElementById('action-type')?.value;
@@ -614,21 +721,34 @@ function addDailyAction() {
         return;
     }
     
-    // Add to reflection data (in a real app, this would save to backend)
+    // Add to reflection data with project ID
     const newAction = {
         time: time,
         action: content,
         result: result,
-        type: type
+        type: type,
+        projectId: selectedProject
     };
     
-    reflectionData.daily[0].actions.unshift(newAction);
+    // Add to global actions data
+    sampleData.actions.unshift({
+        id: sampleData.actions.length + 1,
+        time: time,
+        action: content,
+        result: result,
+        type: type,
+        projectId: selectedProject,
+        date: new Date().toISOString().split('T')[0]
+    });
     
     // Clear form
     clearActionForm();
     
+    // Save data
+    saveReflectionData();
+    
     // Refresh the daily reflection view
-    switchReflectionPeriod('daily');
+    renderReflectionContent('daily');
     
     alert('アクションが追加されました！');
 }
@@ -676,6 +796,98 @@ function promoteSelectedToNext() {
     alert('選択された項目が次期プランに反映されました');
 }
 
+// Project selection
+function selectProject(projectId) {
+    // Update selected project
+    reflectionData.daily[0].selectedProject = projectId;
+    
+    // Update visual state
+    document.querySelectorAll('.project-selector-btn').forEach(btn => {
+        const isSelected = parseInt(btn.dataset.projectId) === projectId;
+        btn.classList.toggle('border-primary', isSelected);
+        btn.classList.toggle('bg-primary/5', isSelected);
+        btn.classList.toggle('border-border', !isSelected);
+        
+        // Update check icon
+        const icon = btn.querySelector('svg');
+        if (isSelected) {
+            icon.innerHTML = '<polyline points="20,6 9,17 4,12"/>';
+            icon.classList.add('text-primary');
+            icon.classList.remove('text-muted-foreground');
+        } else {
+            icon.innerHTML = '<circle cx="12" cy="12" r="10"/>';
+            icon.classList.add('text-muted-foreground');
+            icon.classList.remove('text-primary');
+        }
+    });
+    
+    // Save to localStorage
+    saveReflectionData();
+    
+    // Re-render reflection content
+    renderReflectionContent('daily');
+}
+
+// Filter actions by selected project
+function getProjectActions(projectId) {
+    return sampleData.actions.filter(action => action.projectId === projectId);
+}
+
+// Helper to get project data
+function getProject(projectId) {
+    return sampleData.projects.find(project => project.id === projectId);
+}
+
+// Save reflection data to localStorage
+function saveReflectionData() {
+    localStorage.setItem('reflectionData', JSON.stringify(reflectionData));
+}
+
+// Load reflection data from localStorage
+function loadReflectionData() {
+    const saved = localStorage.getItem('reflectionData');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            // Merge with default structure to ensure all fields exist
+            Object.keys(reflectionData).forEach(period => {
+                if (parsed[period]) {
+                    reflectionData[period] = parsed[period];
+                }
+            });
+        } catch (e) {
+            console.log('Failed to load reflection data:', e);
+        }
+    }
+}
+
+// Render reflection content based on period
+function renderReflectionContent(period) {
+    const contentContainer = document.getElementById('reflection-content');
+    if (!contentContainer) return;
+    
+    // Show/hide project selector based on period
+    const projectSelector = document.getElementById('project-selector');
+    if (projectSelector) {
+        projectSelector.style.display = period === 'daily' ? 'block' : 'none';
+    }
+    
+    switch(period) {
+        case 'daily':
+            contentContainer.innerHTML = renderDailyReflection();
+            break;
+        case 'weekly':
+            contentContainer.innerHTML = renderWeeklyReflection();
+            break;
+        case 'monthly':
+            contentContainer.innerHTML = renderMonthlyReflection();
+            break;
+        case 'yearly':
+            contentContainer.innerHTML = renderYearlyReflection();
+            break;
+    }
+}
+
 // Expose to global scope
 window.renderSummary = renderSummary;
 window.switchReflectionPeriod = switchReflectionPeriod;
@@ -685,3 +897,4 @@ window.saveDailyReflection = saveDailyReflection;
 window.clearDailyReflection = clearDailyReflection;
 window.saveSummary = saveSummary;
 window.promoteSelectedToNext = promoteSelectedToNext;
+window.selectProject = selectProject;
