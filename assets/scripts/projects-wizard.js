@@ -110,7 +110,7 @@ function updateStepDetail(stepData) {
         <h3 class="text-lg font-semibold mb-2 text-${stepData.color}-800">ステップ${stepData.number}: ${stepData.title}</h3>
         <p class="text-${stepData.color}-600 mb-4">${stepData.description}</p>
         <div class="flex justify-center gap-3">
-            <button onclick="openIdeationWorkspace('${stepData.name}')" class="px-6 py-2 bg-${stepData.color}-600 text-white rounded-md hover:bg-${stepData.color}-700 transition-colors">
+            <button class="design-btn px-6 py-2 bg-${stepData.color}-600 text-white rounded-md hover:bg-${stepData.color}-700 transition-colors" data-mode="${stepData.name}">
                 設計する
             </button>
             ${stepData.name === 'proposal' ? `
@@ -220,12 +220,39 @@ function getNextStep(currentStep) {
 // Initialize wizard on page load
 function initializeWizard() {
     updateWizardProgress('ideation');
+    bindDesignButtons();
+}
+
+// Bind design button event listeners
+function bindDesignButtons() {
+    console.log('Binding design button event listeners');
+    document.querySelectorAll('.design-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const mode = e.currentTarget.dataset.mode;
+            if (!mode) {
+                console.warn('design-btn に data-mode がありません', e.currentTarget);
+                return;
+            }
+            console.log('Design button clicked with mode:', mode);
+            openIdeationWorkspace(mode);
+        });
+    });
 }
 
 // Modal management functions
-function openIdeationWorkspace(stage = 'ideation') {
+function openIdeationWorkspace(mode) {
+    console.log('openIdeationWorkspace called with mode:', mode);
+    
+    if (!mode) {
+        console.error('openIdeationWorkspace: mode が未指定です');
+        return;
+    }
+    
     let modal = document.getElementById('project-modal');
     if (!modal) {
+        console.log('Creating new modal');
         // Create modal if it doesn't exist
         modal = document.createElement('div');
         modal.id = 'project-modal';
@@ -237,20 +264,25 @@ function openIdeationWorkspace(stage = 'ideation') {
             </div>
         `;
         document.body.appendChild(modal);
+    } else {
+        console.log('Using existing modal');
     }
+    
     const content = document.getElementById('modal-content');
     
-    const renderedContent = renderIdeationWorkspace(stage);
+    console.log('Calling renderIdeationWorkspace with mode:', mode);
+    const renderedContent = renderIdeationWorkspace(mode);
     
     content.innerHTML = renderedContent;
     modal.classList.remove('hidden');
+    console.log('Modal displayed');
     
     // Update wizard progress and initialize content after modal opens
     setTimeout(() => {
-        updateWizardProgress(stage);
+        updateWizardProgress(mode);
         
         // Initialize stakeholder matrix if on stakeholder stage
-        if (stage === 'stakeholder') {
+        if (mode === 'stakeholder') {
             generateStakeholderMatrix();
         }
     }, 100);
@@ -263,19 +295,32 @@ function closeIdeationWorkspace() {
     }
 }
 
-function renderIdeationWorkspace(stage = 'ideation') {
-    if (stage === 'ideation') {
+function renderIdeationWorkspace(mode) {
+    console.log('renderIdeationWorkspace called with mode:', mode);
+    
+    if (!mode) {
+        console.error('renderIdeationWorkspace: mode が未指定です');
+        return '<div class="p-6"><p class="text-red-600">エラー: モードが指定されていません</p></div>';
+    }
+    
+    if (mode === 'ideation') {
+        console.log('Rendering ideation content');
         return renderIdeationContent();
-    } else if (stage === 'planning') {
+    } else if (mode === 'planning') {
+        console.log('Rendering planning content');
         return renderPlanningContent();
-    } else if (stage === 'goal-setting') {
+    } else if (mode === 'goal-setting') {
+        console.log('Rendering goal setting content');
         return renderGoalSettingContent();
-    } else if (stage === 'stakeholder') {
+    } else if (mode === 'stakeholder') {
+        console.log('Rendering stakeholder content');
         return renderStakeholderContent();
-    } else if (stage === 'proposal') {
+    } else if (mode === 'proposal') {
+        console.log('Rendering proposal content');
         return renderProposalContent();
     }
     
+    console.warn('Unknown mode:', mode, 'Fallback to ideation content');
     return renderIdeationContent();
 }
 
@@ -289,6 +334,7 @@ window.showStepTransitionMessage = showStepTransitionMessage;
 window.markStepCompleted = markStepCompleted;
 window.getNextStep = getNextStep;
 window.initializeWizard = initializeWizard;
+window.bindDesignButtons = bindDesignButtons;
 window.openIdeationWorkspace = openIdeationWorkspace;
 window.closeIdeationWorkspace = closeIdeationWorkspace;
 window.renderIdeationWorkspace = renderIdeationWorkspace;
