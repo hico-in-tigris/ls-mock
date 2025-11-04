@@ -26,6 +26,12 @@ function renderProjects(container) {
                         </svg>
                         新規プロジェクト
                     </button>
+                    <button onclick="openProjectList()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                        </svg>
+                        全プロジェクト一覧
+                    </button>
                 </div>
             </div>
 
@@ -953,12 +959,17 @@ function showProjectDetailModal(project) {
                         </div>
                     </div>
                 </div>
-                <button onclick="closeProjectDetail()" class="text-muted-foreground hover:text-foreground">
-                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
+                <div class="flex space-x-2">
+                    <button onclick="openProjectEditModal(${project.id})" class="px-3 py-2 border border-input rounded-md hover:bg-accent">
+                        編集
+                    </button>
+                    <button onclick="closeProjectDetail()" class="text-muted-foreground hover:text-foreground">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
             
             <div class="grid gap-6 lg:grid-cols-3">
@@ -1074,6 +1085,83 @@ function showProjectDetailModal(project) {
                                         </div>
                                     </div>
                                 `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Change History -->
+                    ${project.changeHistory && project.changeHistory.length > 0 ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-semibold">変更履歴・トレーサビリティ</h3>
+                                    ${project.version ? `<span class="text-sm text-muted-foreground">バージョン: ${project.version}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="space-y-4">
+                                    ${project.changeHistory.map((change, index) => `
+                                        <div class="relative ${index < project.changeHistory.length - 1 ? 'pb-4' : ''}">
+                                            ${index < project.changeHistory.length - 1 ? '<div class="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200"></div>' : ''}
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${change.changeType === 'created' ? 'bg-green-500' : change.impactLevel === 'major' ? 'bg-red-500' : 'bg-blue-500'}">
+                                                    ${change.changeType === 'created' ? 'C' : change.changeType === 'updated' ? 'U' : 'M'}
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <h4 class="font-medium text-sm">${change.title}</h4>
+                                                        <div class="flex items-center space-x-2">
+                                                            <span class="text-xs px-2 py-1 rounded-full ${change.impactLevel === 'major' ? 'bg-red-100 text-red-700' : change.impactLevel === 'minor' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}">
+                                                                ${change.impactLevel}
+                                                            </span>
+                                                            <span class="text-xs text-muted-foreground">${change.version}</span>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-700 mb-2">${change.description}</p>
+                                                    <div class="text-xs text-muted-foreground mb-2">
+                                                        ${formatDate(change.date)} • ${change.author}
+                                                        ${change.approvedBy ? ` • 承認: ${change.approvedBy}` : ''}
+                                                    </div>
+                                                    ${change.changes && change.changes.length > 0 ? `
+                                                        <div class="bg-gray-50 rounded-lg p-3 mb-2">
+                                                            <h5 class="text-xs font-medium text-gray-600 mb-2">主な変更内容:</h5>
+                                                            <ul class="text-xs text-gray-700 space-y-1">
+                                                                ${change.changes.map(item => `<li class="flex items-start space-x-2"><span class="text-blue-500 mt-1">•</span><span>${item}</span></li>`).join('')}
+                                                            </ul>
+                                                        </div>
+                                                    ` : ''}
+                                                    ${change.relatedKPT && change.relatedKPT.length > 0 ? `
+                                                        <div class="bg-blue-50 border-l-4 border-blue-400 rounded p-2">
+                                                            <h5 class="text-xs font-medium text-blue-700 mb-1">関連するKPT:</h5>
+                                                            <ul class="text-xs text-blue-700 space-y-1">
+                                                                ${change.relatedKPT.map(kpt => `<li>• ${kpt}</li>`).join('')}
+                                                            </ul>
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                
+                                <!-- Change Summary -->
+                                <div class="mt-6 pt-4 border-t border-gray-200">
+                                    <h4 class="text-sm font-medium text-muted-foreground mb-3">変更サマリー</h4>
+                                    <div class="grid grid-cols-3 gap-4 text-center">
+                                        <div class="bg-green-50 rounded-lg p-3">
+                                            <div class="text-lg font-bold text-green-600">${project.changeHistory.filter(c => c.changeType === 'created').length}</div>
+                                            <div class="text-xs text-green-700">作成</div>
+                                        </div>
+                                        <div class="bg-blue-50 rounded-lg p-3">
+                                            <div class="text-lg font-bold text-blue-600">${project.changeHistory.filter(c => c.changeType === 'updated').length}</div>
+                                            <div class="text-xs text-blue-700">更新</div>
+                                        </div>
+                                        <div class="bg-orange-50 rounded-lg p-3">
+                                            <div class="text-lg font-bold text-orange-600">${project.changeHistory.filter(c => c.impactLevel === 'major').length}</div>
+                                            <div class="text-xs text-orange-700">重要変更</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ` : ''}
@@ -1271,6 +1359,380 @@ function closeProjectDetail() {
     }
 }
 
+function openProjectEditModal(projectId) {
+    const project = sampleData.projects.find(p => p.id == projectId);
+    if (!project) {
+        alert('プロジェクトが見つかりません');
+        return;
+    }
+    
+    // Close project detail modal
+    closeProjectDetail();
+    
+    // Create or update edit modal
+    let editModal = document.getElementById('project-edit-modal');
+    if (!editModal) {
+        editModal = document.createElement('div');
+        editModal.id = 'project-edit-modal';
+        editModal.className = 'fixed inset-0 z-50 hidden';
+        document.body.appendChild(editModal);
+    }
+    
+    editModal.innerHTML = `
+        <div class="fixed inset-0 bg-black/50" onclick="closeProjectEditModal()"></div>
+        <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-6xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">プロジェクトを編集</h2>
+                    <p class="text-muted-foreground">${project.title}</p>
+                </div>
+                <button onclick="closeProjectEditModal()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form onsubmit="saveProjectEdit(event, ${project.id})" class="space-y-6">
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <!-- Left Column: Basic Info -->
+                    <div class="space-y-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">基本情報</h3>
+                            </div>
+                            <div class="card-content space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">プロジェクト名 *</label>
+                                    <input type="text" id="edit-project-title" value="${project.title}" class="w-full p-2 border border-input rounded-md" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">目的 *</label>
+                                    <textarea id="edit-project-purpose" class="w-full p-2 border border-input rounded-md h-20" required>${project.purpose}</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">範囲・スコープ *</label>
+                                    <textarea id="edit-project-scope" class="w-full p-2 border border-input rounded-md h-24" required>${project.scope}</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">KPI・成功指標 *</label>
+                                    <input type="text" id="edit-project-kpi" value="${project.kpi}" class="w-full p-2 border border-input rounded-md" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">ステータス</label>
+                                    <select id="edit-project-status" class="w-full p-2 border border-input rounded-md">
+                                        <option value="Plan" ${project.status === 'Plan' ? 'selected' : ''}>Plan（計画）</option>
+                                        <option value="Try" ${project.status === 'Try' ? 'selected' : ''}>Try（実行）</option>
+                                        <option value="Done" ${project.status === 'Done' ? 'selected' : ''}>Done（完了）</option>
+                                        <option value="Pause" ${project.status === 'Pause' ? 'selected' : ''}>Pause（一時停止）</option>
+                                    </select>
+                                </div>
+                                ${project.approach ? `
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">アプローチ</label>
+                                        <textarea id="edit-project-approach" class="w-full p-2 border border-input rounded-md h-20">${project.approach}</textarea>
+                                    </div>
+                                ` : ''}
+                                ${project.currentPhase ? `
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">現在のフェーズ</label>
+                                        <input type="text" id="edit-project-phase" value="${project.currentPhase}" class="w-full p-2 border border-input rounded-md">
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Additional Info -->
+                    <div class="space-y-6">
+                        ${project.budget ? `
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="font-semibold">予算情報</h3>
+                                </div>
+                                <div class="card-content space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">総予算</label>
+                                        <input type="number" id="edit-project-budget-allocated" value="${project.budget.allocated}" class="w-full p-2 border border-input rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">使用済み予算</label>
+                                        <input type="number" id="edit-project-budget-spent" value="${project.budget.spent}" class="w-full p-2 border border-input rounded-md">
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${project.estimatedDuration ? `
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="font-semibold">期間</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">予定期間</label>
+                                        <input type="text" id="edit-project-duration" value="${project.estimatedDuration}" class="w-full p-2 border border-input rounded-md">
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="font-semibold">変更情報</h3>
+                            </div>
+                            <div class="card-content space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">変更タイトル *</label>
+                                    <input type="text" id="edit-change-title" placeholder="例: KPI指標の調整" class="w-full p-2 border border-input rounded-md" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">変更理由・説明 *</label>
+                                    <textarea id="edit-change-description" placeholder="なぜこの変更が必要なのか、どのような影響があるかを記載してください。" class="w-full p-2 border border-input rounded-md h-20" required></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">影響レベル</label>
+                                    <select id="edit-change-impact" class="w-full p-2 border border-input rounded-md">
+                                        <option value="minor">Minor（軽微な変更）</option>
+                                        <option value="major">Major（重要な変更）</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">承認者（任意）</label>
+                                    <input type="text" id="edit-change-approver" placeholder="例: 山田 太郎" class="w-full p-2 border border-input rounded-md">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-6 border-t">
+                    <button type="button" onclick="closeProjectEditModal()" class="px-4 py-2 border border-input rounded-md hover:bg-accent">
+                        キャンセル
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
+                        変更を保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    editModal.classList.remove('hidden');
+}
+
+function closeProjectEditModal() {
+    const modal = document.getElementById('project-edit-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function saveProjectEdit(event, projectId) {
+    event.preventDefault();
+    
+    const projectIndex = sampleData.projects.findIndex(p => p.id === projectId);
+    if (projectIndex === -1) {
+        alert('プロジェクトが見つかりません');
+        return;
+    }
+    
+    const project = sampleData.projects[projectIndex];
+    const originalProject = JSON.parse(JSON.stringify(project)); // Deep copy for comparison
+    
+    // Collect form data
+    const title = document.getElementById('edit-project-title').value.trim();
+    const purpose = document.getElementById('edit-project-purpose').value.trim();
+    const scope = document.getElementById('edit-project-scope').value.trim();
+    const kpi = document.getElementById('edit-project-kpi').value.trim();
+    const status = document.getElementById('edit-project-status').value;
+    const approach = document.getElementById('edit-project-approach')?.value?.trim();
+    const currentPhase = document.getElementById('edit-project-phase')?.value?.trim();
+    const budgetAllocated = parseFloat(document.getElementById('edit-project-budget-allocated')?.value) || null;
+    const budgetSpent = parseFloat(document.getElementById('edit-project-budget-spent')?.value) || null;
+    const estimatedDuration = document.getElementById('edit-project-duration')?.value?.trim();
+    
+    // Change tracking data
+    const changeTitle = document.getElementById('edit-change-title').value.trim();
+    const changeDescription = document.getElementById('edit-change-description').value.trim();
+    const changeImpact = document.getElementById('edit-change-impact').value;
+    const changeApprover = document.getElementById('edit-change-approver').value.trim();
+    
+    // Determine what changed
+    const changes = [];
+    if (title !== originalProject.title) changes.push(`タイトル変更: "${originalProject.title}" → "${title}"`);
+    if (purpose !== originalProject.purpose) changes.push(`目的変更: "${originalProject.purpose}" → "${purpose}"`);
+    if (scope !== originalProject.scope) changes.push(`範囲変更: "${originalProject.scope}" → "${scope}"`);
+    if (kpi !== originalProject.kpi) changes.push(`KPI変更: "${originalProject.kpi}" → "${kpi}"`);
+    if (status !== originalProject.status) changes.push(`ステータス変更: "${originalProject.status}" → "${status}"`);
+    if (approach && approach !== originalProject.approach) changes.push(`アプローチ変更: "${originalProject.approach || '(未設定)'}" → "${approach}"`);
+    if (currentPhase && currentPhase !== originalProject.currentPhase) changes.push(`フェーズ変更: "${originalProject.currentPhase || '(未設定)'}" → "${currentPhase}"`);
+    if (budgetAllocated && originalProject.budget && budgetAllocated !== originalProject.budget.allocated) changes.push(`総予算変更: ¥${originalProject.budget.allocated.toLocaleString()} → ¥${budgetAllocated.toLocaleString()}`);
+    if (budgetSpent && originalProject.budget && budgetSpent !== originalProject.budget.spent) changes.push(`使用済み予算変更: ¥${originalProject.budget.spent.toLocaleString()} → ¥${budgetSpent.toLocaleString()}`);
+    if (estimatedDuration && estimatedDuration !== originalProject.estimatedDuration) changes.push(`期間変更: "${originalProject.estimatedDuration || '(未設定)'}" → "${estimatedDuration}"`);
+    
+    // Update project data
+    project.title = title;
+    project.purpose = purpose;
+    project.scope = scope;
+    project.kpi = kpi;
+    project.status = status;
+    if (approach) project.approach = approach;
+    if (currentPhase) project.currentPhase = currentPhase;
+    if (budgetAllocated && project.budget) project.budget.allocated = budgetAllocated;
+    if (budgetSpent && project.budget) project.budget.spent = budgetSpent;
+    if (estimatedDuration) project.estimatedDuration = estimatedDuration;
+    
+    // Update version
+    const currentVersion = project.version || '1.0.0';
+    const versionParts = currentVersion.split('.').map(Number);
+    if (changeImpact === 'major') {
+        versionParts[1]++; // Increment minor version for major changes
+        versionParts[2] = 0; // Reset patch version
+    } else {
+        versionParts[2]++; // Increment patch version for minor changes
+    }
+    project.version = versionParts.join('.');
+    
+    // Add to change history
+    if (!project.changeHistory) project.changeHistory = [];
+    
+    const changeEntry = {
+        version: project.version,
+        date: new Date().toISOString().split('T')[0],
+        author: 'Current User', // In real app, this would be the logged-in user
+        changeType: 'updated',
+        title: changeTitle,
+        description: changeDescription,
+        changes: changes,
+        impactLevel: changeImpact
+    };
+    
+    if (changeApprover) {
+        changeEntry.approvedBy = changeApprover;
+    }
+    
+    project.changeHistory.unshift(changeEntry); // Add to beginning of array
+    
+    // Save data
+    saveData();
+    closeProjectEditModal();
+    
+    // Show success message and refresh project detail
+    const successMessage = document.createElement('div');
+    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+    successMessage.textContent = 'プロジェクトを更新しました';
+    document.body.appendChild(successMessage);
+    setTimeout(() => {
+        document.body.removeChild(successMessage);
+    }, 3000);
+    
+    // Reopen project detail with updated data
+    setTimeout(() => {
+        openProject(projectId);
+    }, 500);
+}
+
+// Project listing functionality
+function openProjectList() {
+    let modal = document.getElementById('project-list-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'project-list-modal';
+        modal.className = 'fixed inset-0 z-50 hidden';
+        modal.innerHTML = `
+            <div class="fixed inset-0 bg-black/50" onclick="closeProjectList()"></div>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-6xl bg-background p-6 shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
+                <div id="project-list-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    const content = document.getElementById('project-list-content');
+    const allProjects = sampleData.projects || [];
+    
+    content.innerHTML = `
+        <div class="max-w-6xl mx-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">全プロジェクト一覧</h2>
+                    <p class="text-muted-foreground">すべてのプロジェクトのステータスと詳細を確認できます</p>
+                </div>
+                <button onclick="closeProjectList()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Project Status Summary -->
+            <div class="grid gap-4 md:grid-cols-4 mb-6">
+                ${['Plan', 'Try', 'Done', 'Pause'].map(status => {
+                    const count = allProjects.filter(p => p.status === status).length;
+                    const statusLabels = {
+                        'Plan': '計画',
+                        'Try': '実行中', 
+                        'Done': '完了',
+                        'Pause': '一時停止'
+                    };
+                    return `
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold ${status === 'Done' ? 'text-green-600' : status === 'Try' ? 'text-blue-600' : status === 'Pause' ? 'text-orange-600' : 'text-gray-600'}">${count}</div>
+                            <div class="text-sm text-muted-foreground">${statusLabels[status]}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <!-- All Projects List -->
+            <div class="space-y-4">
+                ${allProjects.map(project => `
+                    <div class="card hover:shadow-md transition-shadow cursor-pointer" onclick="closeProjectList(); openProject(${project.id})">
+                        <div class="card-content p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-lg">${project.title}</h3>
+                                <span class="px-2 py-1 text-xs rounded-full ${
+                                    project.status === 'Done' ? 'bg-green-100 text-green-800' :
+                                    project.status === 'Try' ? 'bg-blue-100 text-blue-800' :
+                                    project.status === 'Pause' ? 'bg-orange-100 text-orange-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${project.status === 'Plan' ? '計画' : project.status === 'Try' ? '実行中' : project.status === 'Done' ? '完了' : '一時停止'}
+                                </span>
+                            </div>
+                            <p class="text-muted-foreground mb-2">${project.purpose || project.description}</p>
+                            <div class="flex items-center justify-between text-sm text-muted-foreground">
+                                <span>KPI: ${project.kpi}</span>
+                                ${project.version ? `<span>v${project.version}</span>` : ''}
+                            </div>
+                            ${project.budget ? `
+                                <div class="mt-2 text-sm">
+                                    <span class="text-muted-foreground">予算進捗:</span>
+                                    <span class="ml-2">${((project.budget.spent / project.budget.allocated) * 100).toFixed(0)}% (¥${project.budget.spent.toLocaleString()} / ¥${project.budget.allocated.toLocaleString()})</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeProjectList() {
+    const modal = document.getElementById('project-list-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
 function openMapWithProject(lat, lng, projectId) {
     // Save the location and project info to highlight on map
     sessionStorage.setItem('highlightLocation', JSON.stringify({ 
@@ -1396,6 +1858,11 @@ window.generateAIOutline = generateAIOutline;
 window.openProject = openProject;
 window.showProjectDetailModal = showProjectDetailModal;
 window.closeProjectDetail = closeProjectDetail;
+window.openProjectEditModal = openProjectEditModal;
+window.closeProjectEditModal = closeProjectEditModal;
+window.saveProjectEdit = saveProjectEdit;
+window.openProjectList = openProjectList;
+window.closeProjectList = closeProjectList;
 window.loadActiveProjects = loadActiveProjects;
 window.showAllProjects = showAllProjects;
 window.openMapWithProject = openMapWithProject;
