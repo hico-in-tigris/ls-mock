@@ -3,151 +3,61 @@
 // ===============================
 
 function renderProjects(container) {
+    const headerButtons = [
+        createButton({
+            text: '企画ワークスペース',
+            variant: 'secondary',
+            icon: Icons.lightbulb,
+            onClick: 'openIdeationWorkspace()'
+        }),
+        createButton({
+            text: '新規プロジェクト',
+            variant: 'primary',
+            icon: Icons.star,
+            onClick: 'generateAIOutline()'
+        }),
+        createButton({
+            text: '全プロジェクト一覧',
+            variant: 'secondary',
+            icon: Icons.list,
+            onClick: 'openProjectList()'
+        })
+    ];
+
+    const wizardSteps = [
+        { title: '想いの整理', onClick: 'selectWizardStep("ideation")' },
+        { title: '企画構成', onClick: 'selectWizardStep("planning")' },
+        { title: '目標設定', onClick: 'selectWizardStep("goal-setting")' },
+        { title: '関係者分析', onClick: 'selectWizardStep("stakeholder")' },
+        { title: '提案作成', onClick: 'selectWizardStep("proposal")' }
+    ];
+
     container.innerHTML = `
         <div class="animate-fade-in">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tight">Projects</h1>
-                    <p class="text-muted-foreground">企画から実行まで、プロジェクトライフサイクル全体をサポート</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="openIdeationWorkspace()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                            <line x1="9" y1="9" x2="9.01" y2="9"/>
-                            <line x1="15" y1="9" x2="15.01" y2="9"/>
-                        </svg>
-                        企画ワークスペース
-                    </button>
-                    <button onclick="generateAIOutline()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                        新規プロジェクト
-                    </button>
-                    <button onclick="openProjectList()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
-                        </svg>
-                        全プロジェクト一覧
-                    </button>
-                </div>
-            </div>
+            ${createHeaderCard({
+                title: 'Projects',
+                description: '企画から実行まで、プロジェクトライフサイクル全体をサポート',
+                actions: headerButtons.join('')
+            })}
 
             <!-- Project Planning Pipeline -->
-            <div class="card mb-8">
-                <div class="card-header">
-                    <h2 class="text-xl font-semibold">プロジェクト企画パイプライン</h2>
-                    <p class="text-sm text-muted-foreground">想いから実行まで、段階的にプロジェクトを形にしていきます</p>
-                </div>
-                <div class="card-content">
-                    <!-- Wizard Progress Bar -->
-                    <div class="mb-8">
-                        <div class="flex items-center justify-center">
-                            <!-- Step 1: 想いの整理 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('ideation')">
-                                <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
-                                    <span class="wizard-step-number-1">1</span>
-                                    <svg class="wizard-check-icon-1 w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20,6 9,17 4,12"/>
-                                    </svg>
-                                </div>
-                                <span class="text-sm font-medium text-blue-600 text-center">想いの整理</span>
-                            </div>
-                            
-                            <!-- Arrow 1→2 -->
-                            <div class="flex items-center mx-4">
-                                <div class="h-0.5 w-12 bg-gray-300"></div>
-                                <svg class="w-5 h-5 text-gray-400 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </div>
-                            
-                            <!-- Step 2: 企画構成 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('planning')">
-                                <div class="w-12 h-12 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
-                                    <span class="wizard-step-number-2">2</span>
-                                    <svg class="wizard-check-icon-2 w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20,6 9,17 4,12"/>
-                                    </svg>
-                                </div>
-                                <span class="text-sm font-medium text-gray-500 text-center">企画構成</span>
-                            </div>
-                            
-                            <!-- Arrow 2→3 -->
-                            <div class="flex items-center mx-4">
-                                <div class="h-0.5 w-12 bg-gray-300"></div>
-                                <svg class="w-5 h-5 text-gray-400 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </div>
-                            
-                            <!-- Step 3: 目標設定 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('goal-setting')">
-                                <div class="w-12 h-12 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
-                                    <span class="wizard-step-number-3">3</span>
-                                    <svg class="wizard-check-icon-3 w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20,6 9,17 4,12"/>
-                                    </svg>
-                                </div>
-                                <span class="text-sm font-medium text-gray-500 text-center">目標設定</span>
-                            </div>
-                            
-                            <!-- Arrow 3→4 -->
-                            <div class="flex items-center mx-4">
-                                <div class="h-0.5 w-12 bg-gray-300"></div>
-                                <svg class="w-5 h-5 text-gray-400 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </div>
-                            
-                            <!-- Step 4: 関係者分析 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('stakeholder')">
-                                <div class="w-12 h-12 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
-                                    <span class="wizard-step-number-4">4</span>
-                                    <svg class="wizard-check-icon-4 w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20,6 9,17 4,12"/>
-                                    </svg>
-                                </div>
-                                <span class="text-sm font-medium text-gray-500 text-center">関係者分析</span>
-                            </div>
-                            
-                            <!-- Arrow 4→5 -->
-                            <div class="flex items-center mx-4">
-                                <div class="h-0.5 w-12 bg-gray-300"></div>
-                                <svg class="w-5 h-5 text-gray-400 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </div>
-                            
-                            <!-- Step 5: 提案作成 -->
-                            <div class="flex flex-col items-center cursor-pointer" onclick="selectWizardStep('proposal')">
-                                <div class="w-12 h-12 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-lg mb-2 relative transition-all duration-300 hover:scale-110">
-                                    <span class="wizard-step-number-5">5</span>
-                                    <svg class="wizard-check-icon-5 w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20,6 9,17 4,12"/>
-                                    </svg>
-                                </div>
-                                <span class="text-sm font-medium text-gray-500 text-center">提案作成</span>
-                            </div>
-                        </div>
-                    </div>
+            ${createCard({
+                header: {
+                    title: 'プロジェクト企画パイプライン',
+                    description: '想いから実行まで、段階的にプロジェクトを形にしていきます'
+                },
+                content: `
+                    ${createWizard(wizardSteps, 0)}
                     
                     <!-- Current Step Details -->
                     <div class="space-y-4">
                         <div id="wizard-step-detail" class="text-center p-6 rounded-lg bg-blue-50 border border-blue-200">
                             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-                                <svg class="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
-                                </svg>
+                                ${Icons.lightbulb}
                             </div>
                             <h3 class="text-lg font-semibold mb-2 text-blue-800">ステップ1: 想いの整理</h3>
                             <p class="text-blue-600 mb-4">アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。</p>
-                            <div class="flex justify-center gap-3">
+                            <div class="flex justify-center gap-3">`
                                 <button onclick="openIdeationWorkspace('ideation')" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                                     設計する
                                 </button>

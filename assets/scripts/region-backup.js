@@ -174,21 +174,45 @@ function renderRegion(container) {
                 </div>
                 <div class="card-content">
                     <!-- Issues Categories -->
-                                    },
-                content: \`
-                    \${regionIssues.length === 0 ? 'まだ課題が登録されていません。' : renderRegionIssuesList(regionIssues)}
-                \`
-            })}
-            
-            \${createCard({
-                header: {
-                    title: '推奨アクション',
-                    description: '地域の課題・特性に基づく具体的な活動提案'
-                },
-                content: \`\${renderRegionRecommendations(userRegion, regionIssues)}\`
-            })}
-        </div>
-    \`;
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button onclick="filterIssuesByCategory('all')" 
+                                class="px-3 py-1 text-sm rounded border ${getIssueFilter() === 'all' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'border-gray-300 hover:bg-gray-50'}">
+                            全て (${regionIssues.length})
+                        </button>
+                        <button onclick="filterIssuesByCategory('demographic')" 
+                                class="px-3 py-1 text-sm rounded border ${getIssueFilter() === 'demographic' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'border-gray-300 hover:bg-gray-50'}">
+                            人口・高齢化 (${regionIssues.filter(i => i.category === 'demographic').length})
+                        </button>
+                        <button onclick="filterIssuesByCategory('economy')" 
+                                class="px-3 py-1 text-sm rounded border ${getIssueFilter() === 'economy' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'border-gray-300 hover:bg-gray-50'}">
+                            経済・産業 (${regionIssues.filter(i => i.category === 'economy').length})
+                        </button>
+                        <button onclick="filterIssuesByCategory('infrastructure')" 
+                                class="px-3 py-1 text-sm rounded border ${getIssueFilter() === 'infrastructure' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'border-gray-300 hover:bg-gray-50'}">
+                            インフラ・交通 (${regionIssues.filter(i => i.category === 'infrastructure').length})
+                        </button>
+                        <button onclick="filterIssuesByCategory('community')" 
+                                class="px-3 py-1 text-sm rounded border ${getIssueFilter() === 'community' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'border-gray-300 hover:bg-gray-50'}">
+                            コミュニティ (${regionIssues.filter(i => i.category === 'community').length})
+                        </button>
+                    </div>
+                    
+                    <!-- Issues List -->
+                    <div id="region-issues-list">
+                        ${renderRegionIssuesList(regionIssues)}
+                    </div>
+                    
+                    <!-- No Issues Message -->
+                    ${regionIssues.length === 0 ? `
+                        <div class="text-center py-8 text-gray-500">
+                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <p>地域課題がまだ登録されていません</p>
+                            <p class="text-sm mt-1">「AI課題推定」ボタンで自動分析するか、「手動追加」で課題を追加してください</p>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
             
             <!-- Action Items -->

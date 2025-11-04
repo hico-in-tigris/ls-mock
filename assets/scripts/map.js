@@ -48,61 +48,45 @@ function renderMapComponent(containerId, options = {}) {
         <div class="map-container bg-white rounded-lg border border-border overflow-hidden">
             <!-- Map Header -->
             <div class="map-header p-4 bg-gray-50 border-b border-border">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-4">
-                        <h3 class="text-lg font-semibold">地域マップ</h3>
-                        <div class="flex items-center space-x-2 text-sm text-muted-foreground">
-                            ${showPeople ? `<span>ネットワーク: ${filteredPeople.length}件</span>` : ''}
-                            ${showProjects ? `<span>プロジェクト: ${filteredProjects.length}件</span>` : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <!-- Map Controls -->
-                        <div class="flex items-center space-x-1">
-                            <button onclick="toggleMapFilter('${containerId}', 'all')" 
-                                    class="px-3 py-1 text-xs rounded ${!filterArea ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
-                                全て
-                            </button>
-                            <button onclick="toggleMapFilter('${containerId}', 'local')" 
-                                    class="px-3 py-1 text-xs rounded ${filterArea === 'local' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
-                                地域内
-                            </button>
-                            <button onclick="toggleMapFilter('${containerId}', 'external')" 
-                                    class="px-3 py-1 text-xs rounded ${filterArea === 'external' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
-                                地域外
-                            </button>
-                        </div>
-                        
-                        <button onclick="openAddLocationModal('${containerId}')" 
-                                class="px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90">
-                            + 場所追加
-                        </button>
-                    </div>
-                </div>
+                ${createMapControls({
+                    containerId,
+                    currentFilter: filterArea,
+                    showPeople,
+                    showProjects,
+                    peopleCount: filteredPeople.length,
+                    projectCount: filteredProjects.length
+                })}
                 
                 <!-- Legend -->
                 <div class="flex flex-wrap items-center gap-4 mt-3 text-xs">
-                    ${showPeople ? `
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span>地域内ネットワーク (${filteredPeople.filter(p => p.location.area === '地域内').length})</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                            <span>地域外ネットワーク (${filteredPeople.filter(p => p.location.area === '地域外').length})</span>
-                        </div>
-                    ` : ''}
-                    ${showProjects ? `
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                            <span>地域内プロジェクト (${filteredProjects.filter(p => p.location.area === '地域内').length})</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                            <span>地域外プロジェクト (${filteredProjects.filter(p => p.location.area === '地域外').length})</span>
-                        </div>
-                    ` : ''}
+                    ${createMapLegend({
+                        items: [
+                            ...(showPeople ? [
+                                { 
+                                    color: 'green', 
+                                    label: '地域内ネットワーク', 
+                                    count: filteredPeople.filter(p => p.location.area === '地域内').length 
+                                },
+                                { 
+                                    color: 'blue', 
+                                    label: '地域外ネットワーク', 
+                                    count: filteredPeople.filter(p => p.location.area === '地域外').length 
+                                }
+                            ] : []),
+                            ...(showProjects ? [
+                                { 
+                                    color: 'orange', 
+                                    label: '地域内プロジェクト', 
+                                    count: filteredProjects.filter(p => p.location.area === '地域内').length 
+                                },
+                                { 
+                                    color: 'purple', 
+                                    label: '地域外プロジェクト', 
+                                    count: filteredProjects.filter(p => p.location.area === '地域外').length 
+                                }
+                            ] : [])
+                        ]
+                    })}
                 </div>
             </div>
             

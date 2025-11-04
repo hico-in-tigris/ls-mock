@@ -46,78 +46,51 @@ function renderPeople(container) {
             
             <!-- Quick Stats Cards -->
             <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-5 mb-6">
-                <div class="card bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 cursor-pointer hover:shadow-md transition-shadow" onclick="showCategoryDetail('active')">
-                    <div class="card-content">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-blue-700">アクティブ</p>
-                                <p class="text-2xl font-bold text-blue-900">${relationshipStats.active}</p>
-                            </div>
-                            <div class="w-8 h-8 bg-blue-200 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                ${createStatsCard({
+                    title: 'アクティブ',
+                    value: relationshipStats.active,
+                    color: 'blue',
+                    icon: `<svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>`,
+                    onClick: { name: 'showCategoryDetail', params: 'active' }
+                })}
                 
-                <div class="card bg-gradient-to-r from-green-50 to-green-100 border-green-200 cursor-pointer hover:shadow-md transition-shadow" onclick="showCategoryDetail('strong')">
-                    <div class="card-content">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-green-700">強いつながり</p>
-                                <p class="text-2xl font-bold text-green-900">${relationshipStats.strong}</p>
-                            </div>
-                            <div class="w-8 h-8 bg-green-200 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                ${createStatsCard({
+                    title: '強いつながり',
+                    value: relationshipStats.strong,
+                    color: 'green',
+                    icon: Icons.heart,
+                    onClick: { name: 'showCategoryDetail', params: 'strong' }
+                })}
                 
-                <div class="card bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 cursor-pointer hover:shadow-md transition-shadow" onclick="showCategoryDetail('needsFollow')">
-                    <div class="card-content">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-orange-700">要フォロー</p>
-                                <p class="text-2xl font-bold text-orange-900">${relationshipStats.needsFollow}</p>
-                            </div>
-                            <div class="w-8 h-8 bg-orange-200 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                ${createStatsCard({
+                    title: '要フォロー',
+                    value: relationshipStats.needsFollow,
+                    color: 'orange',
+                    icon: Icons.clock,
+                    onClick: { name: 'showCategoryDetail', params: 'needsFollow' }
+                })}
                 
-                <div class="card bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 cursor-pointer hover:shadow-md transition-shadow" onclick="showCategoryDetail('recent')">
-                    <div class="card-content">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-purple-700">新規</p>
-                                <p class="text-2xl font-bold text-purple-900">${relationshipStats.recent}</p>
-                            </div>
-                            <div class="w-8 h-8 bg-purple-200 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                ${createStatsCard({
+                    title: '新規',
+                    value: relationshipStats.recent,
+                    color: 'purple',
+                    icon: `<svg class="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>`,
+                    onClick: { name: 'showCategoryDetail', params: 'recent' }
+                })}
                 
-                <div class="card bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200">
-                    <div class="card-content">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-700">平均関係期間</p>
-                                <p class="text-2xl font-bold text-gray-900">${relationshipStats.avgDuration}ヶ月</p>
-                            </div>
-                            <div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                ${createStatsCard({
+                    title: '平均関係期間',
+                    value: `${relationshipStats.avgDuration}ヶ月`,
+                    color: 'gray',
+                    icon: `<svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>`
+                })}
+            </div>
                                 <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                 </svg>

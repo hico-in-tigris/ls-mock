@@ -23,60 +23,78 @@ function renderActions(container) {
                 </button>
             </div>
             
-            <div class="grid gap-6 md:grid-cols-3">
+                        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <!-- Todo -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold text-orange-600">Todo (${todoActions.length})</h3>
-                    </div>
-                    <div class="card-content space-y-3">
-                        ${todoActions.map(action => `
+                ${createHeaderCard(
+                    'Todo',
+                    `${todoActions.length}件のタスク`,
+                    createItemList(
+                        todoActions,
+                        action => `
                             <div class="p-3 border rounded-lg">
                                 <h4 class="font-medium text-sm">${action.content}</h4>
                                 <p class="text-xs text-muted-foreground">期限: ${formatDate(action.deadline)}</p>
                                 <div class="flex justify-between items-center mt-2">
-                                    <span class="badge action-${action.type}">${action.type}</span>
-                                    <button onclick="updateActionStatus(${action.id}, 'Doing')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">開始</button>
+                                    ${createBadge(action.type, 'secondary', `action-${action.type}`)}
+                                    ${createButton({
+                                        text: '開始',
+                                        size: 'sm',
+                                        variant: 'primary',
+                                        onClick: `updateActionStatus(${action.id}, 'Doing')`,
+                                        className: 'bg-blue-600 hover:bg-blue-700'
+                                    })}
                                 </div>
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
+                        `,
+                        'Todoタスクはありません'
+                    ),
+                    'border-orange-200'
+                )}
                 
                 <!-- Doing -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold text-blue-600">Doing (${doingActions.length})</h3>
-                    </div>
-                    <div class="card-content space-y-3">
-                        ${doingActions.map(action => `
+                ${createHeaderCard(
+                    'Doing',
+                    `${doingActions.length}件実行中`,
+                    createItemList(
+                        doingActions,
+                        action => `
                             <div class="p-3 border rounded-lg border-blue-200 bg-blue-50">
                                 <h4 class="font-medium text-sm">${action.content}</h4>
                                 <p class="text-xs text-muted-foreground">期限: ${formatDate(action.deadline)}</p>
                                 <div class="flex justify-between items-center mt-2">
-                                    <span class="badge action-${action.type}">${action.type}</span>
-                                    <button onclick="updateActionStatus(${action.id}, 'Done')" class="text-xs bg-green-600 text-white px-2 py-1 rounded">完了</button>
+                                    ${createBadge(action.type, 'secondary', `action-${action.type}`)}
+                                    ${createButton({
+                                        text: '完了',
+                                        size: 'sm',
+                                        variant: 'primary',
+                                        onClick: `updateActionStatus(${action.id}, 'Done')`,
+                                        className: 'bg-green-600 hover:bg-green-700'
+                                    })}
                                 </div>
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
+                        `,
+                        '実行中のタスクはありません'
+                    ),
+                    'border-blue-200'
+                )}
                 
                 <!-- Done -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold text-green-600">Done (${doneActions.length})</h3>
-                    </div>
-                    <div class="card-content space-y-3">
-                        ${doneActions.slice(0, 5).map(action => `
+                ${createHeaderCard(
+                    'Done',
+                    `${doneActions.length}件完了`,
+                    createItemList(
+                        doneActions.slice(0, 5),
+                        action => `
                             <div class="p-3 border rounded-lg border-green-200 bg-green-50">
                                 <h4 class="font-medium text-sm">${action.content}</h4>
                                 <p class="text-xs text-muted-foreground">期限: ${formatDate(action.deadline)}</p>
-                                <span class="badge action-${action.type}">${action.type}</span>
+                                ${createBadge(action.type, 'secondary', `action-${action.type}`)}
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
+                        `,
+                        '完了したタスクはありません'
+                    ),
+                    'border-green-200'
+                )}
             </div>
         </div>
     `;

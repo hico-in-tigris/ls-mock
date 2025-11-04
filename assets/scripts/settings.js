@@ -12,49 +12,30 @@ function renderSettings(container) {
             
             <div class="space-y-6">
                 <!-- User Settings -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold">ユーザー設定</h3>
-                        <p class="text-sm text-muted-foreground">プロフィールと地域設定の管理</p>
-                    </div>
-                    <div class="card-content space-y-4">
-                        <div class="grid gap-4">
-                            <button onclick="navigateToProfile()" 
-                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="flex items-center space-x-3">
-                                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="12" cy="7" r="4"/>
-                                    </svg>
-                                    <div class="text-left">
-                                        <h4 class="font-medium">プロフィール設定</h4>
-                                        <p class="text-sm text-gray-600">スキル、経験、志向の設定</p>
-                                    </div>
-                                </div>
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </button>
-                            
-                            <button onclick="navigateToRegion()" 
-                                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="flex items-center space-x-3">
-                                    <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    <div class="text-left">
-                                        <h4 class="font-medium">地域設定</h4>
-                                        <p class="text-sm text-gray-600">所属地域と地域情報の管理</p>
-                                    </div>
-                                </div>
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9,18 15,12 9,6"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                ${createHeaderCard(
+                    'ユーザー設定',
+                    'プロフィールと地域設定の管理',
+                    `<div class="grid gap-4">
+                        ${createSettingItem({
+                            title: 'プロフィール設定',
+                            description: 'スキル、経験、志向の設定',
+                            icon: Icons.user,
+                            iconColor: 'text-blue-600',
+                            onClick: 'navigateToProfile()'
+                        })}
+                        
+                        ${createSettingItem({
+                            title: '地域設定',
+                            description: '所属地域と地域情報の管理',
+                            icon: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>`,
+                            iconColor: 'text-green-600',
+                            onClick: 'navigateToRegion()'
+                        })}
+                    </div>`
+                )}
                 
                 <!-- Privacy Settings -->
                 <div class="card">

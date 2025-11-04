@@ -14,20 +14,24 @@ function renderSummary(container) {
                     <p class="text-muted-foreground">定期的なふりかえりで継続的な改善を図りましょう</p>
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="saveSummary()" class="btn btn-outline">
-                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${createButton({
+                        text: '保存',
+                        variant: 'secondary',
+                        onClick: 'saveSummary()',
+                        icon: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                             <polyline points="17,21 17,13 7,13 7,21"/>
                             <polyline points="7,3 7,8 15,8"/>
-                        </svg>
-                        保存
-                    </button>
-                    <button onclick="promoteSelectedToNext()" class="btn btn-primary">
-                        <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        </svg>`
+                    })}
+                    ${createButton({
+                        text: '次期プランに反映',
+                        variant: 'primary',
+                        onClick: 'promoteSelectedToNext()',
+                        icon: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="9,11 12,14 22,4"/>
-                        </svg>
-                        次期プランに反映
-                    </button>
+                        </svg>`
+                    })}
                 </div>
             </div>
             
