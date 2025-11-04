@@ -234,6 +234,13 @@ function showNotification(message, type = 'success') {
 
 // Initialize application
 function initializeApp() {
+    // Wait for appState to be available from core.js
+    if (typeof window.appState === 'undefined') {
+        console.warn('appState not available yet, retrying...');
+        setTimeout(initializeApp, 100);
+        return;
+    }
+    
     // Load saved settings
     const savedMasking = localStorage.getItem('appMasking');
     if (savedMasking !== null) {
@@ -257,7 +264,6 @@ window.updateDemoGuide = updateDemoGuide;
 window.toggleMasking = toggleMasking;
 window.maskData = maskData;
 window.showNotification = showNotification;
-window.appState = appState;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
