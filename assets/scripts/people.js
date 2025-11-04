@@ -17,7 +17,7 @@ function renderPeople(container) {
             <!-- Header -->
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
                 <div>
-                    <h1 class="text-3xl font-bold tracking-tight">人脈ネットワーク</h1>
+                    <h1 class="text-3xl font-bold tracking-tight">ネットワーク</h1>
                     <p class="text-muted-foreground">地域の関係者とのつながりを戦略的に管理</p>
                     <div class="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
                         <span>総人数: ${sampleData.people.length}人</span>
@@ -1064,7 +1064,7 @@ function addNewPerson(event) {
     closeAddPersonModal();
     renderCurrentRoute(); // Refresh the people page
     
-    alert(`${name}さんを人脈に追加しました！`);
+    alert(`${name}さんをネットワークに追加しました！`);
 }
 
 function getCommonConnections(person) {
@@ -1505,7 +1505,7 @@ function showCategoryDetail(category) {
                     <div class="flex items-center justify-between">
                         <div>
                             <h4 class="font-medium text-green-800">強いつながりを活用</h4>
-                            <p class="text-sm text-green-700">これらの方々にプロジェクトへの協力や新しい人脈の紹介を依頼できます</p>
+                            <p class="text-sm text-green-700">これらの方々にプロジェクトへの協力や新しいネットワークの紹介を依頼できます</p>
                         </div>
                         <button onclick="suggestNetworkingOpportunities('${category}')" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                             ネットワーキング提案

@@ -823,7 +823,7 @@ function initRouter() {
             const routeNames = {
                 'dashboard': 'ダッシュボード',
                 'projects': 'プロジェクト',
-                'people': '人脈',
+                'people': 'ネットワーク',
                 'actions': 'アクション',
                 'map': 'マップ',
                 'follow': 'Follow',
