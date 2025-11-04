@@ -562,3 +562,56 @@ select:focus-visible {
   -webkit-line-clamp: 3;
   line-clamp: 3;
 }
+
+/* ============= Step Content Expansion ============= */
+.step-content-area {
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+}
+
+.step-content-area:not(.hidden) {
+  max-height: 2000px; /* 十分な高さを確保 */
+  opacity: 1;
+}
+
+.step-content-area.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* スムーズな展開アニメーション */
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 2000px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 2000px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.step-content-expanding {
+  animation: slideDown 0.3s ease-in-out;
+}
+
+.step-content-collapsing {
+  animation: slideUp 0.3s ease-in-out;
+}

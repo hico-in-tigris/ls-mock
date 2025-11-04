@@ -2,7 +2,8 @@
 // LocalSuccess - Projects Core Module
 // ===============================
 
-function renderProjects(container) {
+// renderProjects関数はprojects.jsで定義されています
+function renderProjectsCore(container) {
     container.innerHTML = `
         <div class="animate-fade-in">
             <div class="flex justify-between items-center mb-8">
@@ -401,7 +402,7 @@ function editProject(projectId) {
 }
 
 // Export functions to global scope
-window.renderProjects = renderProjects;
+window.renderProjectsCore = renderProjectsCore;
 window.loadActiveProjects = loadActiveProjects;
 window.createSampleProjects = createSampleProjects;
 window.viewProject = viewProject;

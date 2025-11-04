@@ -229,7 +229,7 @@ function bindDesignButtons() {
     });
 }
 
-// Modal management functions
+// Modal management functions - projects.jsの関数を使用
 function openIdeationWorkspace(mode) {
     console.log('openIdeationWorkspace called with mode:', mode);
     
@@ -238,48 +238,26 @@ function openIdeationWorkspace(mode) {
         return;
     }
     
-    let modal = document.getElementById('project-modal');
-    if (!modal) {
-        console.log('Creating new modal');
-        // Create modal if it doesn't exist
-        modal = document.createElement('div');
-        modal.id = 'project-modal';
-        modal.className = 'fixed inset-0 z-50 hidden';
-        modal.innerHTML = `
-            <div class="fixed inset-0 bg-black/50" onclick="closeIdeationWorkspace()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-7xl bg-background shadow-lg border border-border rounded-lg max-h-[95vh] overflow-y-auto">
-                <div id="modal-content"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
+    // projects-modals.jsのopenProjectWorkspaceModalを使用
+    if (typeof openProjectWorkspaceModal === 'function') {
+        openProjectWorkspaceModal(mode);
     } else {
-        console.log('Using existing modal');
+        console.error('openProjectWorkspaceModal function not available');
     }
-    
-    const content = document.getElementById('modal-content');
-    
-    console.log('Calling renderIdeationWorkspace with mode:', mode);
-    const renderedContent = renderIdeationWorkspace(mode);
-    
-    content.innerHTML = renderedContent;
-    modal.classList.remove('hidden');
-    console.log('Modal displayed');
-    
-    // Update wizard progress and initialize content after modal opens
-    setTimeout(() => {
-        updateWizardProgress(mode);
-        
-        // Initialize stakeholder matrix if on stakeholder stage
-        if (mode === 'stakeholder') {
-            generateStakeholderMatrix();
-        }
-    }, 100);
 }
 
 function closeIdeationWorkspace() {
-    const modal = document.getElementById('project-modal');
-    if (modal) {
-        modal.classList.add('hidden');
+    // projects-modals.jsのcloseProjectWorkspaceModalを使用
+    if (typeof closeProjectWorkspaceModal === 'function') {
+        closeProjectWorkspaceModal();
+    } else {
+        console.error('closeProjectWorkspaceModal function not available');
+        // フォールバック
+        const modal = document.getElementById('project-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
     }
 }
 
