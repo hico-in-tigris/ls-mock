@@ -52,25 +52,6 @@ function renderSettings(container) {
                                     <polyline points="9,18 15,12 9,6"/>
                                 </svg>
                             </button>
-                            
-                            <div class="ml-6 pl-4 border-l-2 border-gray-200">
-                                <button onclick="navigateToIssues()" 
-                                        class="flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                    <div class="flex items-center space-x-3">
-                                        <svg class="h-5 w-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M12 9v4l2 2"/>
-                                            <path d="M21 12c0 1.3-.9 2.4-2 2.7V18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3.3c-1.1-.3-2-1.4-2-2.7V7a1 1 0 0 1 1 1h14a1 1 0 0 1 1-1v5z"/>
-                                        </svg>
-                                        <div class="text-left">
-                                            <h4 class="font-medium">地域課題管理</h4>
-                                            <p class="text-sm text-gray-600">課題の推論と管理</p>
-                                        </div>
-                                    </div>
-                                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="9,18 15,12 9,6"/>
-                                    </svg>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
