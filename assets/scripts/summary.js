@@ -122,10 +122,3 @@ function switchReflectionPeriod(period) {
 // Expose to global scope
 window.renderSummary = renderSummary;
 window.switchReflectionPeriod = switchReflectionPeriod;
-window.addDailyAction = addDailyAction;
-window.clearActionForm = clearActionForm;
-window.saveDailyReflection = saveDailyReflection;
-window.clearDailyReflection = clearDailyReflection;
-window.saveSummary = saveSummary;
-window.promoteSelectedToNext = promoteSelectedToNext;
-window.selectProject = selectProject;

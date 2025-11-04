@@ -131,3 +131,6 @@ const reflectionData = {
         }
     ]
 };
+
+// Expose to global scope
+window.reflectionData = reflectionData;

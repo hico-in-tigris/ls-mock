@@ -93,3 +93,11 @@ function renderReflectionContent(period) {
             break;
     }
 }
+
+// Expose to global scope
+window.selectProject = selectProject;
+window.getProjectActions = getProjectActions;
+window.getProject = getProject;
+window.saveReflectionData = saveReflectionData;
+window.loadReflectionData = loadReflectionData;
+window.renderReflectionContent = renderReflectionContent;

@@ -455,3 +455,9 @@ function renderYearlyReflection() {
         </div>
     `;
 }
+
+// Expose to global scope
+window.renderDailyReflection = renderDailyReflection;
+window.renderWeeklyReflection = renderWeeklyReflection;
+window.renderMonthlyReflection = renderMonthlyReflection;
+window.renderYearlyReflection = renderYearlyReflection;

@@ -98,3 +98,11 @@ function saveSummary() {
 function promoteSelectedToNext() {
     alert('選択された項目が次期プランに反映されました');
 }
+
+// Expose to global scope
+window.addDailyAction = addDailyAction;
+window.clearActionForm = clearActionForm;
+window.saveDailyReflection = saveDailyReflection;
+window.clearDailyReflection = clearDailyReflection;
+window.saveSummary = saveSummary;
+window.promoteSelectedToNext = promoteSelectedToNext;
