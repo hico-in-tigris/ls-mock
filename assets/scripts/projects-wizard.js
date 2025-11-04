@@ -303,6 +303,21 @@ function renderIdeationWorkspace(mode) {
         return '<div class="p-6"><p class="text-red-600">エラー: モードが指定されていません</p></div>';
     }
     
+    // Check if required functions are available
+    const requiredFunctions = {
+        'ideation': 'renderIdeationContent',
+        'planning': 'renderPlanningContent',
+        'goal-setting': 'renderGoalSettingContent',
+        'stakeholder': 'renderStakeholderContent',
+        'proposal': 'renderProposalContent'
+    };
+    
+    const functionName = requiredFunctions[mode];
+    if (functionName && typeof window[functionName] !== 'function') {
+        console.error(`Required function ${functionName} is not available`);
+        return `<div class="p-6"><p class="text-red-600">エラー: ${functionName}関数が見つかりません。スクリプトの読み込み順序を確認してください。</p></div>`;
+    }
+    
     if (mode === 'ideation') {
         console.log('Rendering ideation content');
         return renderIdeationContent();
