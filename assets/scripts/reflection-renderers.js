@@ -36,13 +36,24 @@ function renderDailyReflection() {
             
             <!-- Project Actions -->
             <div class="card">
-                <div class="card-header">
-                    <h3 class="font-semibold">
-                        ${selectedProject ? `${selectedProject.title}の` : ''}今日のアクション
-                    </h3>
-                    <p class="text-sm text-muted-foreground">
-                        ${projectActions.length > 0 ? `${projectActions.length}件のアクションがあります` : '今日はまだアクションがありません'}
-                    </p>
+                <div class="card-header flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold">
+                            ${selectedProject ? `${selectedProject.title}の` : ''}今日のアクション
+                        </h3>
+                        <p class="text-sm text-muted-foreground">
+                            ${projectActions.length > 0 ? `${projectActions.length}件のアクションがあります` : '今日はまだアクションがありません'}
+                        </p>
+                    </div>
+                    ${selectedProject ? `
+                        <button onclick="openActionModal()" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <svg class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            アクション追加
+                        </button>
+                    ` : ''}
                 </div>
                 <div class="card-content space-y-4">
                     ${projectActions.length > 0 ? `
@@ -60,64 +71,43 @@ function renderDailyReflection() {
                                 </div>
                             `).join('')}
                         </div>
-                        <hr class="my-4">
-                    ` : ''}
-                    
-                    <!-- Add Action Form -->
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2">
-                            <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            <h4 class="font-medium">新しいアクションを追加</h4>
+                    ` : `
+                        <div class="text-center py-12 text-muted-foreground">
+                            ${selectedProject ? 
+                                `<div class="space-y-4">
+                                    <div class="flex justify-center">
+                                        <svg class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M12 4v16m8-8H4"/>
+                                            <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.2"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-lg font-medium text-gray-700">今日はまだアクションがありません</p>
+                                        <p class="text-sm mt-2">右上の <span class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                                            <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                            </svg>
+                                            アクション追加</span> ボタンから<br>今日の活動を記録しましょう！</p>
+                                    </div>
+                                </div>` : 
+                                `<div class="space-y-4">
+                                    <div class="flex justify-center">
+                                        <svg class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M8 12l2 2 4-4"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-lg font-medium text-gray-700">プロジェクトを選択してください</p>
+                                        <p class="text-sm mt-2">上のプロジェクト選択エリアから<br>プロジェクトを選ぶと、アクションを追加できます</p>
+                                    </div>
+                                </div>`
+                            }
                         </div>
-                        
-                        ${!selectedProject ? `
-                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <p class="text-sm text-yellow-800">
-                                    <strong>⚠️ プロジェクトを選択してください</strong><br>
-                                    アクションを追加するには、まず上でプロジェクトを選択する必要があります。
-                                </p>
-                            </div>
-                        ` : ''}
-                        
-                        <div class="grid gap-4 md:grid-cols-3">
-                            <div>
-                                <label class="text-sm font-medium">時間</label>
-                                <input id="action-time" type="time" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="時間" ${!selectedProject ? 'disabled' : ''}>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium">アクション内容</label>
-                                <input id="action-content" type="text" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="実施したアクション" ${!selectedProject ? 'disabled' : ''}>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium">種類</label>
-                                <select id="action-type" class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" ${!selectedProject ? 'disabled' : ''}>
-                                    <option value="meeting">会議</option>
-                                    <option value="work">作業</option>
-                                    <option value="research">調査</option>
-                                    <option value="planning">企画</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">結果・成果</label>
-                            <textarea id="action-result" class="mt-1 w-full p-3 border border-input bg-background rounded-md text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" rows="2" placeholder="どのような結果や成果が得られましたか？" ${!selectedProject ? 'disabled' : ''}></textarea>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="addDailyAction()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2" ${!selectedProject ? 'disabled' : ''}>
-                                <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                </svg>
-                                アクションを追加
-                            </button>
-                            <button onclick="clearActionForm()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2" ${!selectedProject ? 'disabled' : ''}>
-                                クリア
-                            </button>
-                        </div>
-                    </div>
+                    `}
+                </div>
+            </div>
                 </div>
             </div>
             

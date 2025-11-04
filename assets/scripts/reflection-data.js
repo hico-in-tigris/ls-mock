@@ -10,7 +10,9 @@ const reflectionData = {
             selectedProject: 1, // デジタル移住サポートプログラム
             actions: [
                 { time: '09:00', action: '田中さんとの打診会議', result: '移住相談のニーズ確認完了', type: 'meeting', projectId: 1 },
+                { time: '11:30', action: 'VR体験プロトタイプ作成', result: '基本的なVR環境のセットアップが完了', type: 'work', projectId: 1 },
                 { time: '14:00', action: 'プロジェクト企画書更新', result: 'VR体験機能の詳細を追加', type: 'work', projectId: 1 },
+                { time: '15:30', action: '移住希望者アンケート分析', result: 'UI/UX改善点を3つ特定', type: 'research', projectId: 1 },
                 { time: '16:30', action: '地域課題調査', result: '3件の新しい課題を発見', type: 'research', projectId: 2 }
             ],
             reflection: {
