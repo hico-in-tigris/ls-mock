@@ -106,15 +106,6 @@
                     </div>
                 </div>
                 
-                <!-- Quick Add Button -->
-                <button class="quick-add-btn hidden sm:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Quick Add
-                </button>
-                
                 <!-- User Settings Menu -->
                 <div class="relative" id="user-menu">
                     <button onclick="toggleUserMenu()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-full bg-primary text-primary-foreground">
@@ -323,51 +314,6 @@
                 <!-- Content will be dynamically loaded here -->
             </div>
         </main>
-    </div>
-
-    <!-- Floating Action Button (Mobile) -->
-    <button class="quick-add-fab fixed bottom-6 right-6 z-50 md:hidden inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 h-14 w-14">
-        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-    </button>
-
-    <!-- Quick Add Modal -->
-    <div id="quick-add-modal" class="fixed inset-0 z-50 hidden">
-        <div class="fixed inset-0 bg-black/50" onclick="closeQuickAddModal()"></div>
-        <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-lg bg-background p-6 shadow-lg border border-border rounded-lg">
-            <div class="flex flex-col space-y-1.5 text-center sm:text-left">
-                <h3 class="text-lg font-semibold leading-none tracking-tight">Quick Add</h3>
-                <p class="text-sm text-muted-foreground">
-                    新しいアクションを追加します。# タグ、@ 人物、! 期限を使用できます
-                </p>
-            </div>
-            <div class="grid gap-4 py-4">
-                <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">アクション内容</label>
-                    <textarea 
-                        id="quick-add-input"
-                        class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        placeholder="例: @田中さん に #移住相談 の件で連絡 !2025-11-10"
-                    ></textarea>
-                </div>
-                <div class="text-xs text-muted-foreground space-y-1">
-                    <p><strong>使用例:</strong></p>
-                    <p>• # タグ: #移住相談, #イベント, #空き家</p>
-                    <p>• @ 人物: @田中さん, @佐藤さん</p>
-                    <p>• ! 期限: !今週末, !2025-11-10, !明日</p>
-                </div>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
-                <button onclick="closeQuickAddModal()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                    キャンセル
-                </button>
-                <button onclick="submitQuickAdd()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                    追加
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Demo Guide -->
