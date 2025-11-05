@@ -1348,37 +1348,98 @@
     return `
       <div class="card p-6">
         <div class="space-y-6">
+          <!-- ネットワークから候補を選択 -->
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
+            <div class="flex items-start gap-3 mb-3">
+              <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-blue-900 mb-2">ネットワークから候補を選ぶ</p>
+                <div class="flex items-center gap-2">
+                  <button onclick="openNetworkPicker()" class="inline-flex items-center text-sm px-3 py-1.5 rounded-md bg-white border border-blue-300 text-blue-700 hover:bg-blue-50">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    ネットワークから選択
+                  </button>
+                  <span class="text-xs text-blue-700">登録されている人物から簡単に追加できます</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- スキル・役割の充足状況 -->
+          <div id="gap-analysis-section" class="hidden">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-yellow-900 mb-2">スキル・役割の不足分析</p>
+                  <div id="gap-analysis-content" class="text-sm text-yellow-800"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div>
-            <label class="block text-sm font-medium mb-4">ステークホルダーマップ</label>
+            <div class="flex items-center justify-between mb-4">
+              <label class="block text-sm font-medium">ステークホルダーマップ</label>
+              <button onclick="analyzeGaps()" class="text-xs px-3 py-1 rounded-md bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                不足分析を表示
+              </button>
+            </div>
             <div class="grid grid-cols-1 gap-4">
               <div class="border rounded-lg p-4">
                 <div class="flex items-center justify-between mb-3">
                   <h4 class="font-medium">主要ステークホルダー</h4>
-                  <button class="text-sm text-primary hover:underline">+ 追加</button>
+                  <button onclick="addStakeholderRow()" class="text-sm text-primary hover:underline">+ 手動で追加</button>
                 </div>
-                <div class="space-y-2">
-                  <div class="grid grid-cols-4 gap-2 text-sm">
-                    <input type="text" placeholder="名前・役割" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
-                    <input type="text" placeholder="期待すること" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
-                    <input type="text" placeholder="懸念事項" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
-                    <select class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
-                      <option>影響度:高</option>
-                      <option>影響度:中</option>
-                      <option>影響度:低</option>
-                    </select>
-                  </div>
+                <div id="stakeholder-list" class="space-y-2">
+                  <!-- ステークホルダー行が動的に追加される -->
                 </div>
               </div>
             </div>
           </div>
           <div>
             <label class="block text-sm font-medium mb-2">コミュニケーション計画</label>
-            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="各ステークホルダーとどのように連携・報告していきますか？"></textarea>
+            <textarea id="stakeholder-comm-plan" class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="各ステークホルダーとどのように連携・報告していきますか？"></textarea>
           </div>
           <div class="flex justify-end gap-2">
             <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
             <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
             <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ネットワークピッカーモーダル -->
+      <div id="network-picker-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden">
+          <div class="p-4 border-b flex items-center justify-between">
+            <h3 class="text-lg font-semibold">ネットワークから関係者を選択</h3>
+            <button onclick="closeNetworkPicker()" class="text-muted-foreground hover:text-foreground">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="p-4">
+            <input 
+              type="text" 
+              id="network-search" 
+              placeholder="名前や役割で絞り込み..."
+              class="w-full px-3 py-2 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
+              oninput="filterNetworkPicker(this.value)"
+            />
+            <div id="network-picker-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+              <!-- 人物リストが動的に生成される -->
+            </div>
           </div>
         </div>
       </div>
@@ -1428,37 +1489,99 @@
     return `
       <div class="card p-6">
         <div class="space-y-6">
-          <div>
-            <h3 class="font-medium mb-4">収入計画</h3>
-            <div class="space-y-2">
-              <div class="grid grid-cols-3 gap-2">
-                <input type="text" placeholder="収入項目" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="number" placeholder="金額" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="text" placeholder="備考" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <!-- 目標月収シミュレーター -->
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-5 rounded-r">
+            <div class="flex items-start gap-3 mb-4">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+              <div class="flex-1">
+                <h3 class="font-semibold text-green-900 mb-2">💰 目標月収シミュレーター</h3>
+                <p class="text-sm text-green-800 mb-3">月にいくら稼ぎたいか入力すると、必要な売上と利用者数を自動計算します</p>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-green-900 mb-2">目標月収（粗利）</label>
+                    <div class="relative">
+                      <input 
+                        type="number" 
+                        id="target-monthly-income" 
+                        class="w-full px-3 py-2 pr-12 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        placeholder="300000"
+                        oninput="simulateFromTarget()"
+                      />
+                      <span class="absolute right-3 top-2 text-green-700 font-medium">円/月</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-green-900 mb-2">事業モデル</label>
+                    <select id="business-model-select" class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" onchange="simulateFromTarget()">
+                      <option value="">選択してください</option>
+                      <option value="coworking">コワーキングスペース</option>
+                      <option value="guesthouse">ゲストハウス</option>
+                      <option value="cafe">カフェ・飲食店</option>
+                      <option value="event">イベント事業</option>
+                      <option value="tour">観光ツアー</option>
+                      <option value="consulting">コンサル・サービス</option>
+                      <option value="subscription">サブスク・会員制</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="simulation-result" class="mt-4 hidden">
+                  <div class="bg-white rounded-lg p-4 border border-green-200">
+                    <div class="text-sm font-medium text-green-900 mb-3">📊 シミュレーション結果</div>
+                    <div id="simulation-content" class="space-y-2 text-sm"></div>
+                    <button onclick="applySimulation()" class="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
+                      この試算を予算に反映
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button class="text-sm text-primary hover:underline">+ 収入項目を追加</button>
             </div>
           </div>
+
           <div>
-            <h3 class="font-medium mb-4">支出計画</h3>
-            <div class="space-y-2">
-              <div class="grid grid-cols-3 gap-2">
-                <input type="text" placeholder="支出項目" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="number" placeholder="金額" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="text" placeholder="備考" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-              </div>
-              <button class="text-sm text-primary hover:underline">+ 支出項目を追加</button>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-medium">収入計画</h3>
+              <button onclick="addBudgetRow('income')" class="text-sm text-primary hover:underline">+ 収入項目を追加</button>
+            </div>
+            <div id="income-list" class="space-y-2">
+              <!-- 収入項目が動的に追加される -->
             </div>
           </div>
+          
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-medium">支出計画</h3>
+              <button onclick="addBudgetRow('expense')" class="text-sm text-primary hover:underline">+ 支出項目を追加</button>
+            </div>
+            <div id="expense-list" class="space-y-2">
+              <!-- 支出項目が動的に追加される -->
+            </div>
+          </div>
+          
           <div class="border-t pt-4">
-            <div class="flex justify-between items-center text-lg font-bold">
-              <span>収支</span>
-              <span class="text-green-600">+0円</span>
+            <div class="grid md:grid-cols-3 gap-4 text-center">
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="text-xs text-blue-700 mb-1">総収入</div>
+                <div id="total-income" class="text-2xl font-bold text-blue-900">¥0</div>
+              </div>
+              <div class="bg-red-50 rounded-lg p-4">
+                <div class="text-xs text-red-700 mb-1">総支出</div>
+                <div id="total-expense" class="text-2xl font-bold text-red-900">¥0</div>
+              </div>
+              <div class="bg-green-50 rounded-lg p-4">
+                <div class="text-xs text-green-700 mb-1">収支（粗利）</div>
+                <div id="net-profit" class="text-2xl font-bold text-green-900">¥0</div>
+              </div>
             </div>
           </div>
+          
           <div class="flex justify-end gap-2">
-            <button class="btn-secondary">保存</button>
-            <button class="btn-primary">収支表をエクスポート</button>
+            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+            <button class="btn">収支表をエクスポート</button>
           </div>
         </div>
       </div>
@@ -1472,6 +1595,1140 @@
     } else {
       showNotification(`${module}ワークスペースは準備中です`, 'info');
     }
+  };
+
+  // ===== ステークホルダー管理機能 =====
+  let stakeholders = []; // 追加されたステークホルダーのリスト
+
+  // ネットワークピッカーを開く
+  window.openNetworkPicker = function() {
+    const modal = document.getElementById('network-picker-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('hidden');
+    renderNetworkPickerList();
+  };
+
+  // ネットワークピッカーを閉じる
+  window.closeNetworkPicker = function() {
+    const modal = document.getElementById('network-picker-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  };
+
+  // 役割から期待できるスキル・貢献を推定
+  function getSuggestedContributions(person) {
+    const roleContributions = {
+      '役場': ['行政手続き支援', '補助金・助成金情報', '地域政策への反映', '公的機関との連携'],
+      '協力隊': ['イベント企画', 'SNS発信', '移住者視点のアドバイス', 'コミュニティづくり'],
+      '住民': ['地域の実情・歴史の共有', '口コミ拡散', '実行面でのサポート'],
+      '事業者': ['ビジネスノウハウ', '施設・設備の提供', '収益モデルのアドバイス', '顧客ネットワーク'],
+      '学生': ['若い視点', '調査・研究協力', 'SNS・デジタル活用', '新しいアイデア'],
+      'メディア': ['広報・PR', '取材・情報発信', '認知度向上', 'ブランディング支援'],
+      '研究者': ['専門知識', 'データ分析', '学術的裏付け', '他地域事例の紹介'],
+      'デザイナー': ['ビジュアルデザイン', 'ブランディング', 'UI/UX設計', '資料作成'],
+      '移住希望者': ['利用者視点', 'ニーズの具体化', '初期ユーザー', 'フィードバック'],
+    };
+
+    const contributions = roleContributions[person.role] || ['専門性の共有', 'ネットワーク提供'];
+    
+    // タグからも推定
+    const tagContributions = [];
+    if (person.tags) {
+      if (person.tags.some(t => t.includes('農業'))) tagContributions.push('農業知識・実践');
+      if (person.tags.some(t => t.includes('観光'))) tagContributions.push('観光振興ノウハウ');
+      if (person.tags.some(t => t.includes('空き家'))) tagContributions.push('物件情報・不動産知識');
+      if (person.tags.some(t => t.includes('イベント'))) tagContributions.push('イベント運営経験');
+      if (person.tags.some(t => t.includes('移住'))) tagContributions.push('移住支援・相談');
+    }
+
+    return [...contributions, ...tagContributions].slice(0, 4);
+  }
+
+  // ネットワークから人物リストを描画
+  function renderNetworkPickerList(filterText = '') {
+    const listContainer = document.getElementById('network-picker-list');
+    if (!listContainer) return;
+
+    // sampleDataからpeople取得
+    const people = (typeof sampleData !== 'undefined' && sampleData.people) ? sampleData.people : [];
+    
+    // フィルタリング
+    const filtered = people.filter(p => {
+      if (!filterText) return true;
+      const query = filterText.toLowerCase();
+      return p.name.toLowerCase().includes(query) || 
+             p.role.toLowerCase().includes(query) ||
+             (p.tags && p.tags.some(t => t.toLowerCase().includes(query)));
+    });
+
+    if (filtered.length === 0) {
+      listContainer.innerHTML = '<p class="text-center text-muted-foreground py-8">該当する人物が見つかりません</p>';
+      return;
+    }
+
+    listContainer.innerHTML = filtered.map(person => {
+      const contributions = getSuggestedContributions(person);
+      return `
+        <div class="border rounded-lg p-4 hover:bg-accent cursor-pointer transition-colors" onclick="selectStakeholderFromNetwork(${person.id})">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-lg">
+                ${person.avatar || person.name.substring(0, 1)}
+              </div>
+              <div>
+                <div class="font-semibold text-base">${person.name}</div>
+                <div class="text-sm text-muted-foreground">${person.role}</div>
+                ${person.tags ? `
+                  <div class="flex items-center gap-1 mt-1">
+                    ${person.tags.slice(0, 3).map(tag => 
+                      `<span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${tag}</span>`
+                    ).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+          
+          ${person.notes ? `
+            <p class="text-xs text-muted-foreground mb-3 line-clamp-2">${person.notes}</p>
+          ` : ''}
+          
+          <div class="bg-green-50 border-l-2 border-green-400 px-3 py-2 rounded-r">
+            <div class="text-xs font-medium text-green-900 mb-1">💡 期待できる貢献・役割</div>
+            <div class="flex flex-wrap gap-1">
+              ${contributions.map(c => 
+                `<span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-800">${c}</span>`
+              ).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ネットワークピッカーのフィルタリング
+  window.filterNetworkPicker = function(query) {
+    renderNetworkPickerList(query);
+  };
+
+  // ネットワークから関係者を選択
+  window.selectStakeholderFromNetwork = function(personId) {
+    const people = (typeof sampleData !== 'undefined' && sampleData.people) ? sampleData.people : [];
+    const person = people.find(p => p.id === personId);
+    
+    if (!person) return;
+
+    // ステークホルダーとして追加
+    const stakeholder = {
+      id: Date.now(),
+      name: person.name,
+      role: person.role,
+      expectations: '', // 後で入力
+      concerns: '', // 後で入力
+      influence: 'middle', // 初期値は「中」
+      fromNetwork: true,
+      networkPersonId: person.id
+    };
+
+    stakeholders.push(stakeholder);
+    renderStakeholderList();
+    closeNetworkPicker();
+    showNotification(`${person.name}さんを関係者に追加しました`, 'success');
+  };
+
+  // 手動でステークホルダー行を追加
+  window.addStakeholderRow = function() {
+    const stakeholder = {
+      id: Date.now(),
+      name: '',
+      role: '',
+      expectations: '',
+      concerns: '',
+      influence: 'middle',
+      fromNetwork: false
+    };
+    stakeholders.push(stakeholder);
+    renderStakeholderList();
+  };
+
+  // ステークホルダーを削除
+  window.removeStakeholder = function(id) {
+    stakeholders = stakeholders.filter(s => s.id !== id);
+    renderStakeholderList();
+  };
+
+  // ステークホルダーリストを描画
+  function renderStakeholderList() {
+    const listContainer = document.getElementById('stakeholder-list');
+    if (!listContainer) return;
+
+    if (stakeholders.length === 0) {
+      listContainer.innerHTML = `
+        <div class="text-center py-8 text-muted-foreground">
+          <p class="mb-2">まだ関係者が追加されていません</p>
+          <p class="text-sm">「ネットワークから選択」または「手動で追加」してください</p>
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = stakeholders.map(s => `
+      <div class="grid grid-cols-5 gap-2 items-center text-sm p-2 border rounded hover:bg-accent/50">
+        <div>
+          ${s.fromNetwork ? `
+            <div class="flex items-center gap-1">
+              <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <span class="font-medium">${s.name}</span>
+            </div>
+            <div class="text-xs text-muted-foreground">${s.role}</div>
+          ` : `
+            <input type="text" value="${s.name}" placeholder="名前・役割" 
+              class="w-full px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+              onchange="updateStakeholder(${s.id}, 'name', this.value)">
+          `}
+        </div>
+        <input type="text" value="${s.expectations}" placeholder="期待すること" 
+          class="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+          onchange="updateStakeholder(${s.id}, 'expectations', this.value)">
+        <input type="text" value="${s.concerns}" placeholder="懸念事項" 
+          class="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+          onchange="updateStakeholder(${s.id}, 'concerns', this.value)">
+        <select class="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+          onchange="updateStakeholder(${s.id}, 'influence', this.value)">
+          <option value="high" ${s.influence === 'high' ? 'selected' : ''}>影響度:高</option>
+          <option value="middle" ${s.influence === 'middle' ? 'selected' : ''}>影響度:中</option>
+          <option value="low" ${s.influence === 'low' ? 'selected' : ''}>影響度:低</option>
+        </select>
+        <button onclick="removeStakeholder(${s.id})" 
+          class="text-red-600 hover:text-red-800 px-2 py-1 text-xs" 
+          title="削除">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // ステークホルダー情報を更新
+  window.updateStakeholder = function(id, field, value) {
+    const stakeholder = stakeholders.find(s => s.id === id);
+    if (stakeholder) {
+      stakeholder[field] = value;
+    }
+  };
+
+  // スキル・役割の不足分析
+  window.analyzeGaps = function() {
+    const section = document.getElementById('gap-analysis-section');
+    const content = document.getElementById('gap-analysis-content');
+    
+    if (!section || !content) return;
+
+    // 必要なスキル・役割のリスト（プロジェクトタイプに応じてカスタマイズ可能）
+    const idealRoles = [
+      { role: '行政・公的機関', skills: ['補助金・助成金', '行政手続き', '公的ネットワーク'], icon: '🏛️' },
+      { role: 'ビジネス・事業者', skills: ['収益モデル', '顧客獲得', '事業運営'], icon: '💼' },
+      { role: '広報・メディア', skills: ['PR・広報', '情報発信', 'ブランディング'], icon: '📢' },
+      { role: 'デザイン・クリエイティブ', skills: ['デザイン', 'UI/UX', '資料作成'], icon: '🎨' },
+      { role: '地域住民', skills: ['地域の実情', '口コミ', '実行サポート'], icon: '👥' },
+      { role: '専門家・研究者', skills: ['専門知識', 'データ分析', '学術的裏付け'], icon: '🎓' },
+      { role: 'IT・デジタル', skills: ['Web制作', 'SNS運用', 'システム開発'], icon: '💻' },
+    ];
+
+    // 現在のステークホルダーからカバーされている役割を分析
+    const people = (typeof sampleData !== 'undefined' && sampleData.people) ? sampleData.people : [];
+    const coveredRoles = new Set();
+    const coveredSkills = new Set();
+
+    stakeholders.forEach(sh => {
+      if (sh.fromNetwork && sh.networkPersonId) {
+        const person = people.find(p => p.id === sh.networkPersonId);
+        if (person) {
+          coveredRoles.add(person.role);
+          const contributions = getSuggestedContributions(person);
+          contributions.forEach(c => coveredSkills.add(c));
+        }
+      }
+    });
+
+    // 不足している役割とスキルを特定
+    const gaps = idealRoles.map(idealRole => {
+      const hasRole = Array.from(coveredRoles).some(role => {
+        // 役割マッチング（柔軟に）
+        if (idealRole.role.includes('行政') && (role.includes('役場') || role.includes('行政'))) return true;
+        if (idealRole.role.includes('ビジネス') && (role.includes('事業者') || role.includes('経営'))) return true;
+        if (idealRole.role.includes('広報') && (role.includes('メディア') || role.includes('広報'))) return true;
+        if (idealRole.role.includes('デザイン') && role.includes('デザイナー')) return true;
+        if (idealRole.role.includes('住民') && role.includes('住民')) return true;
+        if (idealRole.role.includes('専門家') && (role.includes('研究者') || role.includes('専門'))) return true;
+        if (idealRole.role.includes('IT') && (role.includes('エンジニア') || role.includes('IT'))) return true;
+        return false;
+      });
+
+      const missingSkills = idealRole.skills.filter(skill => {
+        return !Array.from(coveredSkills).some(cs => cs.includes(skill) || skill.includes(cs));
+      });
+
+      return {
+        ...idealRole,
+        hasRole,
+        missingSkills
+      };
+    });
+
+    const hasGaps = gaps.some(g => !g.hasRole || g.missingSkills.length > 0);
+
+    if (!hasGaps) {
+      content.innerHTML = `
+        <div class="flex items-center gap-2 text-green-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="font-medium">主要な役割はカバーされています！</span>
+        </div>
+      `;
+    } else {
+      const gapItems = gaps.filter(g => !g.hasRole || g.missingSkills.length > 0);
+      content.innerHTML = `
+        <div class="space-y-2">
+          <p class="font-medium mb-2">以下の役割・スキルが不足している可能性があります：</p>
+          ${gapItems.map(gap => `
+            <div class="bg-white rounded-lg p-3 border border-yellow-200">
+              <div class="flex items-start gap-2">
+                <span class="text-xl">${gap.icon}</span>
+                <div class="flex-1">
+                  <div class="font-medium text-sm ${gap.hasRole ? 'text-gray-700' : 'text-yellow-900'}">
+                    ${gap.role} ${gap.hasRole ? '（一部カバー済み）' : '（未カバー）'}
+                  </div>
+                  ${gap.missingSkills.length > 0 ? `
+                    <div class="text-xs text-yellow-700 mt-1">
+                      不足スキル: ${gap.missingSkills.join('、')}
+                    </div>
+                  ` : ''}
+                </div>
+                ${!gap.hasRole ? `
+                  <button onclick="searchNetworkByRole('${gap.role}')" class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200">
+                    探す
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `).join('')}
+          <div class="mt-3 text-xs text-yellow-700">
+            💡 「ネットワークから選択」で適切な人物を探してみましょう
+          </div>
+        </div>
+      `;
+    }
+
+    section.classList.remove('hidden');
+  };
+
+  // 役割で絞り込んでネットワークピッカーを開く
+  window.searchNetworkByRole = function(roleHint) {
+    openNetworkPicker();
+    
+    // 検索ボックスに役割ヒントを入力
+    setTimeout(() => {
+      const searchBox = document.getElementById('network-search');
+      if (searchBox) {
+        // 役割キーワードをマッピング
+        const roleKeywords = {
+          '行政・公的機関': '役場',
+          'ビジネス・事業者': '事業者',
+          '広報・メディア': 'メディア',
+          'デザイン・クリエイティブ': 'デザイナー',
+          '地域住民': '住民',
+          '専門家・研究者': '研究者',
+          'IT・デジタル': 'エンジニア'
+        };
+        
+        const keyword = roleKeywords[roleHint] || '';
+        searchBox.value = keyword;
+        filterNetworkPicker(keyword);
+      }
+    }, 100);
+  };
+
+  // ===== 予算・収支管理機能 =====
+  let budgetItems = {
+    income: [],
+    expense: []
+  };
+
+  // 予算項目を追加
+  window.addBudgetRow = function(type) {
+    const item = {
+      id: Date.now(),
+      type: type, // 'income' or 'expense'
+      name: '',
+      amount: 0,
+      note: ''
+    };
+    budgetItems[type].push(item);
+    renderBudgetLists();
+  };
+
+  // 予算項目を削除
+  window.removeBudgetItem = function(type, id) {
+    budgetItems[type] = budgetItems[type].filter(item => item.id !== id);
+    renderBudgetLists();
+  };
+
+  // 予算項目を更新
+  window.updateBudgetItem = function(type, id, field, value) {
+    const item = budgetItems[type].find(i => i.id === id);
+    if (item) {
+      item[field] = field === 'amount' ? parseFloat(value) || 0 : value;
+      updateTotals();
+    }
+  };
+
+  // 予算リストを描画
+  function renderBudgetLists() {
+    renderBudgetList('income');
+    renderBudgetList('expense');
+    updateTotals();
+  }
+
+  function renderBudgetList(type) {
+    const container = document.getElementById(`${type}-list`);
+    if (!container) return;
+
+    const items = budgetItems[type];
+    
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-6 text-muted-foreground text-sm">
+          <p>${type === 'income' ? '収入' : '支出'}項目がまだ追加されていません</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <div class="grid grid-cols-12 gap-2 items-center p-2 border rounded hover:bg-accent/50">
+        <input 
+          type="text" 
+          value="${item.name}" 
+          placeholder="${type === 'income' ? '収入' : '支出'}項目名"
+          class="col-span-4 px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+          onchange="updateBudgetItem('${type}', ${item.id}, 'name', this.value)"
+        />
+        <div class="col-span-3 relative">
+          <input 
+            type="number" 
+            value="${item.amount}" 
+            placeholder="0"
+            class="w-full px-2 py-1 pr-8 border rounded focus:outline-none focus:ring-1 focus:ring-primary text-sm text-right"
+            onchange="updateBudgetItem('${type}', ${item.id}, 'amount', this.value)"
+          />
+          <span class="absolute right-2 top-1 text-xs text-muted-foreground">円</span>
+        </div>
+        <input 
+          type="text" 
+          value="${item.note}" 
+          placeholder="備考・メモ"
+          class="col-span-4 px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+          onchange="updateBudgetItem('${type}', ${item.id}, 'note', this.value)"
+        />
+        <button 
+          onclick="removeBudgetItem('${type}', ${item.id})" 
+          class="col-span-1 text-red-600 hover:text-red-800 text-sm"
+          title="削除"
+        >
+          <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // 合計を更新
+  function updateTotals() {
+    const totalIncome = budgetItems.income.reduce((sum, item) => sum + (item.amount || 0), 0);
+    const totalExpense = budgetItems.expense.reduce((sum, item) => sum + (item.amount || 0), 0);
+    const netProfit = totalIncome - totalExpense;
+
+    const incomeEl = document.getElementById('total-income');
+    const expenseEl = document.getElementById('total-expense');
+    const profitEl = document.getElementById('net-profit');
+
+    if (incomeEl) incomeEl.textContent = `¥${totalIncome.toLocaleString()}`;
+    if (expenseEl) expenseEl.textContent = `¥${totalExpense.toLocaleString()}`;
+    if (profitEl) {
+      profitEl.textContent = `¥${netProfit.toLocaleString()}`;
+      profitEl.className = `text-2xl font-bold ${netProfit >= 0 ? 'text-green-900' : 'text-red-900'}`;
+    }
+  }
+
+  // ゲストハウス詳細シミュレーター
+  window.showDetailedGuesthouseSimulator = function() {
+    const modalHTML = `
+      <div id="guesthouse-simulator-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+            <h3 class="text-xl font-bold">ゲストハウス詳細収支シミュレーター</h3>
+            <button onclick="closeGuesthouseSimulator()" class="text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="p-6 space-y-6">
+            <!-- 基本情報 -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h4 class="font-semibold text-blue-900 mb-3">基本情報</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm text-blue-800 mb-1">客室数</label>
+                  <input type="number" id="gh-rooms" value="3" min="1" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-blue-800 mb-1">月の営業日数</label>
+                  <input type="number" id="gh-days" value="30" min="1" max="31" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- 宿泊料金設定 -->
+            <div class="bg-green-50 rounded-lg p-4">
+              <h4 class="font-semibold text-green-900 mb-3">宿泊料金設定</h4>
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm text-green-800 mb-1">平日単価（円/泊）</label>
+                  <input type="number" id="gh-price-weekday" value="4000" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-green-800 mb-1">週末単価（円/泊）</label>
+                  <input type="number" id="gh-price-weekend" value="5500" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-green-800 mb-1">ハイシーズン単価（円/泊）</label>
+                  <input type="number" id="gh-price-high" value="6500" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- 稼働率設定 -->
+            <div class="bg-yellow-50 rounded-lg p-4">
+              <h4 class="font-semibold text-yellow-900 mb-3">稼働率設定（%）</h4>
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm text-yellow-800 mb-1">平日稼働率</label>
+                  <input type="number" id="gh-occ-weekday" value="50" min="0" max="100" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-yellow-800 mb-1">週末稼働率</label>
+                  <input type="number" id="gh-occ-weekend" value="75" min="0" max="100" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-yellow-800 mb-1">ハイシーズン稼働率</label>
+                  <input type="number" id="gh-occ-high" value="90" min="0" max="100" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- 日数配分 -->
+            <div class="bg-purple-50 rounded-lg p-4">
+              <h4 class="font-semibold text-purple-900 mb-3">日数配分（月30日として）</h4>
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm text-purple-800 mb-1">平日（日）</label>
+                  <input type="number" id="gh-days-weekday" value="20" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-purple-800 mb-1">週末（日）</label>
+                  <input type="number" id="gh-days-weekend" value="8" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-purple-800 mb-1">ハイシーズン（日）</label>
+                  <input type="number" id="gh-days-high" value="2" class="w-full px-3 py-2 border rounded" onchange="calculateGuesthouseRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- 試算結果 -->
+            <div id="gh-revenue-result" class="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-4">
+              <h4 class="font-semibold text-green-900 mb-3">売上試算</h4>
+              <div id="gh-revenue-breakdown" class="space-y-2"></div>
+            </div>
+
+            <!-- 固定費 -->
+            <div class="bg-red-50 rounded-lg p-4">
+              <h4 class="font-semibold text-red-900 mb-3 flex justify-between items-center">
+                <span>固定費（月額）</span>
+                <button onclick="addGuesthouseExpense('fixed')" class="text-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                  + 項目追加
+                </button>
+              </h4>
+              <div id="gh-fixed-expenses" class="space-y-2"></div>
+            </div>
+
+            <!-- 変動費 -->
+            <div class="bg-orange-50 rounded-lg p-4">
+              <h4 class="font-semibold text-orange-900 mb-3 flex justify-between items-center">
+                <span>変動費（月額）</span>
+                <button onclick="addGuesthouseExpense('variable')" class="text-sm px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700">
+                  + 項目追加
+                </button>
+              </h4>
+              <div id="gh-variable-expenses" class="space-y-2"></div>
+            </div>
+
+            <!-- 損益サマリー -->
+            <div id="gh-profit-summary" class="bg-gradient-to-r from-blue-900 to-green-900 text-white rounded-lg p-6">
+              <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div class="text-sm opacity-80">月間売上</div>
+                  <div id="gh-total-revenue" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+                <div>
+                  <div class="text-sm opacity-80">月間経費</div>
+                  <div id="gh-total-expense" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+                <div>
+                  <div class="text-sm opacity-80">月間利益</div>
+                  <div id="gh-net-profit" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="flex gap-3">
+              <button onclick="applyGuesthouseSimulation()" class="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 font-semibold">
+                この試算を予算に反映する
+              </button>
+              <button onclick="closeGuesthouseSimulator()" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // 初期費用項目を設定
+    initializeGuesthouseExpenses();
+    calculateGuesthouseRevenue();
+  };
+
+  // ゲストハウスシミュレーターを閉じる
+  window.closeGuesthouseSimulator = function() {
+    const modal = document.getElementById('guesthouse-simulator-modal');
+    if (modal) modal.remove();
+  };
+
+  // 初期費用項目を設定
+  function initializeGuesthouseExpenses() {
+    window.guesthouseExpenses = {
+      fixed: [
+        { id: 1, name: '家賃・賃料', amount: 100000, note: '物件賃料' },
+        { id: 2, name: '水道光熱費', amount: 35000, note: '電気・水道・ガス' },
+        { id: 3, name: '通信費', amount: 8000, note: 'インターネット・電話' },
+        { id: 4, name: '保険料', amount: 15000, note: '火災保険・賠償責任保険' },
+        { id: 5, name: '人件費', amount: 80000, note: '清掃・管理スタッフ' }
+      ],
+      variable: [
+        { id: 6, name: '消耗品費', amount: 25000, note: 'リネン・アメニティ' },
+        { id: 7, name: '清掃費', amount: 20000, note: '外部清掃委託' },
+        { id: 8, name: '広告宣伝費', amount: 30000, note: '予約サイト・SNS広告' },
+        { id: 9, name: '手数料', amount: 15000, note: '予約サイト手数料' },
+        { id: 10, name: '雑費', amount: 10000, note: 'その他経費' }
+      ]
+    };
+    renderGuesthouseExpenses();
+  }
+
+  // 費用項目を描画
+  function renderGuesthouseExpenses() {
+    ['fixed', 'variable'].forEach(type => {
+      const container = document.getElementById(`gh-${type}-expenses`);
+      if (!container) return;
+      
+      const expenses = window.guesthouseExpenses[type];
+      container.innerHTML = expenses.map(exp => `
+        <div class="grid grid-cols-12 gap-2 items-center bg-white rounded p-2 border">
+          <input type="text" value="${exp.name}" class="col-span-4 px-2 py-1 border rounded text-sm" 
+            onchange="updateGuesthouseExpense('${type}', ${exp.id}, 'name', this.value)">
+          <div class="col-span-3 relative">
+            <input type="number" value="${exp.amount}" class="w-full px-2 py-1 pr-8 border rounded text-sm text-right" 
+              onchange="updateGuesthouseExpense('${type}', ${exp.id}, 'amount', this.value)">
+            <span class="absolute right-2 top-1 text-xs text-gray-500">円</span>
+          </div>
+          <input type="text" value="${exp.note}" class="col-span-4 px-2 py-1 border rounded text-sm" 
+            onchange="updateGuesthouseExpense('${type}', ${exp.id}, 'note', this.value)">
+          <button onclick="removeGuesthouseExpense('${type}', ${exp.id})" class="col-span-1 text-red-600 hover:text-red-800">
+            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    });
+    calculateGuesthouseProfit();
+  }
+
+  // 費用項目を追加
+  window.addGuesthouseExpense = function(type) {
+    const newId = Date.now();
+    window.guesthouseExpenses[type].push({
+      id: newId,
+      name: '',
+      amount: 0,
+      note: ''
+    });
+    renderGuesthouseExpenses();
+  };
+
+  // 費用項目を更新
+  window.updateGuesthouseExpense = function(type, id, field, value) {
+    const expense = window.guesthouseExpenses[type].find(e => e.id === id);
+    if (expense) {
+      expense[field] = field === 'amount' ? parseFloat(value) || 0 : value;
+      calculateGuesthouseProfit();
+    }
+  };
+
+  // 費用項目を削除
+  window.removeGuesthouseExpense = function(type, id) {
+    window.guesthouseExpenses[type] = window.guesthouseExpenses[type].filter(e => e.id !== id);
+    renderGuesthouseExpenses();
+  };
+
+  // 売上を計算
+  window.calculateGuesthouseRevenue = function() {
+    const rooms = parseFloat(document.getElementById('gh-rooms')?.value) || 0;
+    const priceWeekday = parseFloat(document.getElementById('gh-price-weekday')?.value) || 0;
+    const priceWeekend = parseFloat(document.getElementById('gh-price-weekend')?.value) || 0;
+    const priceHigh = parseFloat(document.getElementById('gh-price-high')?.value) || 0;
+    const occWeekday = parseFloat(document.getElementById('gh-occ-weekday')?.value) || 0;
+    const occWeekend = parseFloat(document.getElementById('gh-occ-weekend')?.value) || 0;
+    const occHigh = parseFloat(document.getElementById('gh-occ-high')?.value) || 0;
+    const daysWeekday = parseFloat(document.getElementById('gh-days-weekday')?.value) || 0;
+    const daysWeekend = parseFloat(document.getElementById('gh-days-weekend')?.value) || 0;
+    const daysHigh = parseFloat(document.getElementById('gh-days-high')?.value) || 0;
+
+    const revenueWeekday = rooms * priceWeekday * daysWeekday * (occWeekday / 100);
+    const revenueWeekend = rooms * priceWeekend * daysWeekend * (occWeekend / 100);
+    const revenueHigh = rooms * priceHigh * daysHigh * (occHigh / 100);
+    const totalRevenue = revenueWeekday + revenueWeekend + revenueHigh;
+
+    const breakdownEl = document.getElementById('gh-revenue-breakdown');
+    if (breakdownEl) {
+      breakdownEl.innerHTML = `
+        <div class="flex justify-between items-center py-1 border-b">
+          <span class="text-sm">平日: ${rooms}室 × ¥${priceWeekday.toLocaleString()} × ${daysWeekday}日 × ${occWeekday}%</span>
+          <span class="font-semibold">¥${Math.round(revenueWeekday).toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b">
+          <span class="text-sm">週末: ${rooms}室 × ¥${priceWeekend.toLocaleString()} × ${daysWeekend}日 × ${occWeekend}%</span>
+          <span class="font-semibold">¥${Math.round(revenueWeekend).toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b">
+          <span class="text-sm">ハイシーズン: ${rooms}室 × ¥${priceHigh.toLocaleString()} × ${daysHigh}日 × ${occHigh}%</span>
+          <span class="font-semibold">¥${Math.round(revenueHigh).toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 mt-2 bg-green-200 rounded px-2">
+          <span class="font-bold text-green-900">月間売上合計</span>
+          <span class="font-bold text-green-900 text-xl">¥${Math.round(totalRevenue).toLocaleString()}</span>
+        </div>
+      `;
+    }
+
+    const revenueEl = document.getElementById('gh-total-revenue');
+    if (revenueEl) revenueEl.textContent = `¥${Math.round(totalRevenue).toLocaleString()}`;
+
+    calculateGuesthouseProfit();
+  };
+
+  // 損益を計算
+  function calculateGuesthouseProfit() {
+    const revenueText = document.getElementById('gh-total-revenue')?.textContent || '¥0';
+    const revenue = parseFloat(revenueText.replace(/[¥,]/g, '')) || 0;
+
+    if (!window.guesthouseExpenses) return;
+
+    const fixedTotal = window.guesthouseExpenses.fixed.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const variableTotal = window.guesthouseExpenses.variable.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalExpense = fixedTotal + variableTotal;
+    const netProfit = revenue - totalExpense;
+
+    const expenseEl = document.getElementById('gh-total-expense');
+    const profitEl = document.getElementById('gh-net-profit');
+
+    if (expenseEl) expenseEl.textContent = `¥${totalExpense.toLocaleString()}`;
+    if (profitEl) {
+      profitEl.textContent = `¥${netProfit.toLocaleString()}`;
+      profitEl.className = `text-2xl font-bold mt-1 ${netProfit >= 0 ? 'text-green-200' : 'text-red-200'}`;
+    }
+  }
+
+  // シミュレーション結果を予算に反映
+  window.applyGuesthouseSimulation = function() {
+    const revenueText = document.getElementById('gh-total-revenue')?.textContent || '¥0';
+    const revenue = parseFloat(revenueText.replace(/[¥,]/g, '')) || 0;
+
+    // 既存の予算項目をクリア
+    budgetItems.income = [];
+    budgetItems.expense = [];
+
+    // 収入項目を追加（内訳として）
+    const rooms = parseFloat(document.getElementById('gh-rooms')?.value) || 0;
+    const priceWeekday = parseFloat(document.getElementById('gh-price-weekday')?.value) || 0;
+    const priceWeekend = parseFloat(document.getElementById('gh-price-weekend')?.value) || 0;
+    const priceHigh = parseFloat(document.getElementById('gh-price-high')?.value) || 0;
+    const occWeekday = parseFloat(document.getElementById('gh-occ-weekday')?.value) || 0;
+    const occWeekend = parseFloat(document.getElementById('gh-occ-weekend')?.value) || 0;
+    const occHigh = parseFloat(document.getElementById('gh-occ-high')?.value) || 0;
+    const daysWeekday = parseFloat(document.getElementById('gh-days-weekday')?.value) || 0;
+    const daysWeekend = parseFloat(document.getElementById('gh-days-weekend')?.value) || 0;
+    const daysHigh = parseFloat(document.getElementById('gh-days-high')?.value) || 0;
+
+    budgetItems.income.push({
+      id: Date.now() + 1,
+      type: 'income',
+      name: '宿泊料（平日）',
+      amount: Math.round(rooms * priceWeekday * daysWeekday * (occWeekday / 100)),
+      note: `${rooms}室×¥${priceWeekday}×${daysWeekday}日×${occWeekday}%`
+    });
+
+    budgetItems.income.push({
+      id: Date.now() + 2,
+      type: 'income',
+      name: '宿泊料（週末）',
+      amount: Math.round(rooms * priceWeekend * daysWeekend * (occWeekend / 100)),
+      note: `${rooms}室×¥${priceWeekend}×${daysWeekend}日×${occWeekend}%`
+    });
+
+    if (daysHigh > 0) {
+      budgetItems.income.push({
+        id: Date.now() + 3,
+        type: 'income',
+        name: '宿泊料（ハイシーズン）',
+        amount: Math.round(rooms * priceHigh * daysHigh * (occHigh / 100)),
+        note: `${rooms}室×¥${priceHigh}×${daysHigh}日×${occHigh}%`
+      });
+    }
+
+    // 支出項目を追加
+    if (window.guesthouseExpenses) {
+      window.guesthouseExpenses.fixed.forEach(exp => {
+        budgetItems.expense.push({
+          id: Date.now() + Math.random(),
+          type: 'expense',
+          name: exp.name,
+          amount: exp.amount,
+          note: `固定費: ${exp.note}`
+        });
+      });
+
+      window.guesthouseExpenses.variable.forEach(exp => {
+        budgetItems.expense.push({
+          id: Date.now() + Math.random(),
+          type: 'expense',
+          name: exp.name,
+          amount: exp.amount,
+          note: `変動費: ${exp.note}`
+        });
+      });
+    }
+
+    renderBudgetLists();
+    closeGuesthouseSimulator();
+    showNotification('ゲストハウス収支計画を予算に反映しました', 'success');
+  };
+
+  // 目標月収からシミュレーション
+  window.simulateFromTarget = function() {
+    const targetIncome = parseFloat(document.getElementById('target-monthly-income')?.value) || 0;
+    const businessModel = document.getElementById('business-model-select')?.value;
+    
+    // ゲストハウスの場合は詳細シミュレーターを開く
+    if (businessModel === 'guesthouse') {
+      showDetailedGuesthouseSimulator();
+      return;
+    }
+    
+    const resultSection = document.getElementById('simulation-result');
+    const contentEl = document.getElementById('simulation-content');
+    
+    if (!resultSection || !contentEl) return;
+
+    if (targetIncome === 0 || !businessModel) {
+      resultSection.classList.add('hidden');
+      return;
+    }
+
+    // 事業モデル別のシミュレーションパラメータ
+    const models = {
+      coworking: {
+        name: 'コワーキングスペース',
+        incomes: [
+          { name: '月額会員', unitPrice: 15000, description: '月額会員費' },
+          { name: 'ドロップイン', unitPrice: 1000, description: 'ドロップイン利用' }
+        ],
+        expenses: [
+          { name: '家賃', amount: 80000, description: '施設賃料' },
+          { name: '水道光熱費', amount: 30000, description: '電気・水道・ガス' },
+          { name: '通信費', amount: 10000, description: 'インターネット' }
+        ],
+        profitRate: 0.4
+      },
+      guesthouse: {
+        name: 'ゲストハウス',
+        incomes: [
+          { name: '宿泊料', unitPrice: 4000, description: '1泊あたり' }
+        ],
+        expenses: [
+          { name: '家賃', amount: 100000, description: '施設賃料' },
+          { name: '水道光熱費', amount: 50000, description: '電気・水道・ガス' },
+          { name: '消耗品費', amount: 30000, description: 'リネン・アメニティ等' }
+        ],
+        profitRate: 0.35
+      },
+      cafe: {
+        name: 'カフェ・飲食店',
+        incomes: [
+          { name: '飲食売上', unitPrice: 800, description: '客単価' }
+        ],
+        expenses: [
+          { name: '家賃', amount: 120000, description: '店舗賃料' },
+          { name: '食材費', amount: 150000, description: '原価（売上の30%想定）' },
+          { name: '水道光熱費', amount: 40000, description: '電気・水道・ガス' }
+        ],
+        profitRate: 0.25
+      },
+      event: {
+        name: 'イベント事業',
+        incomes: [
+          { name: 'イベント参加費', unitPrice: 3000, description: '1人あたり' }
+        ],
+        expenses: [
+          { name: '会場費', amount: 50000, description: '月平均' },
+          { name: '材料費', amount: 40000, description: 'イベント材料' },
+          { name: '広告宣伝費', amount: 30000, description: 'SNS広告等' }
+        ],
+        profitRate: 0.45
+      },
+      tour: {
+        name: '観光ツアー',
+        incomes: [
+          { name: 'ツアー料金', unitPrice: 5000, description: '1人あたり' }
+        ],
+        expenses: [
+          { name: '交通費', amount: 60000, description: '車両維持費等' },
+          { name: '保険料', amount: 20000, description: '旅行保険' },
+          { name: '広告宣伝費', amount: 40000, description: 'プロモーション' }
+        ],
+        profitRate: 0.5
+      },
+      consulting: {
+        name: 'コンサル・サービス',
+        incomes: [
+          { name: 'コンサル料', unitPrice: 50000, description: '1件あたり' }
+        ],
+        expenses: [
+          { name: '通信費', amount: 15000, description: 'インターネット・電話' },
+          { name: '交通費', amount: 30000, description: '訪問交通費' },
+          { name: '広告宣伝費', amount: 25000, description: 'Web広告等' }
+        ],
+        profitRate: 0.7
+      },
+      subscription: {
+        name: 'サブスク・会員制',
+        incomes: [
+          { name: '月額会費', unitPrice: 2000, description: '1人あたり' }
+        ],
+        expenses: [
+          { name: 'サーバー費', amount: 20000, description: 'システム維持費' },
+          { name: 'コンテンツ制作費', amount: 50000, description: '月次コンテンツ' },
+          { name: '広告宣伝費', amount: 40000, description: 'プロモーション' }
+        ],
+        profitRate: 0.6
+      }
+    };
+
+    const model = models[businessModel];
+    if (!model) return;
+
+    // 必要売上を計算（目標粗利 ÷ 粗利率）
+    const requiredRevenue = Math.ceil(targetIncome / model.profitRate);
+    const totalExpenses = model.expenses.reduce((sum, e) => sum + e.amount, 0);
+
+    let simulationHTML = `
+      <div class="space-y-3">
+        <div class="flex justify-between items-center pb-2 border-b">
+          <span class="text-green-800">必要な月次売上</span>
+          <span class="font-bold text-green-900">¥${requiredRevenue.toLocaleString()}</span>
+        </div>
+    `;
+
+    // 収入項目ごとに必要数量を計算
+    model.incomes.forEach((income, idx) => {
+      const requiredUnits = Math.ceil(requiredRevenue / model.incomes.length / income.unitPrice);
+      simulationHTML += `
+        <div class="bg-blue-50 rounded p-2">
+          <div class="text-xs text-blue-700 mb-1">${income.name}（${income.description}）</div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-blue-900">単価 ¥${income.unitPrice.toLocaleString()} × ${requiredUnits}${income.name.includes('会員') ? '人' : income.name.includes('料') ? '件' : '回'}</span>
+            <span class="font-semibold text-blue-900">¥${(income.unitPrice * requiredUnits).toLocaleString()}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    simulationHTML += `
+        <div class="pt-2 border-t">
+          <div class="text-xs text-gray-600 mb-2">主な固定費（想定）</div>
+    `;
+
+    model.expenses.forEach(expense => {
+      simulationHTML += `
+        <div class="flex justify-between items-center text-xs text-gray-700 py-1">
+          <span>${expense.name}</span>
+          <span>¥${expense.amount.toLocaleString()}</span>
+        </div>
+      `;
+    });
+
+    simulationHTML += `
+        </div>
+        <div class="pt-2 border-t bg-green-100 rounded p-2 -mx-2">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-medium text-green-900">想定粗利</span>
+            <span class="font-bold text-green-900">¥${targetIncome.toLocaleString()}</span>
+          </div>
+          <div class="text-xs text-green-700 mt-1">
+            （粗利率: ${(model.profitRate * 100).toFixed(0)}%想定）
+          </div>
+        </div>
+      </div>
+    `;
+
+    contentEl.innerHTML = simulationHTML;
+    resultSection.classList.remove('hidden');
+  };
+
+  // シミュレーション結果を予算に反映
+  window.applySimulation = function() {
+    const targetIncome = parseFloat(document.getElementById('target-monthly-income')?.value) || 0;
+    const businessModel = document.getElementById('business-model-select')?.value;
+    
+    if (!targetIncome || !businessModel) return;
+
+    const models = {
+      coworking: {
+        incomes: [
+          { name: '月額会員', unitPrice: 15000 },
+          { name: 'ドロップイン', unitPrice: 1000 }
+        ],
+        expenses: [
+          { name: '家賃', amount: 80000 },
+          { name: '水道光熱費', amount: 30000 },
+          { name: '通信費', amount: 10000 }
+        ],
+        profitRate: 0.4
+      },
+      guesthouse: {
+        incomes: [{ name: '宿泊料', unitPrice: 4000 }],
+        expenses: [
+          { name: '家賃', amount: 100000 },
+          { name: '水道光熱費', amount: 50000 },
+          { name: '消耗品費', amount: 30000 }
+        ],
+        profitRate: 0.35
+      },
+      cafe: {
+        incomes: [{ name: '飲食売上', unitPrice: 800 }],
+        expenses: [
+          { name: '家賃', amount: 120000 },
+          { name: '食材費', amount: 150000 },
+          { name: '水道光熱費', amount: 40000 }
+        ],
+        profitRate: 0.25
+      },
+      event: {
+        incomes: [{ name: 'イベント参加費', unitPrice: 3000 }],
+        expenses: [
+          { name: '会場費', amount: 50000 },
+          { name: '材料費', amount: 40000 },
+          { name: '広告宣伝費', amount: 30000 }
+        ],
+        profitRate: 0.45
+      },
+      tour: {
+        incomes: [{ name: 'ツアー料金', unitPrice: 5000 }],
+        expenses: [
+          { name: '交通費', amount: 60000 },
+          { name: '保険料', amount: 20000 },
+          { name: '広告宣伝費', amount: 40000 }
+        ],
+        profitRate: 0.5
+      },
+      consulting: {
+        incomes: [{ name: 'コンサル料', unitPrice: 50000 }],
+        expenses: [
+          { name: '通信費', amount: 15000 },
+          { name: '交通費', amount: 30000 },
+          { name: '広告宣伝費', amount: 25000 }
+        ],
+        profitRate: 0.7
+      },
+      subscription: {
+        incomes: [{ name: '月額会費', unitPrice: 2000 }],
+        expenses: [
+          { name: 'サーバー費', amount: 20000 },
+          { name: 'コンテンツ制作費', amount: 50000 },
+          { name: '広告宣伝費', amount: 40000 }
+        ],
+        profitRate: 0.6
+      }
+    };
+
+    const model = models[businessModel];
+    if (!model) return;
+
+    const requiredRevenue = Math.ceil(targetIncome / model.profitRate);
+
+    // 既存の項目をクリア
+    budgetItems.income = [];
+    budgetItems.expense = [];
+
+    // 収入項目を追加
+    model.incomes.forEach(income => {
+      const requiredUnits = Math.ceil(requiredRevenue / model.incomes.length / income.unitPrice);
+      budgetItems.income.push({
+        id: Date.now() + Math.random(),
+        type: 'income',
+        name: income.name,
+        amount: income.unitPrice * requiredUnits,
+        note: `単価¥${income.unitPrice.toLocaleString()} × ${requiredUnits}件`
+      });
+    });
+
+    // 支出項目を追加
+    model.expenses.forEach(expense => {
+      budgetItems.expense.push({
+        id: Date.now() + Math.random(),
+        type: 'expense',
+        name: expense.name,
+        amount: expense.amount,
+        note: '月次固定費'
+      });
+    });
+
+    renderBudgetLists();
+    showNotification('シミュレーション結果を予算に反映しました', 'success');
   };
 
   window.renderPlanEditor = renderPlanEditor;
