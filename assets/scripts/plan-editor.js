@@ -867,6 +867,14 @@
     // 再描画後のDOMに対してインラインワークスペースを描画
     if (activeWorkspace) {
       renderInlineWorkspace(activeWorkspace);
+      // 予算ワークスペース初期化フック（リスト/合計の初期描画）
+      if (activeWorkspace === 'budget' && typeof window.renderBudgetLists === 'function') {
+        try {
+          window.renderBudgetLists();
+        } catch (e) {
+          console.warn('Failed to initialize budget lists on first render', e);
+        }
+      }
       // インラインエリアまでスムーズスクロール
       const inline = document.getElementById('inline-workspace-container');
       inline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
