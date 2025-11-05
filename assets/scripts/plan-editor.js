@@ -56,123 +56,8 @@
     attachEventListeners();
   }
 
-  function renderModeSelector() {
-    return `
-      <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
-        <div>
-          <h1 class="text-2xl font-bold">企画室</h1>
-          <p class="text-muted-foreground">企画の作成方法を選んでください</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6 mt-8">
-          <!-- ライトモード -->
-          <div class="card hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-primary" onclick="selectPlanningMode('simple')">
-            <div class="p-8">
-              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center mb-6">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-              </div>
-              <h2 class="text-xl font-bold mb-3">ライトに作成</h2>
-              <p class="text-muted-foreground mb-6">簡単な質問に答えるだけで、AIが事業計画の下書きを自動生成します。すぐに企画を形にしたい方におすすめです。</p>
-              
-              <div class="space-y-2 mb-6">
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>3つの質問に答えるだけ</span>
-                </div>
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>AI が財務概算も自動生成</span>
-                </div>
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>後から詳細ワークスペースで深掘り可能</span>
-                </div>
-              </div>
-
-              <div class="inline-flex items-center text-sm font-medium text-primary">
-                このモードで始める
-                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- ワークスペースモード -->
-          <div class="card hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-primary" onclick="selectPlanningMode('workspace')">
-            <div class="p-8">
-              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center mb-6">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
-                </svg>
-              </div>
-              <h2 class="text-xl font-bold mb-3">ワークスペースから開始</h2>
-              <p class="text-muted-foreground mb-6">各ワークスペースで段階的に企画を作り込みます。じっくり練りたい方、複雑な企画におすすめです。</p>
-              
-              <div class="space-y-2 mb-6">
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>アイデア整理・目標設定など6つのツール</span>
-                </div>
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>関係者分析・SMART目標など専門機能</span>
-                </div>
-                <div class="flex items-start gap-2 text-sm">
-                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                  </svg>
-                  <span>好きな順番で必要な部分だけ作成</span>
-                </div>
-              </div>
-
-              <div class="inline-flex items-center text-sm font-medium text-primary">
-                このモードで始める
-                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 補足情報 -->
-        <div class="bg-muted/50 rounded-lg p-4 mt-6">
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <div class="text-sm text-muted-foreground">
-              <p class="font-medium text-foreground mb-1">どちらのモードでも</p>
-              <p>いつでもモードを切り替えられます。ライトに始めて、必要に応じてワークスペースで詳細を詰めることも可能です。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // モジュールごとの初期化フック
-    // 予算ワークスペース: 初期表示時にリストと合計を描画（既存のUI挙動を維持）
-    if (module === 'budget' && typeof window.renderBudgetLists === 'function') {
-      try {
-        window.renderBudgetLists();
-      } catch (e) {
-        console.warn('Failed to initialize budget lists on first render', e);
-      }
-    }
-  }
+  // ライトモードUIは plan-editor-light.js に分離
+  // window.renderInitialForm, window.renderDraftEditor, window.renderPreview は外部モジュールで提供
 
   window.selectPlanningMode = function(mode) {
     currentMode = mode;
@@ -332,6 +217,21 @@
     `;
   }
 
+  // ライトモードUIは plan-editor-light.js に分離
+  // window.renderInitialForm, window.renderDraftEditor, window.renderPreview は外部モジュールで提供
+
+  window.selectPlanningMode = function(mode) {
+    currentMode = mode;
+    if (mode === 'simple') {
+      window.renderPlanEditor(document.getElementById('main-content'));
+    } else if (mode === 'workspace') {
+      const container = document.getElementById('main-content');
+      container.innerHTML = renderWorkspaceSelector();
+    }
+  };
+
+  // window.renderInitialForm は plan-editor-light.js で提供
+
   function renderDraftEditor() {
     if (!currentDraft) return '';
     
@@ -425,145 +325,9 @@
     `;
   }
 
-  function renderPreview() {
-    if (!currentDraft) return '';
-    return `
-      <div class="space-y-6">
-        <!-- Title -->
-        <div class="border-b border-border pb-4">
-          <h1 class="text-2xl font-bold text-foreground mb-2">事業計画書</h1>
-          ${currentDraft.title ? `<div class=\"text-lg font-semibold text-foreground\">${currentDraft.title}</div>` : ''}
-          <p class="text-sm text-muted-foreground">作成日: ${new Date().toLocaleDateString('ja-JP')}</p>
-          ${currentDraft.genres && currentDraft.genres.length ? `
-          <div class="mt-2 flex flex-wrap gap-2">
-            ${currentDraft.genres.map(g=>`<span class=\"px-2 py-0.5 rounded-full bg-accent text-xs\">${{
-              coworking:'コワーキング', guesthouse:'ゲストハウス', events:'イベント', akiya:'空き家活用', tour:'観光ツアー'
-            }[g]||g}</span>`).join('')}
-          </div>`: ''}
-        </div>
+  // window.renderDraftEditor は plan-editor-light.js で提供
 
-        <!-- 事業概要 -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-foreground">1. 事業概要</h2>
-          </div>
-          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
-            <p class="text-sm text-foreground whitespace-pre-line">${currentDraft.overview}</p>
-          </div>
-        </div>
-
-        <!-- ターゲット顧客 -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-foreground">2. ターゲット顧客</h2>
-          </div>
-          <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r">
-            <p class="text-sm text-foreground whitespace-pre-line">${currentDraft.target}</p>
-          </div>
-        </div>
-
-        <!-- 収益モデル -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-foreground">3. 収益モデル</h2>
-          </div>
-          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
-            <p class="text-sm text-foreground whitespace-pre-line">${currentDraft.revenue}</p>
-          </div>
-        </div>
-
-        <!-- 実行計画 -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-foreground">4. 実行計画</h2>
-          </div>
-          <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r">
-            <p class="text-sm text-foreground whitespace-pre-line">${currentDraft.plan}</p>
-          </div>
-        </div>
-
-        ${currentDraft.financials ? `
-        <!-- 財務概算 -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-foreground">5. 財務概算</h2>
-          </div>
-          <div class="bg-rose-50 border-l-4 border-rose-400 p-4 rounded-r space-y-4">
-            <div>
-              <h3 class="font-medium text-foreground mb-2">収入（概算・月次）</h3>
-              <div class="text-sm divide-y">
-                ${currentDraft.financials.incomes.map(i=>`
-                  <div class=\"flex items-center justify-between py-1\">
-                    <span>${i.label}</span>
-                    <span class=\"tabular-nums\">約${i.monthly.toLocaleString()}円</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-            <div>
-              <h3 class="font-medium text-foreground mb-2">支出（概算・月次）</h3>
-              <div class="text-sm divide-y">
-                ${currentDraft.financials.expenses.map(e=>`
-                  <div class=\"flex items-center justify-between py-1\">
-                    <span>${e.label}</span>
-                    <span class=\"tabular-nums\">約${(e.monthly||0).toLocaleString()}円</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-3 text-sm">
-              <div class="bg-white rounded border border-rose-200 p-3">
-                <div class="text-xs text-muted-foreground">売上合計</div>
-                <div class="text-base font-semibold tabular-nums">${currentDraft.financials.totals.income.toLocaleString()}円/月</div>
-              </div>
-              <div class="bg-white rounded border border-rose-200 p-3">
-                <div class="text-xs text-muted-foreground">費用合計</div>
-                <div class="text-base font-semibold tabular-nums">${currentDraft.financials.totals.expense.toLocaleString()}円/月</div>
-              </div>
-              <div class="bg-white rounded border border-rose-200 p-3">
-                <div class="text-xs text-muted-foreground">概算粗利</div>
-                <div class="text-base font-semibold tabular-nums">${currentDraft.financials.totals.profit.toLocaleString()}円/月</div>
-              </div>
-            </div>
-            <p class="text-xs text-muted-foreground">※ あくまで概算です。価格/数量/稼働率などは状況に応じて調整してください。</p>
-          </div>
-        </div>` : ''}
-
-        <!-- Footer -->
-        <div class="border-t border-border pt-4 mt-6">
-          <div class="flex items-center justify-between text-xs text-muted-foreground">
-            <span>LocalSuccess 企画室で生成</span>
-            <span>AI支援による下書き</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+  // window.renderPreview は plan-editor-light.js で提供
 
   function attachEventListeners() {
     // Toggle genre chips
@@ -707,7 +471,7 @@
             <div class="p-6">
               <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>' ,
                 </svg>
               </div>
               <h3 class="text-lg font-semibold mb-2">アイデア整理</h3>
@@ -726,7 +490,7 @@
             <div class="p-6">
               <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
                 </svg>
               </div>
               <h3 class="text-lg font-semibold mb-2">企画構成</h3>
@@ -745,8 +509,7 @@
             <div class="p-6">
               <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>' ,
               </div>
               <h3 class="text-lg font-semibold mb-2">目標設定</h3>
               <p class="text-sm text-muted-foreground mb-4">SMART目標とKPIで成功指標を明確にします</p>
@@ -783,7 +546,7 @@
             <div class="p-6">
               <div class="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
                 </svg>
               </div>
               <h3 class="text-lg font-semibold mb-2">提案作成</h3>
@@ -802,8 +565,7 @@
             <div class="p-6">
               <div class="w-12 h-12 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
               </div>
               <h3 class="text-lg font-semibold mb-2">予算・スケジュール</h3>
               <p class="text-sm text-muted-foreground mb-4">予算計画とタイムラインを作成します</p>
