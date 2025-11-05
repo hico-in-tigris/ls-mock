@@ -8,6 +8,10 @@ function renderPeople(container) {
     const filteredPeople = window.PeopleFilters.getFilteredPeople();
     const allTags = window.PeopleStats.getAllTags();
     const relationshipStats = window.PeopleStats.getRelationshipStats();
+    const currentViewMode = window.PeopleFilters.getCurrentViewMode();
+    const searchQuery = window.PeopleFilters.getSearchQuery();
+    const selectedTags = window.PeopleFilters.getSelectedTags();
+    const sortBy = window.PeopleFilters.getSortBy();
     
     container.innerHTML = `
         <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
