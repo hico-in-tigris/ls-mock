@@ -1533,9 +1533,6 @@
                   <div class="bg-white rounded-lg p-4 border border-green-200">
                     <div class="text-sm font-medium text-green-900 mb-3">📊 シミュレーション結果</div>
                     <div id="simulation-content" class="space-y-2 text-sm"></div>
-                    <button onclick="applySimulation()" class="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
-                      この試算を予算に反映
-                    </button>
                   </div>
                 </div>
               </div>
@@ -2070,19 +2067,13 @@
 
   // ゲストハウス詳細シミュレーター
   window.showDetailedGuesthouseSimulator = function() {
-    const modalHTML = `
-      <div id="guesthouse-simulator-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-            <h3 class="text-xl font-bold">ゲストハウス詳細収支シミュレーター</h3>
-            <button onclick="closeGuesthouseSimulator()" class="text-gray-500 hover:text-gray-700">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-          
-          <div class="p-6 space-y-6">
+    const resultSection = document.getElementById('simulation-result');
+    const contentEl = document.getElementById('simulation-content');
+    
+    if (!resultSection || !contentEl) return;
+    
+    const simulatorHTML = `
+          <div class="space-y-6">
             <!-- 基本情報 -->
             <div class="bg-blue-50 rounded-lg p-4">
               <h4 class="font-semibold text-blue-900 mb-3">基本情報</h4>
@@ -2206,26 +2197,16 @@
               <button onclick="applyGuesthouseSimulation()" class="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 font-semibold">
                 この試算を予算に反映する
               </button>
-              <button onclick="closeGuesthouseSimulator()" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
-                キャンセル
-              </button>
             </div>
           </div>
-        </div>
-      </div>
     `;
     
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    contentEl.innerHTML = simulatorHTML;
+    resultSection.classList.remove('hidden');
     
     // 初期費用項目を設定
     initializeGuesthouseExpenses();
     calculateGuesthouseRevenue();
-  };
-
-  // ゲストハウスシミュレーターを閉じる
-  window.closeGuesthouseSimulator = function() {
-    const modal = document.getElementById('guesthouse-simulator-modal');
-    if (modal) modal.remove();
   };
 
   // 初期費用項目を設定
@@ -2448,6 +2429,437 @@
     showNotification('ゲストハウス収支計画を予算に反映しました', 'success');
   };
 
+  // ========================================
+  // カフェ・飲食店シミュレーター
+  // ========================================
+  
+  window.showDetailedCafeSimulator = function() {
+    const resultSection = document.getElementById('simulation-result');
+    const contentEl = document.getElementById('simulation-content');
+    
+    if (!resultSection || !contentEl) return;
+    
+    const simulatorHTML = `
+          <div class="space-y-6">
+            <!-- 基本情報 -->
+            <div class="bg-amber-50 rounded-lg p-4">
+              <h4 class="font-semibold text-amber-900 mb-3">基本情報</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm text-amber-800 mb-1">客席数</label>
+                  <input type="number" id="cafe-seats" value="20" min="1" class="w-full px-3 py-2 border rounded" onchange="calculateCafeRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-amber-800 mb-1">月の営業日数</label>
+                  <input type="number" id="cafe-days" value="26" min="1" max="31" class="w-full px-3 py-2 border rounded" onchange="calculateCafeRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- メニュー設定 -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h4 class="font-semibold text-blue-900 mb-3 flex justify-between items-center">
+                <span>メニュー設定</span>
+                <button onclick="addCafeMenu()" class="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  + メニュー追加
+                </button>
+              </h4>
+              <div id="cafe-menu-list" class="space-y-2"></div>
+            </div>
+
+            <!-- 日数配分 -->
+            <div class="bg-purple-50 rounded-lg p-4">
+              <h4 class="font-semibold text-purple-900 mb-3">日数配分（営業日ベース）</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm text-purple-800 mb-1">平日（日）</label>
+                  <input type="number" id="cafe-days-weekday" value="20" class="w-full px-3 py-2 border rounded" onchange="calculateCafeRevenue()">
+                </div>
+                <div>
+                  <label class="block text-sm text-purple-800 mb-1">休日（日）</label>
+                  <input type="number" id="cafe-days-weekend" value="6" class="w-full px-3 py-2 border rounded" onchange="calculateCafeRevenue()">
+                </div>
+              </div>
+            </div>
+
+            <!-- 試算結果 -->
+            <div id="cafe-revenue-result" class="bg-gradient-to-r from-green-100 to-amber-100 rounded-lg p-4">
+              <h4 class="font-semibold text-green-900 mb-3">売上試算</h4>
+              <div id="cafe-revenue-breakdown" class="space-y-2"></div>
+            </div>
+
+            <!-- 固定費 -->
+            <div class="bg-red-50 rounded-lg p-4">
+              <h4 class="font-semibold text-red-900 mb-3 flex justify-between items-center">
+                <span>固定費（月額）</span>
+                <button onclick="addCafeExpense('fixed')" class="text-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                  + 項目追加
+                </button>
+              </h4>
+              <div id="cafe-fixed-expenses" class="space-y-2"></div>
+            </div>
+
+            <!-- 変動費 -->
+            <div class="bg-orange-50 rounded-lg p-4">
+              <h4 class="font-semibold text-orange-900 mb-3 flex justify-between items-center">
+                <span>変動費（月額）</span>
+                <button onclick="addCafeExpense('variable')" class="text-sm px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700">
+                  + 項目追加
+                </button>
+              </h4>
+              <div id="cafe-variable-expenses" class="space-y-2"></div>
+            </div>
+
+            <!-- 損益サマリー -->
+            <div id="cafe-profit-summary" class="bg-gradient-to-r from-amber-900 to-green-900 text-white rounded-lg p-6">
+              <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div class="text-sm opacity-80">月間売上</div>
+                  <div id="cafe-total-revenue" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+                <div>
+                  <div class="text-sm opacity-80">月間経費</div>
+                  <div id="cafe-total-expense" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+                <div>
+                  <div class="text-sm opacity-80">月間利益</div>
+                  <div id="cafe-net-profit" class="text-2xl font-bold mt-1">¥0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="flex gap-3">
+              <button onclick="applyCafeSimulation()" class="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 font-semibold">
+                この試算を予算に反映する
+              </button>
+            </div>
+          </div>
+    `;
+    
+    contentEl.innerHTML = simulatorHTML;
+    resultSection.classList.remove('hidden');
+    
+    // 初期費用項目を設定
+    initializeCafeExpenses();
+    calculateCafeRevenue();
+  };
+
+  // 初期費用項目を設定
+  function initializeCafeExpenses() {
+    // メニューアイテムを初期化
+    window.cafeMenuItems = [
+      { id: 1, name: 'ブレンドコーヒー', price: 400, weekdayCount: 25, weekendCount: 35 },
+      { id: 2, name: 'カフェラテ', price: 500, weekdayCount: 20, weekendCount: 30 },
+      { id: 3, name: 'ケーキセット', price: 700, weekdayCount: 10, weekendCount: 20 },
+      { id: 4, name: 'ランチセット', price: 980, weekdayCount: 15, weekendCount: 10 }
+    ];
+    
+    window.cafeExpenses = {
+      fixed: [
+        { id: 1, name: '家賃・賃料', amount: 120000, note: '店舗賃料' },
+        { id: 2, name: '水道光熱費', amount: 40000, note: '電気・水道・ガス' },
+        { id: 3, name: '通信費', amount: 6000, note: 'インターネット・電話' },
+        { id: 4, name: '保険料', amount: 10000, note: '火災保険・賠償責任保険' },
+        { id: 5, name: '人件費', amount: 200000, note: 'スタッフ給与' }
+      ],
+      variable: [
+        { id: 6, name: '食材費', amount: 150000, note: '原価（売上の30%想定）' },
+        { id: 7, name: '消耗品費', amount: 20000, note: '紙製品・洗剤等' },
+        { id: 8, name: '広告宣伝費', amount: 25000, note: 'SNS広告・チラシ' },
+        { id: 9, name: '衛生費', amount: 15000, note: '清掃・消毒用品' },
+        { id: 10, name: '雑費', amount: 10000, note: 'その他経費' }
+      ]
+    };
+    renderCafeMenuItems();
+    renderCafeExpenses();
+  }
+
+  // メニューアイテムを描画
+  function renderCafeMenuItems() {
+    const container = document.getElementById('cafe-menu-list');
+    if (!container || !window.cafeMenuItems) return;
+    
+    container.innerHTML = window.cafeMenuItems.map(item => `
+      <div class="bg-white rounded p-3 border border-blue-200">
+        <div class="grid grid-cols-12 gap-2 items-center">
+          <input type="text" value="${item.name}" placeholder="メニュー名" 
+            class="col-span-3 px-2 py-1 border rounded text-sm" 
+            onchange="updateCafeMenu(${item.id}, 'name', this.value)">
+          <div class="col-span-2 relative">
+            <input type="number" value="${item.price}" placeholder="単価" 
+              class="w-full px-2 py-1 pr-6 border rounded text-sm text-right" 
+              onchange="updateCafeMenu(${item.id}, 'price', this.value)">
+            <span class="absolute right-2 top-1 text-xs text-gray-500">円</span>
+          </div>
+          <div class="col-span-3">
+            <label class="block text-xs text-blue-700 mb-1">平日販売数/日</label>
+            <input type="number" value="${item.weekdayCount}" 
+              class="w-full px-2 py-1 border rounded text-sm text-right" 
+              onchange="updateCafeMenu(${item.id}, 'weekdayCount', this.value)">
+          </div>
+          <div class="col-span-3">
+            <label class="block text-xs text-blue-700 mb-1">休日販売数/日</label>
+            <input type="number" value="${item.weekendCount}" 
+              class="w-full px-2 py-1 border rounded text-sm text-right" 
+              onchange="updateCafeMenu(${item.id}, 'weekendCount', this.value)">
+          </div>
+          <button onclick="removeCafeMenu(${item.id})" class="col-span-1 text-red-600 hover:text-red-800">
+            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+    
+    calculateCafeRevenue();
+  }
+
+  // メニュー項目を追加
+  window.addCafeMenu = function() {
+    const newId = Date.now();
+    window.cafeMenuItems.push({
+      id: newId,
+      name: '',
+      price: 0,
+      weekdayCount: 0,
+      weekendCount: 0
+    });
+    renderCafeMenuItems();
+  };
+
+  // メニュー項目を更新
+  window.updateCafeMenu = function(id, field, value) {
+    const menu = window.cafeMenuItems.find(m => m.id === id);
+    if (menu) {
+      if (field === 'name') {
+        menu[field] = value;
+      } else {
+        menu[field] = parseFloat(value) || 0;
+      }
+      calculateCafeRevenue();
+    }
+  };
+
+  // メニュー項目を削除
+  window.removeCafeMenu = function(id) {
+    window.cafeMenuItems = window.cafeMenuItems.filter(m => m.id !== id);
+    renderCafeMenuItems();
+  };
+
+  // 費用項目を描画
+  function renderCafeExpenses() {
+    ['fixed', 'variable'].forEach(type => {
+      const container = document.getElementById(`cafe-${type}-expenses`);
+      if (!container) return;
+      
+      const expenses = window.cafeExpenses[type];
+      container.innerHTML = expenses.map(exp => `
+        <div class="grid grid-cols-12 gap-2 items-center bg-white rounded p-2 border">
+          <input type="text" value="${exp.name}" class="col-span-4 px-2 py-1 border rounded text-sm" 
+            onchange="updateCafeExpense('${type}', ${exp.id}, 'name', this.value)">
+          <div class="col-span-3 relative">
+            <input type="number" value="${exp.amount}" class="w-full px-2 py-1 pr-8 border rounded text-sm text-right" 
+              onchange="updateCafeExpense('${type}', ${exp.id}, 'amount', this.value)">
+            <span class="absolute right-2 top-1 text-xs text-gray-500">円</span>
+          </div>
+          <input type="text" value="${exp.note}" class="col-span-4 px-2 py-1 border rounded text-sm" 
+            onchange="updateCafeExpense('${type}', ${exp.id}, 'note', this.value)">
+          <button onclick="removeCafeExpense('${type}', ${exp.id})" class="col-span-1 text-red-600 hover:text-red-800">
+            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    });
+    calculateCafeProfit();
+  }
+
+  // 費用項目を追加
+  window.addCafeExpense = function(type) {
+    const newId = Date.now();
+    window.cafeExpenses[type].push({
+      id: newId,
+      name: '',
+      amount: 0,
+      note: ''
+    });
+    renderCafeExpenses();
+  };
+
+  // 費用項目を更新
+  window.updateCafeExpense = function(type, id, field, value) {
+    const expense = window.cafeExpenses[type].find(e => e.id === id);
+    if (expense) {
+      expense[field] = field === 'amount' ? parseFloat(value) || 0 : value;
+      calculateCafeProfit();
+    }
+  };
+
+  // 費用項目を削除
+  window.removeCafeExpense = function(type, id) {
+    window.cafeExpenses[type] = window.cafeExpenses[type].filter(e => e.id !== id);
+    renderCafeExpenses();
+  };
+
+  // 売上を計算
+  window.calculateCafeRevenue = function() {
+    if (!window.cafeMenuItems) return;
+    
+    const daysWeekday = parseFloat(document.getElementById('cafe-days-weekday')?.value) || 0;
+    const daysWeekend = parseFloat(document.getElementById('cafe-days-weekend')?.value) || 0;
+
+    // メニューごとの売上を計算
+    let totalRevenueWeekday = 0;
+    let totalRevenueWeekend = 0;
+    const menuBreakdown = [];
+
+    window.cafeMenuItems.forEach(menu => {
+      const weekdayRevenue = menu.price * menu.weekdayCount * daysWeekday;
+      const weekendRevenue = menu.price * menu.weekendCount * daysWeekend;
+      totalRevenueWeekday += weekdayRevenue;
+      totalRevenueWeekend += weekendRevenue;
+      
+      if (menu.name && (weekdayRevenue > 0 || weekendRevenue > 0)) {
+        menuBreakdown.push({
+          name: menu.name,
+          weekdayRevenue,
+          weekendRevenue,
+          total: weekdayRevenue + weekendRevenue
+        });
+      }
+    });
+
+    const totalRevenue = totalRevenueWeekday + totalRevenueWeekend;
+
+    const breakdownEl = document.getElementById('cafe-revenue-breakdown');
+    if (breakdownEl) {
+      let html = '';
+      
+      // メニューごとの内訳を表示
+      if (menuBreakdown.length > 0) {
+        html += '<div class="space-y-1 mb-3">';
+        menuBreakdown.forEach(item => {
+          html += `
+            <div class="flex justify-between items-center py-1 text-xs border-b border-green-200">
+              <span class="text-gray-700">${item.name}</span>
+              <span class="font-medium">¥${Math.round(item.total).toLocaleString()}</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      // 平日・休日の合計
+      html += `
+        <div class="flex justify-between items-center py-1 border-b">
+          <span class="text-sm">平日売上（${daysWeekday}日分）</span>
+          <span class="font-semibold">¥${Math.round(totalRevenueWeekday).toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b">
+          <span class="text-sm">休日売上（${daysWeekend}日分）</span>
+          <span class="font-semibold">¥${Math.round(totalRevenueWeekend).toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 mt-2 bg-green-200 rounded px-2">
+          <span class="font-bold text-green-900">月間売上合計</span>
+          <span class="font-bold text-green-900 text-xl">¥${Math.round(totalRevenue).toLocaleString()}</span>
+        </div>
+      `;
+      
+      breakdownEl.innerHTML = html;
+    }
+
+    const revenueEl = document.getElementById('cafe-total-revenue');
+    if (revenueEl) revenueEl.textContent = `¥${Math.round(totalRevenue).toLocaleString()}`;
+
+    calculateCafeProfit();
+  };
+
+  // 損益を計算
+  function calculateCafeProfit() {
+    const revenueText = document.getElementById('cafe-total-revenue')?.textContent || '¥0';
+    const revenue = parseFloat(revenueText.replace(/[¥,]/g, '')) || 0;
+
+    if (!window.cafeExpenses) return;
+
+    const fixedTotal = window.cafeExpenses.fixed.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const variableTotal = window.cafeExpenses.variable.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalExpense = fixedTotal + variableTotal;
+    const netProfit = revenue - totalExpense;
+
+    const expenseEl = document.getElementById('cafe-total-expense');
+    const profitEl = document.getElementById('cafe-net-profit');
+
+    if (expenseEl) expenseEl.textContent = `¥${totalExpense.toLocaleString()}`;
+    if (profitEl) {
+      profitEl.textContent = `¥${netProfit.toLocaleString()}`;
+      profitEl.className = `text-2xl font-bold mt-1 ${netProfit >= 0 ? 'text-green-200' : 'text-red-200'}`;
+    }
+  }
+
+  // シミュレーション結果を予算に反映
+  window.applyCafeSimulation = function() {
+    const revenueText = document.getElementById('cafe-total-revenue')?.textContent || '¥0';
+    const revenue = parseFloat(revenueText.replace(/[¥,]/g, '')) || 0;
+
+    // 既存の予算項目をクリア
+    budgetItems.income = [];
+    budgetItems.expense = [];
+
+    // メニューごとの収入項目を追加
+    const daysWeekday = parseFloat(document.getElementById('cafe-days-weekday')?.value) || 0;
+    const daysWeekend = parseFloat(document.getElementById('cafe-days-weekend')?.value) || 0;
+
+    if (window.cafeMenuItems) {
+      window.cafeMenuItems.forEach((menu, index) => {
+        if (!menu.name) return;
+        
+        const weekdayRevenue = menu.price * menu.weekdayCount * daysWeekday;
+        const weekendRevenue = menu.price * menu.weekendCount * daysWeekend;
+        const totalMenuRevenue = weekdayRevenue + weekendRevenue;
+        
+        if (totalMenuRevenue > 0) {
+          budgetItems.income.push({
+            id: Date.now() + index + 1,
+            type: 'income',
+            name: `${menu.name}売上`,
+            amount: Math.round(totalMenuRevenue),
+            note: `平日${menu.weekdayCount}個×${daysWeekday}日 + 休日${menu.weekendCount}個×${daysWeekend}日 @¥${menu.price}`
+          });
+        }
+      });
+    }
+
+    // 支出項目を追加
+    if (window.cafeExpenses) {
+      window.cafeExpenses.fixed.forEach(exp => {
+        budgetItems.expense.push({
+          id: Date.now() + Math.random(),
+          type: 'expense',
+          name: exp.name,
+          amount: exp.amount,
+          note: `固定費: ${exp.note}`
+        });
+      });
+
+      window.cafeExpenses.variable.forEach(exp => {
+        budgetItems.expense.push({
+          id: Date.now() + Math.random(),
+          type: 'expense',
+          name: exp.name,
+          amount: exp.amount,
+          note: `変動費: ${exp.note}`
+        });
+      });
+    }
+
+    renderBudgetLists();
+    showNotification('カフェ収支計画を予算に反映しました', 'success');
+  };
+
+
   // 目標月収からシミュレーション
   window.simulateFromTarget = function() {
     const targetIncome = parseFloat(document.getElementById('target-monthly-income')?.value) || 0;
@@ -2456,6 +2868,12 @@
     // ゲストハウスの場合は詳細シミュレーターを開く
     if (businessModel === 'guesthouse') {
       showDetailedGuesthouseSimulator();
+      return;
+    }
+    
+    // カフェの場合は詳細シミュレーターを開く
+    if (businessModel === 'cafe') {
+      showDetailedCafeSimulator();
       return;
     }
     
