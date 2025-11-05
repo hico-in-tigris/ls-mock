@@ -659,8 +659,6 @@
   };
 
   let activeWorkspace = null;
-  // 企画構成ワークスペース内のフレームワーク選択状態
-  let planningFramework = '5w1h'; // '5w1h' | 'swot' | '4p' | 'bmc' | 'lean'
 
   function renderWorkspaceSelector() {
     return `
@@ -1066,20 +1064,9 @@
     return [...(byModule[mod] || []), ...common];
   }
 
-  // タブ切替: 企画構成のフレームワーク
-  window.selectPlanningFramework = function(key){
-    planningFramework = key;
-    // 開いている状態を保って企画構成だけ差し替え
-    if (activeWorkspace !== 'planning') {
-      activeWorkspace = 'planning';
-    }
-    // 画面再描画（カードのアクティブ表示も更新）
-    const container = document.getElementById('main-content');
-    container.innerHTML = renderWorkspaceSelector();
-    renderInlineWorkspace('planning');
-  };
-
   // 各ワークスペースの描画関数
+  // ※ 企画構成（planning）、目標設定（goal）、提案作成（proposal）は外部モジュールに分離済み
+
   function renderIdeationWorkspace() {
     return `
       <div class="card p-6">
@@ -1110,256 +1097,9 @@
     `;
   }
 
-  function renderPlanningWorkspace() {
-    const tabBtn = (key, label) => `
-      <button 
-        class="px-3 py-1.5 text-sm ${planningFramework===key? 'bg-primary text-primary-foreground' : 'bg-background text-foreground hover:bg-accent'} border-r last:border-r-0"
-        onclick="selectPlanningFramework('${key}')"
-      >${label}</button>
-    `;
-
-    return `
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="inline-flex rounded-md overflow-hidden border">
-            ${tabBtn('5w1h','5W1H')}
-            ${tabBtn('swot','SWOT')}
-            ${tabBtn('4p','4P')}
-            ${tabBtn('bmc','BMC')}
-            ${tabBtn('lean','リーンキャンバス')}
-          </div>
-          <div class="text-xs text-muted-foreground">フレームワークを切り替えて多面的に整理</div>
-        </div>
-
-        <div id="planning-framework-content">
-          ${renderPlanningFrameworkContent()}
-        </div>
-
-        <div class="flex justify-end gap-2 mt-6">
-          <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
-          <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
-          <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderPlanningFrameworkContent(){
-    switch (planningFramework){
-      case 'swot': return renderPlanningSWOT();
-      case '4p': return renderPlanning4P();
-      case 'bmc': return renderPlanningBMC();
-      case 'lean': return renderPlanningLeanCanvas();
-      case '5w1h':
-      default:
-        return renderPlanning5W1H();
-    }
-  }
-
-  function renderPlanning5W1H(){
-    return `
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-medium mb-2">何をするか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="実施する内容をわかりやすく書いてください"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">なぜやるのか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="目的やねらいを書いてください"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">誰がやるのか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="関わる人や役割を書いてください"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">いつやるのか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="開始時期や期間を書いてください"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">どこでやるのか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="場所や方法（オンライン/オフライン）を書いてください"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">どのようにやるのか</label>
-          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="具体的な進め方や手順を書いてください"></textarea>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderPlanningSWOT(){
-    return `
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-medium mb-2">強み</label>
-          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="うまくできている点、他より優れている点"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">弱み</label>
-          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="課題になっている点、足りない点"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">機会</label>
-          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="追い風になりそうなこと（制度、流行、ニーズなど）"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">脅威</label>
-          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="向かい風になりそうなこと（競合、規制、代替手段など）"></textarea>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderPlanning4P(){
-    return `
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-medium mb-2">何を提供するか（製品・サービス）</label>
-          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="お客さまにどんな価値を届けるか"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">価格はいくらか</label>
-          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="料金プランや割引の考え方"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">どこで/どう届けるか（チャネル）</label>
-          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="オンライン/オフラインなどの提供方法"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">どうやって知ってもらうか（告知・集客）</label>
-          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="SNS、広告、イベントなど"></textarea>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderPlanningBMC(){
-    return `
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">重要なパートナー</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="協力先、連携する団体・企業"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">主要な活動</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="価値を生むための中核活動"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">主要な資源</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="人・物・お金・知識など"></textarea>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">価値提案</label>
-            <textarea class="w-full min-h-[150px] px-2 py-2 border rounded-md" placeholder="お客さまにとっての嬉しい点・解決する困りごと"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">顧客との関係</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのように関係を築き維持するか"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">チャネル</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="価値を届ける経路（Web、店舗など）"></textarea>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">顧客セグメント</label>
-            <textarea class="w-full min-h-[150px] px-2 py-2 border rounded-md" placeholder="どんな人に価値を届けるか"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">コスト構造</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="主な費用の種類（固定費・変動費など）"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">収益の流れ</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのようにお金が入るか（料金、手数料など）"></textarea>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderPlanningLeanCanvas(){
-    return `
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">問題</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="お客さまが抱える困りごと"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">解決策</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="その困りごとをどう解決するか"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">大事な指標</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="成功を測るための数字（登録数、継続率など）"></textarea>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">独自の価値</label>
-            <textarea class="w-full min-h-[100px] px-2 py-2 border rounded-md" placeholder="他では得られない価値は何か"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">他に真似できない強み</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="自分たちだけが持っている優位性"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">チャネル</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どの経路で価値を届けるか"></textarea>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium mb-1">顧客セグメント</label>
-            <textarea class="w-full min-h-[100px] px-2 py-2 border rounded-md" placeholder="価値を届けたい相手（ペルソナなど）"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">コスト構造</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="主にかかる費用（固定費・変動費）"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium mb-1">収益の流れ</label>
-            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのようにお金が入るか"></textarea>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderGoalWorkspace() {
-    return `
-      <div class="card p-6">
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium mb-2">最終ゴール</label>
-            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="このプロジェクトで最終的に達成したいゴールは何ですか？"></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">主要KPI（3〜5個）</label>
-            <div class="space-y-3">
-              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 1: 例）月間利用者数 100名">
-              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 2: 例）顧客満足度 4.5/5.0以上">
-              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 3: 例）収支プラス転換（6ヶ月以内）">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">マイルストーン</label>
-            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="目標達成までの主要なマイルストーンを時系列で記載してください"></textarea>
-          </div>
-          <div class="flex justify-end gap-2">
-            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
-            <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
-            <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+  // renderPlanningWorkspace → plan-editor-planning.js に移動済み
+  // renderGoalWorkspace → plan-editor-goal.js に移動済み
+  // renderProposalWorkspace → plan-editor-proposal.js に移動済み
 
   function renderStakeholderWorkspace() {
     return `
@@ -1457,45 +1197,6 @@
             <div id="network-picker-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
               <!-- 人物リストが動的に生成される -->
             </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderProposalWorkspace() {
-    return `
-      <div class="card p-6">
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium mb-2">提案の背景</label>
-            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="なぜこの提案が必要なのか"></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">提案内容</label>
-            <textarea class="w-full min-h-[120px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="具体的に何を提案するのか"></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">期待される効果</label>
-            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="実施することでどんな効果が期待できるか"></textarea>
-          </div>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">必要な予算</label>
-              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例）初期費用200万円、月次30万円">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-2">実施スケジュール</label>
-              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例）3ヶ月（準備1ヶ月、実施2ヶ月）">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">リスクと対策</label>
-            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="想定されるリスクとその対策"></textarea>
-          </div>
-          <div class="flex justify-end gap-2">
-            <button class="btn-secondary">保存</button>
-            <button class="btn-primary">提案書をエクスポート</button>
           </div>
         </div>
       </div>
