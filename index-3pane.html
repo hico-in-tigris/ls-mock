@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3ペインプロジェクトモック</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body data-app-root="true">
+  <header class="app-header">
+    <div class="header-left">
+      <h1 class="text-lg font-semibold">3ペイン プロジェクト</h1>
+    </div>
+    <div class="header-right">
+      <div class="badge" data-badge-unresolved>未解決: 0</div>
+      <div class="badge" data-badge-review>レビュー待ち: 0</div>
+      <button class="btn" data-open-drawer>＋クイック操作</button>
+    </div>
+  </header>
+  <main class="app-main grid grid-cols-3">
+    <aside class="panel" data-outline>
+      <div class="panel-header">
+        <div class="font-semibold">Outline</div>
+        <div class="muted text-sm">セクションの並び替えと選択</div>
+      </div>
+      <div class="panel-body" data-outline-list></div>
+    </aside>
+
+    <section class="panel" data-editor>
+      <div class="panel-header">
+        <div class="font-semibold" data-editor-title>Editor</div>
+        <div class="muted text-sm">インライン編集・タブ・スナップショット</div>
+      </div>
+      <div class="panel-body">
+        <div class="tabs" data-editor-tabs>
+          <button class="tab active" data-tab="overview">概要</button>
+          <button class="tab" data-tab="detail">詳細</button>
+          <button class="tab" data-tab="artifact">成果物</button>
+        </div>
+        <div class="tab-panels" data-tab-panels>
+          <div class="tab-panel" data-panel="overview"></div>
+          <div class="tab-panel hidden" data-panel="detail"></div>
+          <div class="tab-panel hidden" data-panel="artifact"></div>
+        </div>
+        <div class="mt-2">
+          <button class="btn" data-snapshot>スナップショット保存</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" data-context>
+      <div class="panel-header">
+        <div class="font-semibold">Context</div>
+        <div class="muted text-sm">チェックリスト / 次の一手 / 履歴</div>
+      </div>
+      <div class="panel-body">
+        <div class="card p-2">
+          <div class="font-semibold mb-2">Checklist</div>
+          <ul class="list" data-checklist></ul>
+        </div>
+        <div class="card p-2 mt-2">
+          <div class="font-semibold mb-2">次の一手（提案）</div>
+          <div class="stack" data-suggestions></div>
+        </div>
+        <div class="card p-2 mt-2">
+          <div class="font-semibold mb-2">フレームワーク</div>
+          <div class="stack" data-frameworks></div>
+        </div>
+        <div class="card p-2 mt-2">
+          <div class="font-semibold mb-2">履歴（スナップショット）</div>
+          <div class="stack" data-snapshots></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="drawer" data-drawer aria-hidden="true">
+    <div class="drawer-header">
+      <div class="font-semibold">クイック操作</div>
+      <button class="btn ghost" data-drawer-close aria-label="閉じる">×</button>
+    </div>
+    <div class="drawer-body" data-drawer-body>
+      <!-- drawer.js が動的に描画 -->
+    </div>
+  </div>
+  <div class="drawer-backdrop hidden" data-drawer-backdrop></div>
+
+  <div class="cmdk hidden" data-cmdk>
+    <input class="cmdk-input" data-cmdk-input placeholder="/目的 /関係者 などのスニペットを入力… (Ctrl/Cmd+K)" />
+    <div class="cmdk-list" data-cmdk-list></div>
+  </div>
+
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/components/outline.js"></script>
+  <script src="assets/js/components/editor.js"></script>
+  <script src="assets/js/components/frameworks.js"></script>
+  <script src="assets/js/components/context.js"></script>
+  <script src="assets/js/components/drawer.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

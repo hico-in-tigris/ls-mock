@@ -28,7 +28,8 @@ function navigate(route) {
             'profile': 'Profile',
             'region': 'Region',
             'issues': 'Issues',
-            'map': 'Map'
+            'map': 'Map',
+            'plan': '企画室'
         };
         currentPageMobile.textContent = pageNames[route] || 'Dashboard';
     }

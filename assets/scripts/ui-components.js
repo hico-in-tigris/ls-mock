@@ -4,6 +4,14 @@
  */
 
 // ===========================
+// Theme (Monochrome mode)
+// ===========================
+let __uiThemeMono = true; // 単色テーマをデフォルト有効
+function setMonochrome(enabled = true) {
+    __uiThemeMono = !!enabled;
+}
+
+// ===========================
 // Card Components
 // ===========================
 
@@ -95,24 +103,33 @@ function createHeaderCard(title, subtitle, content, className = '') {
 function createStatsCard({ title, value, subtitle, icon, color = 'blue', onClick }) {
     const clickHandler = onClick ? `onclick="${onClick.name}('${onClick.params || ''}')"` : '';
     const cursor = onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : '';
-    
+
+    // 単色テーマでは色を固定のグレイスケールに
+    const titleClass = __uiThemeMono ? 'text-gray-700' : `text-${color}-700`;
+    const valueClass = __uiThemeMono ? 'text-gray-900' : `text-${color}-900`;
+    const subClass = __uiThemeMono ? 'text-gray-600' : `text-${color}-600`;
+    const iconBg = __uiThemeMono ? 'bg-gray-200' : `bg-${color}-200`;
+    const cardClass = __uiThemeMono 
+        ? 'bg-white border border-gray-200'
+        : `bg-gradient-to-r from-${color}-50 to-${color}-100 border-${color}-200`;
+
     const content = `
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-${color}-700">${title}</p>
-                <p class="text-2xl font-bold text-${color}-900">${value}</p>
-                ${subtitle ? `<p class="text-xs text-${color}-600">${subtitle}</p>` : ''}
+                <p class="text-sm font-medium ${titleClass}">${title}</p>
+                <p class="text-2xl font-bold ${valueClass}">${value}</p>
+                ${subtitle ? `<p class="text-xs ${subClass}">${subtitle}</p>` : ''}
             </div>
             ${icon ? `
-                <div class="w-8 h-8 bg-${color}-200 rounded-lg flex items-center justify-center">
+                <div class="w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center">
                     ${icon}
                 </div>
             ` : ''}
         </div>
     `;
-    
+
     return `
-        <div class="card bg-gradient-to-r from-${color}-50 to-${color}-100 border-${color}-200 ${cursor}" ${clickHandler}>
+        <div class="card ${cardClass} ${cursor}" ${clickHandler}>
             <div class="card-content">
                 ${content}
             </div>
@@ -182,11 +199,12 @@ function createEmptyState(message, icon, action) {
  * @returns {string} 設定項目のHTML
  */
 function createSettingItem({ title, description, icon, iconColor = 'text-blue-600', onClick }) {
+    const ic = __uiThemeMono ? 'text-gray-700' : iconColor;
     return `
         <button onclick="${onClick}" 
                 class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             <div class="flex items-center space-x-3">
-                <div class="h-5 w-5 ${iconColor}">
+                <div class="h-5 w-5 ${ic}">
                     ${icon}
                 </div>
                 <div class="text-left">
@@ -207,13 +225,15 @@ function createSettingItem({ title, description, icon, iconColor = 'text-blue-60
  * @returns {string} タブのHTML
  */
 function createTabs(tabs) {
+    const activeClass = __uiThemeMono ? 'border-black text-black' : 'border-primary text-primary';
+    const hoverClass = __uiThemeMono ? 'hover:text-black' : 'hover:text-primary';
     return `
         <div class="flex space-x-2 border-b border-border">
             ${tabs.map(tab => `
                 <button onclick="${tab.onClick}" 
-                        class="px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 ${
+                        class="px-4 py-2 text-sm font-medium transition-colors ${hoverClass} border-b-2 ${
                             tab.active 
-                                ? 'border-primary text-primary' 
+                                ? activeClass
                                 : 'border-transparent text-muted-foreground'
                         }" 
                         data-tab="${tab.id}">
@@ -312,7 +332,13 @@ function createTextArea({ label, id, placeholder = '', value = '', rows = 3, req
 function createButton({ text, variant = 'primary', size = 'md', onClick, icon, disabled = false, className = '' }) {
     const baseClasses = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50';
     
-    const variantClasses = {
+    const variantClasses = __uiThemeMono ? {
+        primary: 'bg-black text-white shadow hover:bg-black/90',
+        secondary: 'border border-gray-300 bg-white shadow-sm hover:bg-gray-100',
+        destructive: 'bg-gray-800 text-white shadow-sm hover:bg-gray-700',
+        ghost: 'hover:bg-gray-100 hover:text-gray-900',
+        link: 'text-black underline-offset-4 hover:underline'
+    } : {
         primary: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
         secondary: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
         destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
@@ -411,13 +437,13 @@ function createTagFilter({ allTags, selectedTags, onToggle, onClear }) {
                     <line x1="7" y1="7" x2="7.01" y2="7"/>
                 </svg>
                 <span>タグ</span>
-                ${selectedTags.length > 0 ? `<span class="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">${selectedTags.length}</span>` : ''}
+                ${selectedTags.length > 0 ? `<span class="${__uiThemeMono ? 'bg-black text-white' : 'bg-primary text-primary-foreground'} text-xs px-2 py-1 rounded-full">${selectedTags.length}</span>` : ''}
             </button>
             <div id="tag-filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-background border border-border rounded-md shadow-lg z-10">
                 <div class="p-3">
                     <div class="flex flex-wrap gap-2">
                         ${allTags.map(tag => `
-                            <button onclick="${onToggle}('${tag}')" class="text-xs px-2 py-1 rounded-full border transition-colors ${selectedTags.includes(tag) ? 'bg-primary text-primary-foreground border-primary' : 'border-input hover:bg-accent'}">
+                            <button onclick="${onToggle}('${tag}')" class="text-xs px-2 py-1 rounded-full border transition-colors ${selectedTags.includes(tag) ? (__uiThemeMono ? 'bg-black text-white border-black' : 'bg-primary text-primary-foreground border-primary') : 'border-input hover:bg-accent'}">
                                 ${tag}
                             </button>
                         `).join('')}
@@ -746,6 +772,7 @@ function createFileUpload(options = {}) {
 
 // windowオブジェクトに関数を公開
 if (typeof window !== 'undefined') {
+    window.setMonochrome = setMonochrome;
     window.createCard = createCard;
     window.createHeaderCard = createHeaderCard;
     window.createStatsCard = createStatsCard;

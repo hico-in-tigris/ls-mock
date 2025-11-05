@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Q-Driven Editor (Mock)</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <h1 class="text-lg font-semibold">Q-Driven Editor</h1>
+    </div>
+    <div class="header-right">
+      <button class="btn" data-toggle-outline>Outline</button>
+      <button class="btn" data-export-md>Markdownエクスポート</button>
+    </div>
+  </header>
+  
+
+  <main class="app-main grid grid-cols-2" data-layout>
+    <section class="panel" data-preview>
+      <div class="panel-header">
+        <div class="font-semibold">プレビュー</div>
+        <div class="muted text-sm">回答をテンプレに即時反映</div>
+      </div>
+      <div class="panel-body" data-preview-body></div>
+      <div class="panel-footer">
+        <div class="card p-2 mt-2">
+          <div class="font-semibold mb-2">不足チェック</div>
+          <ul class="list" data-checklist></ul>
+          <div class="mt-2">
+            <div class="font-semibold mb-1">次に答えると効く問い</div>
+            <div class="stack" data-next-questions></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-editor>
+      <div class="panel-header">
+        <div class="font-semibold" data-editor-title>Editor</div>
+        <div class="muted text-sm">問いに答えるだけで事業計画書</div>
+      </div>
+      <div class="panel-body" data-editor-cards></div>
+    </section>
+  </main>
+
+  <!-- Outline side panel -->
+  <aside class="side-panel hidden" data-outline-panel>
+    <div class="side-panel-header">
+      <div class="font-semibold">Outline</div>
+      <button class="btn ghost" data-close-outline>×</button>
+    </div>
+    <div class="side-panel-body" data-outline-list></div>
+  </aside>
+
+  <div class="fab" data-open-bottom-sheet>＋不足チェック</div>
+  <div class="bottom-sheet hidden" data-bottom-sheet>
+    <div class="bottom-sheet-header">
+      <div class="font-semibold">不足チェック</div>
+      <button class="btn ghost" data-bottom-sheet-close>×</button>
+    </div>
+    <div class="bottom-sheet-body">
+      <ul class="list" data-bs-checklist></ul>
+      <div class="mt-2">
+        <div class="font-semibold mb-1">次に答えると効く問い</div>
+        <div class="stack" data-bs-next-questions></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/qbank.js"></script>
+  <script src="assets/js/components/outline.js"></script>
+  <script src="assets/js/components/qcard.js"></script>
+  <script src="assets/js/components/preview.js"></script>
+  <script src="assets/js/components/checklist.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

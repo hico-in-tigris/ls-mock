@@ -6,9 +6,10 @@ function updateWizardProgress(currentStep) {
     const steps = [
         { name: 'ideation', number: 1, title: 'アイデア整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
         { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: '想いを具体的な企画として構成し、フレームワークを使って体系化しましょう。' },
-        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
-        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
-        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめて、説得力のある提案資料を作成しましょう。' }
+        { name: 'stakeholder', number: 3, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
+        { name: 'goal-setting', number: 4, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
+        { name: 'budget', number: 5, title: '予算/スケジュール', color: 'gray', icon: 'document', description: '費目別の予算とマイルストーンを設定しましょう。' },
+        { name: 'proposal', number: 6, title: '資料作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめ、説得力のある資料を作成しましょう。' }
     ];
     
     const currentStepIndex = steps.findIndex(step => step.name === currentStep);
@@ -131,9 +132,10 @@ function selectWizardStep(stepName) {
     const steps = [
         { name: 'ideation', number: 1, title: 'アイデア整理', color: 'blue', icon: 'circle', description: 'アイデアや想いを整理して、プロジェクトの核となる部分を明確化しましょう。' },
         { name: 'planning', number: 2, title: '企画構成', color: 'green', icon: 'document', description: '想いを具体的な企画として構成し、フレームワークを使って体系化しましょう。' },
-        { name: 'goal-setting', number: 3, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
-        { name: 'stakeholder', number: 4, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
-        { name: 'proposal', number: 5, title: '提案作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめて、説得力のある提案資料を作成しましょう。' }
+        { name: 'stakeholder', number: 3, title: '関係者分析', color: 'orange', icon: 'users', description: 'プロジェクトに関わる関係者を特定し、影響度と関心度を分析しましょう。' },
+        { name: 'goal-setting', number: 4, title: '目標設定', color: 'purple', icon: 'target', description: '明確で測定可能な目標を設定し、成功の指標を定義しましょう。' },
+        { name: 'budget', number: 5, title: '予算/スケジュール', color: 'gray', icon: 'document', description: '費目別の予算とマイルストーンを設定しましょう。' },
+        { name: 'proposal', number: 6, title: '資料作成', color: 'indigo', icon: 'presentation', description: 'これまでの検討結果をまとめ、説得力のある資料を作成しましょう。' }
     ];
     
     const selectedStep = steps.find(step => step.name === stepName);
@@ -146,7 +148,7 @@ function selectWizardStep(stepName) {
 
 // Get next step name
 function getNextStepName(currentStepName) {
-    const stepOrder = ['ideation', 'planning', 'goal-setting', 'stakeholder', 'proposal'];
+    const stepOrder = ['ideation', 'planning', 'stakeholder', 'goal-setting', 'budget', 'proposal'];
     const currentIndex = stepOrder.indexOf(currentStepName);
     return currentIndex < stepOrder.length - 1 ? stepOrder[currentIndex + 1] : null;
 }
@@ -157,7 +159,6 @@ function proceedToNextStep(currentStepName) {
     if (nextStepName) {
         // Mark current step as completed
         markStepCompleted(currentStepName);
-        
         // Move to next step
         selectWizardStep(nextStepName);
         
@@ -171,9 +172,10 @@ function showStepTransitionMessage(fromStep, toStep) {
     const stepTitles = {
         'ideation': 'アイデア整理',
         'planning': '企画構成',
-        'goal-setting': '目標設定',
         'stakeholder': '関係者分析',
-        'proposal': '提案作成'
+        'goal-setting': '目標設定',
+        'budget': '予算/スケジュール',
+        'proposal': '資料作成'
     };
 
     const notification = document.createElement('div');
@@ -200,7 +202,7 @@ function markStepCompleted(stepName) {
 }
 
 function getNextStep(currentStep) {
-    const stepOrder = ['ideation', 'planning', 'goal-setting'];
+    const stepOrder = ['ideation', 'planning', 'stakeholder', 'goal-setting', 'budget', 'proposal'];
     const currentIndex = stepOrder.indexOf(currentStep);
     return currentIndex < stepOrder.length - 1 ? stepOrder[currentIndex + 1] : null;
 }
@@ -273,8 +275,9 @@ function renderIdeationWorkspace(mode) {
     const requiredFunctions = {
         'ideation': 'renderIdeationContent',
         'planning': 'renderPlanningContent',
-        'goal-setting': 'renderGoalSettingContent',
         'stakeholder': 'renderStakeholderContent',
+        'goal-setting': 'renderGoalSettingContent',
+        'budget': 'renderBudgetContent',
         'proposal': 'renderProposalContent'
     };
     
@@ -290,12 +293,15 @@ function renderIdeationWorkspace(mode) {
     } else if (mode === 'planning') {
         console.log('Rendering planning content');
         return renderPlanningContent();
-    } else if (mode === 'goal-setting') {
-        console.log('Rendering goal setting content');
-        return renderGoalSettingContent();
     } else if (mode === 'stakeholder') {
         console.log('Rendering stakeholder content');
         return renderStakeholderContent();
+    } else if (mode === 'goal-setting') {
+        console.log('Rendering goal setting content');
+        return renderGoalSettingContent();
+    } else if (mode === 'budget') {
+        console.log('Rendering budget content');
+        return renderBudgetContent();
     } else if (mode === 'proposal') {
         console.log('Rendering proposal content');
         return renderProposalContent();

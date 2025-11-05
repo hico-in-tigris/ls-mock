@@ -228,6 +228,13 @@
                     </svg>
                     ふりかえり
                 </a>
+                <a href="#/plan" class="nav-link flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground" data-route="plan">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 4h18v16H3z"/>
+                        <path d="M7 8h10M7 12h10M7 16h6"/>
+                    </svg>
+                    企画室
+                </a>
             </nav>
             
             <!-- Mobile Navigation Header -->
@@ -293,6 +300,13 @@
                             <polyline points="10,9 9,9 8,9"/>
                         </svg>
                         ふりかえり
+                    </a>
+                    <a href="#/plan" class="nav-link flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground" data-route="plan">
+                        <svg class="mr-3 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 4h18v16H3z"/>
+                            <path d="M7 8h10M7 12h10M7 16h6"/>
+                        </svg>
+                        企画室
                     </a>
                 </nav>
             </div>
@@ -414,6 +428,7 @@
     <script src="assets/scripts/projects-ideation.js"></script>
     <script src="assets/scripts/projects-planning.js"></script>
     <script src="assets/scripts/projects-goal.js"></script>
+    <script src="assets/scripts/projects-budget.js"></script>
     <script src="assets/scripts/projects-stakeholder.js"></script>
     <script src="assets/scripts/projects-utils.js"></script>
     <script src="assets/scripts/projects-proposal.js"></script>
@@ -427,6 +442,18 @@
     <script src="assets/scripts/profile-enhanced.js"></script>
     <script src="assets/scripts/region.js"></script>
     <script src="assets/scripts/issues.js"></script>
+
+    <!-- QDE modules (embedded) -->
+    <script>window.QDE_PATH_PREFIX = 'qde/assets/data/';</script>
+    <script src="qde/assets/js/state.js"></script>
+    <script src="qde/assets/js/qbank.js"></script>
+    <script src="qde/assets/js/components/outline.js"></script>
+    <script src="qde/assets/js/components/qcard.js"></script>
+    <script src="qde/assets/js/components/preview.js"></script>
+    <script src="qde/assets/js/components/checklist.js"></script>
+    <!-- Financial Estimator must load before plan-editor -->
+    <script src="assets/scripts/plan-estimator.js"></script>
+    <script src="assets/scripts/plan-editor.js"></script>
     
     <!-- Additional Scripts -->
     <script src="assets/scripts/region-inference.js"></script>

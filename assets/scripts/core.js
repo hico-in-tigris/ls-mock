@@ -912,6 +912,13 @@ function renderCurrentRoute() {
         case 'issues':
             renderIssues(container);
             break;
+        case 'plan':
+            if (typeof renderPlanEditor === 'function') {
+                renderPlanEditor(container);
+            } else {
+                container.innerHTML = '<div class="p-6 text-red-500">Error: Plan Editor failed to load</div>';
+            }
+            break;
         default:
             renderDashboard(container);
     }

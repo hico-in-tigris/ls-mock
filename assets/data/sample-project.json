@@ -1,0 +1,15 @@
+{
+  "id": "pj-001",
+  "title": "きもべつ関わり方相談窓口 リニューアル",
+  "status": "構想中",
+  "sections": [
+    {"id":"goal","title":"目的","summary":"","status":"draft","unresolved":2,"progress":40},
+    {"id":"stakeholders","title":"関係者","summary":"","status":"empty","unresolved":3,"progress":10},
+    {"id":"hypothesis","title":"仮説","summary":"","status":"draft","unresolved":1,"progress":50},
+    {"id":"plan","title":"実行計画","summary":"","status":"empty","unresolved":4,"progress":0},
+    {"id":"kpi","title":"KPI","summary":"","status":"empty","unresolved":2,"progress":0}
+  ],
+  "draftVersion": {},
+  "publishedVersion": {},
+  "snapshots": []
+}
