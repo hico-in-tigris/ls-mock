@@ -66,7 +66,14 @@ assets/scripts/
 │   ├── plan-editor-budget.js
 │   ├── plan-editor-simulators.js
 │   └── plan-estimator.js
-├── people.js                  # 人物管理
+├── people/                   # 人物・ネットワーク管理
+│   ├── people.js (93行)       # コアオーケストレーション
+│   ├── people-stats.js (95行) # 統計計算
+│   ├── people-filters.js (193行) # 検索・フィルタ・ソート
+│   ├── people-views.js (249行) # 3つのビュー（cards, list, network）
+│   ├── people-modals.js (408行) # モーダル管理
+│   ├── people-network.js (37行) # ネットワーク可視化
+│   └── people-location.js (97行) # 位置情報管理
 ├── actions.js                 # アクション管理
 ├── summary/                   # サマリー・リフレクション
 │   ├── summary.js
@@ -345,10 +352,22 @@ test('plan generation flow', async ({ page }) => {
 - After: 197行
 - **削減率: 81.8%**
 
+### Phase 3: people.js削減（2025年11月5日）
+- Before: 1633行（単一ファイル）
+- After: 93行（コア） + 6モジュール（1079行）
+- **コア削減率: 94.3%**
+- **モジュール構成:**
+  - people-stats.js (95行) - 統計計算
+  - people-filters.js (193行) - 検索・フィルタリング
+  - people-views.js (249行) - ビューレンダリング
+  - people-modals.js (408行) - モーダル管理
+  - people-network.js (37行) - ネットワーク可視化
+  - people-location.js (97行) - 位置情報管理
+
 ### 合計削減
-- Total Before: 4719行
-- Total After: 471行
-- **総削減率: 90.0%**
+- Total Before: 6352行 (main + plan-editor + people)
+- Total After: 564行 (コアファイルのみ)
+- **総コア削減率: 91.1%**
 
 ## 📚 参考資料
 
