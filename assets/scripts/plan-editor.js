@@ -4,19 +4,36 @@
   
   let currentDraft = null;
   let isGenerating = false;
+  let currentMode = null; // 'simple' or 'workspace' or null
+  // ライト/ワークスペース共通で使うプロジェクト名の一時保持
+  let projectName = '';
 
   function renderPlanEditor(container){
     const hasDraft = currentDraft !== null;
+    
+    // モード選択画面を表示
+    if (!currentMode && !hasDraft) {
+      container.innerHTML = renderModeSelector();
+      return;
+    }
     
     container.innerHTML = `
       <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
         <div class="flex items-start justify-between">
           <div>
             <h1 class="text-2xl font-bold">企画室</h1>
-            <p class="text-muted-foreground text-sm">簡単な質問に答えるだけで、AIが事業計画の下書きを作成します</p>
+            <p class="text-muted-foreground text-sm">
+              ${currentMode === 'simple' ? '簡単な質問に答えるだけで、AIが事業計画の下書きを作成します' : '各ワークスペースで計画を深掘りして作成します'}
+            </p>
           </div>
           ${hasDraft ? `
             <div class="flex gap-2">
+              <button onclick="openDetailedWorkspace()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+                </svg>
+                詳細ワークスペースへ
+              </button>
               <button onclick="exportPlanAsPDF()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent h-9 px-4 py-2">
                 <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -40,10 +57,143 @@
     attachEventListeners();
   }
 
+  function renderModeSelector() {
+    return `
+      <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+        <div>
+          <h1 class="text-2xl font-bold">企画室</h1>
+          <p class="text-muted-foreground">企画の作成方法を選んでください</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mt-8">
+          <!-- ライトモード -->
+          <div class="card hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-primary" onclick="selectPlanningMode('simple')">
+            <div class="p-8">
+              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold mb-3">ライトに作成</h2>
+              <p class="text-muted-foreground mb-6">簡単な質問に答えるだけで、AIが事業計画の下書きを自動生成します。すぐに企画を形にしたい方におすすめです。</p>
+              
+              <div class="space-y-2 mb-6">
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>3つの質問に答えるだけ</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>AI が財務概算も自動生成</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>後から詳細ワークスペースで深掘り可能</span>
+                </div>
+              </div>
+
+              <div class="inline-flex items-center text-sm font-medium text-primary">
+                このモードで始める
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ワークスペースモード -->
+          <div class="card hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-primary" onclick="selectPlanningMode('workspace')">
+            <div class="p-8">
+              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold mb-3">ワークスペースから開始</h2>
+              <p class="text-muted-foreground mb-6">各ワークスペースで段階的に企画を作り込みます。じっくり練りたい方、複雑な企画におすすめです。</p>
+              
+              <div class="space-y-2 mb-6">
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>アイデア整理・目標設定など6つのツール</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>関係者分析・SMART目標など専門機能</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>好きな順番で必要な部分だけ作成</span>
+                </div>
+              </div>
+
+              <div class="inline-flex items-center text-sm font-medium text-primary">
+                このモードで始める
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 補足情報 -->
+        <div class="bg-muted/50 rounded-lg p-4 mt-6">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="text-sm text-muted-foreground">
+              <p class="font-medium text-foreground mb-1">どちらのモードでも</p>
+              <p>いつでもモードを切り替えられます。ライトに始めて、必要に応じてワークスペースで詳細を詰めることも可能です。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.selectPlanningMode = function(mode) {
+    currentMode = mode;
+    if (mode === 'simple') {
+      window.renderPlanEditor(document.getElementById('main-content'));
+    } else if (mode === 'workspace') {
+      const container = document.getElementById('main-content');
+      container.innerHTML = renderWorkspaceSelector();
+    }
+  };
+
   function renderInitialForm() {
     return `
       <div class="max-w-3xl mx-auto">
         <div class="card p-6 space-y-6">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">P</div>
+              <h2 class="text-lg font-semibold">プロジェクト名</h2>
+            </div>
+            <input 
+              id="project-name" 
+              type="text"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              placeholder="例: ○○エリア活性化プロジェクト"
+              value="${(currentDraft && currentDraft.title) ? currentDraft.title : (projectName || '')}"
+              oninput="updateProjectName(this.value)"
+            />
+            <p class="text-xs text-muted-foreground">後からいつでも変更できます。</p>
+          </div>
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <div class="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">0</div>
@@ -273,6 +423,7 @@
         <!-- Title -->
         <div class="border-b border-border pb-4">
           <h1 class="text-2xl font-bold text-foreground mb-2">事業計画書</h1>
+          ${currentDraft.title ? `<div class=\"text-lg font-semibold text-foreground\">${currentDraft.title}</div>` : ''}
           <p class="text-sm text-muted-foreground">作成日: ${new Date().toLocaleDateString('ja-JP')}</p>
           ${currentDraft.genres && currentDraft.genres.length ? `
           <div class="mt-2 flex flex-wrap gap-2">
@@ -417,6 +568,7 @@
   }
 
   window.generateAIDraft = function() {
+    const name = document.getElementById('project-name')?.value?.trim() || projectName || '';
     const idea = document.getElementById('business-idea')?.value;
     const target = document.getElementById('target-users')?.value;
     const value = document.getElementById('value-prop')?.value;
@@ -452,6 +604,7 @@
       }
 
       currentDraft = {
+        title: name || undefined,
         overview: `${finalIdea}\n\n${finalValue}を通じて、地域活性化と移住促進に貢献します。${budget ? `初期投資額: ${budget}` : ''}${timeline ? `、開始予定: ${timeline}` : ''}`,
         target: finalTarget,
         revenue: financials ? `選択ジャンル: ${financials.meta.genres.join('、')}\n\n主な収益源（概算）:\n${financials.incomes.map(i=>`• ${i.label}: 約${i.monthly.toLocaleString()}円/月`).join('\n')}\n\n主な固定費（概算）:\n${financials.expenses.map(e=>`• ${e.label}: 約${(e.monthly||0).toLocaleString()}円/月`).join('\n')}\n\n概算粗利: 約${(financials.totals.profit).toLocaleString()}円/月` : `主な収益源:\n• コワーキングスペース月額会員費: 2万円/月\n• ゲストハウス宿泊費: 5,000円/泊\n• イベント・ワークショップ収益\n• 地域企業とのコラボレーション収益`,
@@ -459,6 +612,7 @@
         genres: finalGenres,
         financials
       };
+      projectName = name; // 一時名も同期
       
       window.renderPlanEditor(document.getElementById('main-content'));
       showNotification('AI下書きを生成しました。内容を確認して編集してください。', 'success');
@@ -478,12 +632,846 @@
   window.startNewPlan = function() {
     if (confirm('現在の内容を破棄して新しい計画を作成しますか?')) {
       currentDraft = null;
+      currentMode = null;
+      projectName = '';
       window.renderPlanEditor(document.getElementById('main-content'));
     }
   };
 
   window.exportPlanAsPDF = function() {
     showNotification('PDF出力機能は実装予定です', 'info');
+  };
+
+  // 詳細ワークスペースへの遷移
+  window.openDetailedWorkspace = function() {
+    const container = document.getElementById('main-content');
+    currentMode = 'workspace';
+    container.innerHTML = renderWorkspaceSelector();
+  };
+
+  let activeWorkspace = null;
+  // 企画構成ワークスペース内のフレームワーク選択状態
+  let planningFramework = '5w1h'; // '5w1h' | 'swot' | '4p' | 'bmc' | 'lean'
+
+  function renderWorkspaceSelector() {
+    return `
+      <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold">詳細ワークスペース</h1>
+            <p class="text-muted-foreground">各ステップで深掘りして計画をブラッシュアップしましょう</p>
+          </div>
+          <div class="flex gap-2">
+            ${currentDraft ? `
+              <button onclick="backToSimpleEditor()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent h-9 px-4 py-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                シンプル編集へ戻る
+              </button>
+            ` : `
+              <button onclick="switchToLightMode()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent h-9 px-4 py-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                ライトモードに切替
+              </button>
+              <button onclick="backToModeSelector()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent h-9 px-4 py-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                モード選択へ戻る
+              </button>
+            `}
+          </div>
+        </div>
+        
+        <!-- プロジェクト名（ワークスペース開始時にも設定可能） -->
+        <div class="bg-muted/40 rounded-lg p-4">
+          <label class="block text-sm font-medium mb-1">プロジェクト名</label>
+          <input id="project-name-ws" type="text" class="w-full h-9 rounded-md border border-input px-3" placeholder="例: ○○エリア活性化プロジェクト" value="${(currentDraft && currentDraft.title) ? currentDraft.title : (projectName || '')}" oninput="updateProjectName(this.value)" />
+          <p class="text-xs text-muted-foreground mt-1">いつでも変更できます（保存不要）。</p>
+        </div>
+
+        <!-- ワークスペース選択カード -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- アイデア整理 -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'ideation' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('ideation')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">アイデア整理</h3>
+              <p class="text-sm text-muted-foreground mb-4">想いを構造化し、課題・解決策・対象者・効果を明確にします</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'ideation' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'ideation' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'ideation' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 企画構成 -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'planning' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('planning')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">企画構成</h3>
+              <p class="text-sm text-muted-foreground mb-4">5W1Hで企画を整理し、実行可能な形に落とし込みます</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'planning' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'planning' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'planning' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 目標設定 -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'goal-setting' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('goal-setting')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">目標設定</h3>
+              <p class="text-sm text-muted-foreground mb-4">SMART目標とKPIで成功指標を明確にします</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'goal-setting' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'goal-setting' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'goal-setting' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 関係者分析 -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'stakeholder' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('stakeholder')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">関係者分析</h3>
+              <p class="text-sm text-muted-foreground mb-4">ステークホルダーを特定し、影響力と関心度を分析します</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'stakeholder' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'stakeholder' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'stakeholder' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 提案作成 -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'proposal' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('proposal')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">提案作成</h3>
+              <p class="text-sm text-muted-foreground mb-4">分析結果をもとに説得力のある提案書を作成します</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'proposal' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'proposal' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'proposal' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 予算・スケジュール -->
+          <div class="card hover:shadow-lg transition-shadow cursor-pointer ${activeWorkspace === 'budget' ? 'ring-2 ring-primary' : ''}" onclick="toggleWorkspaceModule('budget')">
+            <div class="p-6">
+              <div class="w-12 h-12 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">予算・スケジュール</h3>
+              <p class="text-sm text-muted-foreground mb-4">予算計画とタイムラインを作成します</p>
+              <div class="flex items-center text-sm ${activeWorkspace === 'budget' ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                ${activeWorkspace === 'budget' ? '開いています' : '開く'}
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${activeWorkspace === 'budget' ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'}"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- インラインワークスペース表示エリア -->
+        <div id="inline-workspace-container"></div>
+
+        <!-- ヒント -->
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="text-sm text-blue-900">
+              <p class="font-medium mb-1">各ワークスペースで計画を深掘りできます</p>
+              <p class="text-blue-800">AI下書きをベースに、それぞれの観点から詳細を詰めていきましょう。いつでもシンプル編集に戻れます。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.backToSimpleEditor = function() {
+    currentMode = 'simple';
+    window.renderPlanEditor(document.getElementById('main-content'));
+  };
+
+  window.switchToLightMode = function() {
+    currentMode = 'simple';
+    window.renderPlanEditor(document.getElementById('main-content'));
+  };
+
+  window.backToModeSelector = function() {
+    currentMode = null;
+    currentDraft = null;
+    projectName = '';
+    window.renderPlanEditor(document.getElementById('main-content'));
+  };
+
+  // ワークスペースモジュールのトグル表示
+  window.toggleWorkspaceModule = function(module) {
+    // 状態を更新（同じものなら閉じる）
+    activeWorkspace = (activeWorkspace === module) ? null : module;
+
+    // ワークスペース選択画面を再描画してアクティブ状態を反映
+    const container = document.getElementById('main-content');
+    container.innerHTML = renderWorkspaceSelector();
+
+    // 再描画後のDOMに対してインラインワークスペースを描画
+    if (activeWorkspace) {
+      renderInlineWorkspace(activeWorkspace);
+      // インラインエリアまでスムーズスクロール
+      const inline = document.getElementById('inline-workspace-container');
+      inline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // インラインワークスペースの描画
+  function renderInlineWorkspace(module) {
+    const container = document.getElementById('inline-workspace-container');
+    
+    const palette = {
+      blue:   { bg:'bg-blue-100',   text:'text-blue-600',   grad:'from-blue-500 to-blue-400' },
+      green:  { bg:'bg-green-100',  text:'text-green-600',  grad:'from-green-500 to-green-400' },
+      purple: { bg:'bg-purple-100', text:'text-purple-600', grad:'from-purple-500 to-purple-400' },
+      orange: { bg:'bg-orange-100', text:'text-orange-600', grad:'from-orange-500 to-orange-400' },
+      indigo: { bg:'bg-indigo-100', text:'text-indigo-600', grad:'from-indigo-500 to-indigo-400' },
+      yellow: { bg:'bg-yellow-100', text:'text-yellow-600', grad:'from-yellow-500 to-yellow-400' },
+    };
+
+    const moduleConfig = {
+      ideation: {
+        title: 'アイデア整理ワークスペース',
+        subtitle: '想い・課題・対象・効果を整理',
+        color: 'blue',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>' ,
+        content: renderIdeationWorkspace(),
+      },
+      planning: {
+        title: '企画構成ワークスペース',
+        subtitle: 'フレームワークで多面的に整理',
+        color: 'green',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+        content: renderPlanningWorkspace(),
+      },
+      'goal-setting': {
+        title: '目標設定ワークスペース',
+        subtitle: 'ゴール・KPI・マイルストーン',
+        color: 'purple',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>' ,
+        content: renderGoalWorkspace(),
+      },
+      stakeholder: {
+        title: '関係者分析ワークスペース',
+        subtitle: '関係者・期待・懸念・影響度',
+        color: 'orange',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>',
+        content: renderStakeholderWorkspace(),
+      },
+      proposal: {
+        title: '提案作成ワークスペース',
+        subtitle: '背景・提案内容・効果・リスク',
+        color: 'indigo',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+        content: renderProposalWorkspace(),
+      },
+      budget: {
+        title: '予算・スケジュールワークスペース',
+        subtitle: '収入・支出・収支を整理',
+        color: 'yellow',
+        icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+        content: renderBudgetWorkspace(),
+      }
+    };
+
+    const cfg = moduleConfig[module];
+    const col = palette[cfg.color] || palette.blue;
+    
+    container.innerHTML = `
+      <div class="mt-8 border rounded-lg shadow-sm overflow-hidden animate-fade-in">
+        <div class="h-1.5 bg-gradient-to-r ${col.grad}"></div>
+        <div class="p-5 border-b">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg ${col.bg} ${col.text} flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">${cfg.icon}</svg>
+              </div>
+              <div>
+                <h2 class="text-lg md:text-xl font-bold">${cfg.title}</h2>
+                <p class="text-xs md:text-sm text-muted-foreground">${cfg.subtitle||''}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="handleWorkspaceSave('${module}')" class="btn-secondary">保存</button>
+              <button onclick="aiPolishWorkspace('${module}')" class="btn">AIにブラッシュアップ</button>
+              <button onclick="goToNextWorkspaceModule()" class="btn-primary">次のステップへ</button>
+            </div>
+          </div>
+        </div>
+        <div class="p-5 bg-white">
+          ${cfg.content}
+          <div class="mt-6 bg-muted/40 border-l-4 border-muted p-4 rounded-r">
+            <div class="flex items-start gap-2 text-muted-foreground text-xs md:text-sm">
+              <svg class="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p>入力内容は画面上の保存ボタンで一時保存できます。後からいつでも編集可能です。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 保存処理（現状は通知のみ、将来的にcurrentDraftへ書き込み）
+  window.handleWorkspaceSave = function(moduleKey) {
+    const mod = moduleKey || activeWorkspace;
+    // TODO: 各モジュールのフォーム値を取得してcurrentDraftへ保存
+    showNotification('保存しました', 'success');
+  };
+
+  // プロジェクト名の更新（ワークスペース/共通）
+  window.updateProjectName = function(val){
+    projectName = (val || '').trim();
+    if (currentDraft) {
+      currentDraft.title = projectName || undefined;
+    }
+  };
+
+  // 次のステップへ進む（モジュール順に切り替え）
+  window.goToNextWorkspaceModule = function() {
+    const order = ['ideation','planning','goal-setting','stakeholder','proposal','budget'];
+    const idx = order.indexOf(activeWorkspace);
+    const next = idx >= 0 && idx < order.length - 1 ? order[idx + 1] : null;
+    if (next) {
+      toggleWorkspaceModule(next);
+    } else {
+      showNotification('全てのステップが完了しました', 'success');
+    }
+  };
+
+  // AIブラッシュアップ: 現在のモジュールに応じた提案を画面内に生成（非破壊）
+  window.aiPolishWorkspace = function(moduleKey) {
+    const mod = moduleKey || activeWorkspace;
+    const root = document.getElementById('inline-workspace-container');
+    if (!root) return;
+
+    // 既存の提案を一旦削除
+    root.querySelectorAll('.ai-suggestion-box').forEach(el => el.remove());
+
+    const suggestions = getAISuggestionsForModule(mod);
+    const wrap = root.querySelector('.p-5.bg-white') || root;
+
+    const box = document.createElement('div');
+    box.className = 'ai-suggestion-box mt-4 p-4 rounded-lg border bg-muted/40';
+    box.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-medium">AIの提案</div>
+        <button class="text-xs text-muted-foreground hover:text-foreground" onclick="this.closest('.ai-suggestion-box').remove()">閉じる</button>
+      </div>
+      <ul class="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+        ${suggestions.map(s => `<li>${s}</li>`).join('')}
+      </ul>
+      <div class="mt-2 text-xs text-muted-foreground">提案は参考用です。必要なものだけ取り入れてください。</div>
+    `;
+    wrap.appendChild(box);
+    showNotification('AIが提案を作成しました', 'success');
+  };
+
+  function getAISuggestionsForModule(mod) {
+    const common = [
+      '曖昧な表現は具体的な数字や期間に置き換えましょう（例: 早め → 2週間以内）。',
+      '対象者や範囲を明確にしましょう（例: 地域住民 → 町内会B地区の高齢者）。',
+      '実行順序と担当を明文化すると実践しやすくなります。'
+    ];
+    const byModule = {
+      ideation: [
+        '「課題 → 解決策 → 期待効果」の流れで1〜3行に要約してみましょう。',
+        '既存の取り組みとの差分（ユニークさ）を一言で示しましょう。'
+      ],
+      planning: [
+        '選んだフレームワークの空欄に最低1つずつ記入し、抜けを可視化しましょう。',
+        '5W1Hなら「いつ・どこで・誰が・何を・なぜ・どうやって」を1文ずつ。'
+      ],
+      'goal-setting': [
+        'KPIは「指標・目標値・期限・測定方法」をセットで記載しましょう。',
+        'マイルストーンは四半期ごとに1〜2個に絞ると実行管理しやすいです。'
+      ],
+      stakeholder: [
+        'ステークホルダーごとに「期待・懸念・影響度・関与方法」を1行で整理。',
+        '対立が起きた場合の調整ルール（エスカレーション先）を決めておきましょう。'
+      ],
+      proposal: [
+        '背景→課題→解決策→実施計画→効果→リスク→体制→予算の見出しで構成。',
+        '読み手の意思決定に必要な根拠（データ・事例）を1つ添えましょう。'
+      ],
+      budget: [
+        '収入と支出は月次と年次の2軸で整理し、前提（単価・数量）を明記。',
+        'キャッシュがマイナスになる月の対策（支払いサイト・助成金）を検討。'
+      ]
+    };
+    return [...(byModule[mod] || []), ...common];
+  }
+
+  // タブ切替: 企画構成のフレームワーク
+  window.selectPlanningFramework = function(key){
+    planningFramework = key;
+    // 開いている状態を保って企画構成だけ差し替え
+    if (activeWorkspace !== 'planning') {
+      activeWorkspace = 'planning';
+    }
+    // 画面再描画（カードのアクティブ表示も更新）
+    const container = document.getElementById('main-content');
+    container.innerHTML = renderWorkspaceSelector();
+    renderInlineWorkspace('planning');
+  };
+
+  // 各ワークスペースの描画関数
+  function renderIdeationWorkspace() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">実現したいこと</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="どんな想いや課題意識からこのプロジェクトを始めようと思いましたか？"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">解決したい課題</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="具体的にどのような課題を解決したいですか？"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">対象者・受益者</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="誰のための取り組みですか？"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">期待される効果</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="実現したらどんな変化が生まれますか？"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+            <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
+            <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanningWorkspace() {
+    const tabBtn = (key, label) => `
+      <button 
+        class="px-3 py-1.5 text-sm ${planningFramework===key? 'bg-primary text-primary-foreground' : 'bg-background text-foreground hover:bg-accent'} border-r last:border-r-0"
+        onclick="selectPlanningFramework('${key}')"
+      >${label}</button>
+    `;
+
+    return `
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="inline-flex rounded-md overflow-hidden border">
+            ${tabBtn('5w1h','5W1H')}
+            ${tabBtn('swot','SWOT')}
+            ${tabBtn('4p','4P')}
+            ${tabBtn('bmc','BMC')}
+            ${tabBtn('lean','リーンキャンバス')}
+          </div>
+          <div class="text-xs text-muted-foreground">フレームワークを切り替えて多面的に整理</div>
+        </div>
+
+        <div id="planning-framework-content">
+          ${renderPlanningFrameworkContent()}
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+          <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
+          <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanningFrameworkContent(){
+    switch (planningFramework){
+      case 'swot': return renderPlanningSWOT();
+      case '4p': return renderPlanning4P();
+      case 'bmc': return renderPlanningBMC();
+      case 'lean': return renderPlanningLeanCanvas();
+      case '5w1h':
+      default:
+        return renderPlanning5W1H();
+    }
+  }
+
+  function renderPlanning5W1H(){
+    return `
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium mb-2">何をするか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="実施する内容をわかりやすく書いてください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">なぜやるのか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="目的やねらいを書いてください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">誰がやるのか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="関わる人や役割を書いてください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">いつやるのか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="開始時期や期間を書いてください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">どこでやるのか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="場所や方法（オンライン/オフライン）を書いてください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">どのようにやるのか</label>
+          <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="具体的な進め方や手順を書いてください"></textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanningSWOT(){
+    return `
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium mb-2">強み</label>
+          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="うまくできている点、他より優れている点"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">弱み</label>
+          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="課題になっている点、足りない点"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">機会</label>
+          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="追い風になりそうなこと（制度、流行、ニーズなど）"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">脅威</label>
+          <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="向かい風になりそうなこと（競合、規制、代替手段など）"></textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanning4P(){
+    return `
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium mb-2">何を提供するか（製品・サービス）</label>
+          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="お客さまにどんな価値を届けるか"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">価格はいくらか</label>
+          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="料金プランや割引の考え方"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">どこで/どう届けるか（チャネル）</label>
+          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="オンライン/オフラインなどの提供方法"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">どうやって知ってもらうか（告知・集客）</label>
+          <textarea class="w-full min-h-[90px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="SNS、広告、イベントなど"></textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanningBMC(){
+    return `
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">重要なパートナー</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="協力先、連携する団体・企業"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">主要な活動</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="価値を生むための中核活動"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">主要な資源</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="人・物・お金・知識など"></textarea>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">価値提案</label>
+            <textarea class="w-full min-h-[150px] px-2 py-2 border rounded-md" placeholder="お客さまにとっての嬉しい点・解決する困りごと"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">顧客との関係</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのように関係を築き維持するか"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">チャネル</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="価値を届ける経路（Web、店舗など）"></textarea>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">顧客セグメント</label>
+            <textarea class="w-full min-h-[150px] px-2 py-2 border rounded-md" placeholder="どんな人に価値を届けるか"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">コスト構造</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="主な費用の種類（固定費・変動費など）"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">収益の流れ</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのようにお金が入るか（料金、手数料など）"></textarea>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPlanningLeanCanvas(){
+    return `
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">問題</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="お客さまが抱える困りごと"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">解決策</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="その困りごとをどう解決するか"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">大事な指標</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="成功を測るための数字（登録数、継続率など）"></textarea>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">独自の価値</label>
+            <textarea class="w-full min-h-[100px] px-2 py-2 border rounded-md" placeholder="他では得られない価値は何か"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">他に真似できない強み</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="自分たちだけが持っている優位性"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">チャネル</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どの経路で価値を届けるか"></textarea>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">顧客セグメント</label>
+            <textarea class="w-full min-h-[100px] px-2 py-2 border rounded-md" placeholder="価値を届けたい相手（ペルソナなど）"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">コスト構造</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="主にかかる費用（固定費・変動費）"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">収益の流れ</label>
+            <textarea class="w-full min-h-[90px] px-2 py-2 border rounded-md" placeholder="どのようにお金が入るか"></textarea>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderGoalWorkspace() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">最終ゴール</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="このプロジェクトで最終的に達成したいゴールは何ですか？"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">主要KPI（3〜5個）</label>
+            <div class="space-y-3">
+              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 1: 例）月間利用者数 100名">
+              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 2: 例）顧客満足度 4.5/5.0以上">
+              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="KPI 3: 例）収支プラス転換（6ヶ月以内）">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">マイルストーン</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="目標達成までの主要なマイルストーンを時系列で記載してください"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+            <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
+            <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStakeholderWorkspace() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-4">ステークホルダーマップ</label>
+            <div class="grid grid-cols-1 gap-4">
+              <div class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="font-medium">主要ステークホルダー</h4>
+                  <button class="text-sm text-primary hover:underline">+ 追加</button>
+                </div>
+                <div class="space-y-2">
+                  <div class="grid grid-cols-4 gap-2 text-sm">
+                    <input type="text" placeholder="名前・役割" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
+                    <input type="text" placeholder="期待すること" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
+                    <input type="text" placeholder="懸念事項" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
+                    <select class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
+                      <option>影響度:高</option>
+                      <option>影響度:中</option>
+                      <option>影響度:低</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">コミュニケーション計画</label>
+            <textarea class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="各ステークホルダーとどのように連携・報告していきますか？"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+            <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
+            <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderProposalWorkspace() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">提案の背景</label>
+            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="なぜこの提案が必要なのか"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">提案内容</label>
+            <textarea class="w-full min-h-[120px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="具体的に何を提案するのか"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">期待される効果</label>
+            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="実施することでどんな効果が期待できるか"></textarea>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">必要な予算</label>
+              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例）初期費用200万円、月次30万円">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">実施スケジュール</label>
+              <input type="text" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例）3ヶ月（準備1ヶ月、実施2ヶ月）">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">リスクと対策</label>
+            <textarea class="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="想定されるリスクとその対策"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary">保存</button>
+            <button class="btn-primary">提案書をエクスポート</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderBudgetWorkspace() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <div>
+            <h3 class="font-medium mb-4">収入計画</h3>
+            <div class="space-y-2">
+              <div class="grid grid-cols-3 gap-2">
+                <input type="text" placeholder="収入項目" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="number" placeholder="金額" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" placeholder="備考" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <button class="text-sm text-primary hover:underline">+ 収入項目を追加</button>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-medium mb-4">支出計画</h3>
+            <div class="space-y-2">
+              <div class="grid grid-cols-3 gap-2">
+                <input type="text" placeholder="支出項目" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="number" placeholder="金額" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" placeholder="備考" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <button class="text-sm text-primary hover:underline">+ 支出項目を追加</button>
+            </div>
+          </div>
+          <div class="border-t pt-4">
+            <div class="flex justify-between items-center text-lg font-bold">
+              <span>収支</span>
+              <span class="text-green-600">+0円</span>
+            </div>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary">保存</button>
+            <button class="btn-primary">収支表をエクスポート</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.openWorkspaceModule = function(module) {
+    // 既存のプロジェクトモジュールを呼び出す
+    if (typeof window.openIdeationWorkspace === 'function') {
+      window.openIdeationWorkspace(module);
+    } else {
+      showNotification(`${module}ワークスペースは準備中です`, 'info');
+    }
   };
 
   window.renderPlanEditor = renderPlanEditor;
