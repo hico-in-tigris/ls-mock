@@ -72,12 +72,6 @@ function renderReflectionContent(period) {
     const contentContainer = document.getElementById('reflection-content');
     if (!contentContainer) return;
     
-    // Show/hide project selector based on period
-    const projectSelector = document.getElementById('project-selector');
-    if (projectSelector) {
-        projectSelector.style.display = period === 'daily' ? 'block' : 'none';
-    }
-    
     switch(period) {
         case 'daily':
             contentContainer.innerHTML = renderDailyReflection();

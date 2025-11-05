@@ -59,6 +59,78 @@ function clearActionForm() {
     document.getElementById('action-result').value = '';
 }
 
+function addDailyReflection() {
+    openDailyReflectionModal();
+}
+
+function openDailyReflectionModal() {
+    const modal = document.getElementById('daily-reflection-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        // フォームをクリア
+        document.getElementById('reflection-good').value = '';
+        document.getElementById('reflection-more').value = '';
+        document.getElementById('reflection-next').value = '';
+        // Goodフィールドにフォーカス
+        setTimeout(() => {
+            document.getElementById('reflection-good').focus();
+        }, 100);
+    }
+}
+
+function closeDailyReflectionModal() {
+    const modal = document.getElementById('daily-reflection-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function submitDailyReflection(e) {
+    e.preventDefault();
+    
+    const good = document.getElementById('reflection-good').value.trim();
+    const more = document.getElementById('reflection-more').value.trim();
+    const next = document.getElementById('reflection-next').value.trim();
+    
+    if (!good && !more) {
+        alert('GoodかMoreのどちらかは入力してください。');
+        return false;
+    }
+    
+    const todayFormatted = new Date().toLocaleDateString('ja-JP', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        weekday: 'short'
+    });
+    
+    // 新しい振り返りを追加
+    const newReflection = {
+        date: todayFormatted,
+        selectedProject: null,
+        reflection: {
+            good: good || '',
+            challenge: more || '',
+            next: next || ''
+        }
+    };
+    
+    // データの先頭に追加
+    reflectionData.daily.unshift(newReflection);
+    
+    // ローカルストレージに保存
+    saveReflectionData();
+    
+    // モーダルを閉じる
+    closeDailyReflectionModal();
+    
+    // 表示を更新
+    renderReflectionContent('daily');
+    
+    alert('振り返りが追加されました！');
+    return false;
+}
+
 function saveDailyReflection() {
     const good = document.getElementById('daily-good')?.value;
     const challenge = document.getElementById('daily-challenge')?.value;
@@ -204,3 +276,7 @@ window.promoteSelectedToNext = promoteSelectedToNext;
 window.openActionModal = openActionModal;
 window.closeActionModal = closeActionModal;
 window.addActionFromModal = addActionFromModal;
+window.addDailyReflection = addDailyReflection;
+window.openDailyReflectionModal = openDailyReflectionModal;
+window.closeDailyReflectionModal = closeDailyReflectionModal;
+window.submitDailyReflection = submitDailyReflection;

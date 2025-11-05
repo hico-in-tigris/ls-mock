@@ -3,153 +3,78 @@
 // ===============================
 
 function renderDailyReflection() {
-    const latestDaily = reflectionData.daily[0];
-    const selectedProject = getProject(latestDaily.selectedProject);
-    const projectActions = getProjectActions(latestDaily.selectedProject);
+    // 過去7日分のふりかえりデータを取得
+    const dailyReflections = reflectionData.daily.slice(0, 7);
     
     return `
         <div class="space-y-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold">日次ふりかえり</h2>
-                <div class="text-sm text-muted-foreground">${latestDaily.date}</div>
+                <h2 class="text-xl font-bold">ひとこと日記</h2>
+                <button onclick="addDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    今日の振り返りを追加
+                </button>
             </div>
             
-            ${selectedProject ? `
-            <!-- Selected Project Info -->
-            <div class="card border-primary bg-primary/5">
-                <div class="card-content">
-                    <div class="flex items-center space-x-3">
-                        <div class="flex-shrink-0">
-                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+            <!-- Daily Reflections List -->
+            <div class="space-y-4">
+                ${dailyReflections.map(daily => `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-semibold">${daily.date}</h3>
                         </div>
-                        <div>
-                            <h3 class="font-semibold">${selectedProject.title}</h3>
-                            <p class="text-sm text-muted-foreground">${selectedProject.kpi}</p>
-                        </div>
-                        <div class="ml-auto">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium status-${selectedProject.status.toLowerCase()}">${selectedProject.status}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            ` : ''}
-            
-            <!-- Project Actions -->
-            <div class="card">
-                <div class="card-header flex items-center justify-between">
-                    <div>
-                        <h3 class="font-semibold">
-                            ${selectedProject ? `${selectedProject.title}の` : ''}今日のアクション
-                        </h3>
-                        <p class="text-sm text-muted-foreground">
-                            ${projectActions.length > 0 ? `${projectActions.length}件のアクションがあります` : '今日はまだアクションがありません'}
-                        </p>
-                    </div>
-                    ${selectedProject ? `
-                        <button onclick="openActionModal()" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                            <svg class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            アクション追加
-                        </button>
-                    ` : ''}
-                </div>
-                <div class="card-content space-y-4">
-                    ${projectActions.length > 0 ? `
-                        <div class="space-y-3 mb-4">
-                            ${projectActions.map(action => `
-                                <div class="flex items-start space-x-3 p-3 border rounded-lg">
-                                    <div class="flex-shrink-0 w-12 text-sm text-muted-foreground">${action.time}</div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center space-x-2">
-                                            <h4 class="font-medium">${action.action}</h4>
-                                            <span class="badge badge-${action.type === 'meeting' ? 'primary' : action.type === 'work' ? 'secondary' : action.type === 'research' ? 'success' : 'default'}">${action.type}</span>
-                                        </div>
-                                        <p class="text-sm text-muted-foreground mt-1">${action.result}</p>
+                        <div class="card-content space-y-3">
+                            ${daily.reflection.good ? `
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="text-green-600 font-medium text-sm">✓ Good</span>
                                     </div>
+                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.good}</p>
                                 </div>
-                            `).join('')}
+                            ` : ''}
+                            
+                            ${daily.reflection.challenge ? `
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="text-orange-600 font-medium text-sm">△ More</span>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.challenge}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${daily.reflection.next ? `
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="text-blue-600 font-medium text-sm">→ Next</span>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.next}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${!daily.reflection.good && !daily.reflection.challenge && !daily.reflection.next ? `
+                                <p class="text-sm text-muted-foreground text-center py-4">まだ振り返りがありません</p>
+                            ` : ''}
                         </div>
-                    ` : `
-                        <div class="text-center py-12 text-muted-foreground">
-                            ${selectedProject ? 
-                                `<div class="space-y-4">
-                                    <div class="flex justify-center">
-                                        <svg class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                            <path d="M12 4v16m8-8H4"/>
-                                            <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.2"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-lg font-medium text-gray-700">今日はまだアクションがありません</p>
-                                        <p class="text-sm mt-2">右上の <span class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
-                                            <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                                <line x1="5" y1="12" x2="19" y2="12"/>
-                                            </svg>
-                                            アクション追加</span> ボタンから<br>今日の活動を記録しましょう！</p>
-                                    </div>
-                                </div>` : 
-                                `<div class="space-y-4">
-                                    <div class="flex justify-center">
-                                        <svg class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <path d="M8 12l2 2 4-4"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-lg font-medium text-gray-700">プロジェクトを選択してください</p>
-                                        <p class="text-sm mt-2">上のプロジェクト選択エリアから<br>プロジェクトを選ぶと、アクションを追加できます</p>
-                                    </div>
-                                </div>`
-                            }
-                        </div>
-                    `}
-                </div>
-            </div>
-                </div>
+                    </div>
+                `).join('')}
             </div>
             
-            <!-- Daily Reflection -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="font-semibold">今日のふりかえり</h3>
-                    <p class="text-sm text-muted-foreground">
-                        ${selectedProject ? `${selectedProject.title}での` : ''}今日の活動を振り返って記録しましょう
-                    </p>
-                </div>
-                <div class="card-content space-y-4">
-                    <div>
-                        <label class="text-sm font-medium text-green-700">✓ よかったこと</label>
-                        <textarea id="daily-good" class="w-full mt-1 p-3 border border-green-200 bg-green-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" placeholder="今日うまくいったことを記録してください...">${latestDaily.reflection.good}</textarea>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-orange-700">△ 課題・改善点</label>
-                        <textarea id="daily-challenge" class="w-full mt-1 p-3 border border-orange-200 bg-orange-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent" rows="3" placeholder="改善できる点や課題を記録してください...">${latestDaily.reflection.challenge}</textarea>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-blue-700">→ 明日やること</label>
-                        <textarea id="daily-next" class="w-full mt-1 p-3 border border-blue-200 bg-blue-50 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="明日の具体的なアクションを記録してください...">${latestDaily.reflection.next}</textarea>
-                    </div>
-                    <div class="flex space-x-2 pt-4">
-                        <button onclick="saveDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
-                                <polyline points="9,11 12,14 22,4"/>
-                            </svg>
-                            ふりかえりを保存
-                        </button>
-                        <button onclick="clearDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="1,4 1,10 7,10"/>
-                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-                            </svg>
-                            リセット
+            ${dailyReflections.length === 0 ? `
+                <div class="card">
+                    <div class="card-content text-center py-12">
+                        <svg class="h-16 w-16 mx-auto mb-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <p class="text-muted-foreground mb-4">まだ振り返りがありません</p>
+                        <button onclick="addDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                            最初の振り返りを追加
                         </button>
                     </div>
                 </div>
-            </div>
+            ` : ''}
         </div>
     `;
 }

@@ -41,7 +41,7 @@ function renderSummary(container) {
                     <button onclick="switchReflectionPeriod('daily')" 
                             class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-primary text-primary" 
                             data-period="daily">
-                        日次
+                        ひとこと日記
                     </button>
                     <button onclick="switchReflectionPeriod('weekly')" 
                             class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-transparent text-muted-foreground" 
@@ -58,42 +58,6 @@ function renderSummary(container) {
                             data-period="yearly">
                         年次
                     </button>
-                </div>
-            </div>
-            
-            <!-- Project Selector (only for daily) -->
-            <div id="project-selector" class="mb-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="font-semibold">プロジェクト選択</h3>
-                        <p class="text-sm text-muted-foreground">ふりかえりを行うプロジェクトを選択してください</p>
-                    </div>
-                    <div class="card-content">
-                        <div class="grid gap-3 md:grid-cols-2">
-                            ${sampleData.projects.map(project => `
-                                <button onclick="selectProject(${project.id})" 
-                                        class="project-selector-btn flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors ${reflectionData.daily[0].selectedProject === project.id ? 'border-primary bg-primary/5' : 'border-border'}" 
-                                        data-project-id="${project.id}">
-                                    <div class="text-left">
-                                        <h4 class="font-medium">${project.title}</h4>
-                                        <p class="text-sm text-muted-foreground">${project.kpi}</p>
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 status-${project.status.toLowerCase()}">${project.status}</span>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        ${reflectionData.daily[0].selectedProject === project.id ? 
-                                            '<svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>' : 
-                                            '<svg class="h-5 w-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>'
-                                        }
-                                    </div>
-                                </button>
-                            `).join('')}
-                        </div>
-                        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                            <p class="text-sm text-blue-700">
-                                <strong>💡 ヒント:</strong> プロジェクトを選択すると、そのプロジェクトに関連するアクションとふりかえりが表示されます。
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
             
@@ -169,9 +133,9 @@ function renderSummary(container) {
     
     // モーダルのフォーム送信イベントを設定
     setTimeout(() => {
-        const form = document.getElementById('action-form');
-        if (form) {
-            form.addEventListener('submit', (e) => {
+        const actionForm = document.getElementById('action-form');
+        if (actionForm) {
+            actionForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 addActionFromModal();
             });

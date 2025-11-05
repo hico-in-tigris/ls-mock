@@ -26,6 +26,12 @@ function renderDashboard(container) {
                     <h1 class="text-2xl font-bold">今日のダッシュボード</h1>
                     <p class="text-muted-foreground">${new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
                 </div>
+                <button onclick="addDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    今日の振り返りを追加
+                </button>
             </div>
             
             <div class="grid gap-6 lg:grid-cols-3">
@@ -118,7 +124,7 @@ function renderDashboard(container) {
                                         <div class="mt-3 space-y-2">
                                             ${reflection.good ? `
                                                 <div class="flex items-start space-x-2">
-                                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">Good</span>
+                                                    <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">Good</span>
                                                     <p class="text-xs text-muted-foreground flex-1">${reflection.good}</p>
                                                 </div>
                                             ` : ''}
@@ -126,6 +132,12 @@ function renderDashboard(container) {
                                                 <div class="flex items-start space-x-2">
                                                     <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-medium">More</span>
                                                     <p class="text-xs text-muted-foreground flex-1">${reflection.more}</p>
+                                                </div>
+                                            ` : ''}
+                                            ${reflection.next ? `
+                                                <div class="flex items-start space-x-2">
+                                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">Next</span>
+                                                    <p class="text-xs text-muted-foreground flex-1">${reflection.next}</p>
                                                 </div>
                                             ` : ''}
                                         </div>
@@ -233,25 +245,44 @@ function renderDashboard(container) {
         <!-- Reflection Modal -->
         <div id="reflection-modal" class="fixed inset-0 z-50 hidden">
             <div class="fixed inset-0 bg-black/50" onclick="closeReflectionModal()"></div>
-            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-md bg-background p-6 shadow-lg border border-border rounded-lg">
-                <h3 class="text-lg font-semibold mb-4">タスクの振り返り</h3>
+            <div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-lg bg-background p-6 shadow-lg border border-border rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">タスクの振り返り</h3>
+                    <button onclick="closeReflectionModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
                 <p id="reflection-task-name" class="text-sm text-muted-foreground mb-4"></p>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Good（良かった点）</label>
-                        <textarea id="reflection-good" class="w-full p-2 border border-input rounded-md h-20" placeholder="例：予定より早く完了できた"></textarea>
+                        <label class="text-sm font-medium text-green-700 block mb-2">✓ Good（良かった点）</label>
+                        <textarea id="reflection-good" class="w-full p-3 border border-green-200 bg-green-50 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" placeholder="予定より早く完了できた、スムーズに進んだ..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">More（改善点・次回への提案）</label>
-                        <textarea id="reflection-more" class="w-full p-2 border border-input rounded-md h-20" placeholder="例：もう少し事前準備に時間をかけたい"></textarea>
+                        <label class="text-sm font-medium text-orange-700 block mb-2">△ More（改善点・次回への提案）</label>
+                        <textarea id="reflection-more" class="w-full p-3 border border-orange-200 bg-orange-50 rounded-md text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent" rows="3" placeholder="もう少し事前準備に時間をかけたい、効率化できる部分..."></textarea>
                     </div>
-                    <div class="flex space-x-3">
-                        <button onclick="closeReflectionModal()" class="flex-1 px-4 py-2 border border-input rounded-md hover:bg-accent">
-                            キャンセル
-                        </button>
-                        <button onclick="saveReflection()" class="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
+                    <div>
+                        <label class="text-sm font-medium text-blue-700 block mb-2">→ Next（次のアクション）</label>
+                        <textarea id="reflection-next" class="w-full p-3 border border-blue-200 bg-blue-50 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="次回に活かしたいこと、改善策..."></textarea>
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button onclick="saveReflection()" class="flex-1 inline-flex items-center justify-center py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg shadow-md transition-all duration-200">
+                            <svg class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
                             保存
                         </button>
+                        <button onclick="closeReflectionModal()" class="flex-1 inline-flex items-center justify-center py-3 px-4 border border-input bg-background hover:bg-accent text-foreground font-medium rounded-lg transition-all duration-200">
+                            キャンセル
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
                     </div>
                 </div>
             </div>
@@ -360,12 +391,14 @@ function closeReflectionModal() {
     // Clear form
     document.getElementById('reflection-good').value = '';
     document.getElementById('reflection-more').value = '';
+    document.getElementById('reflection-next').value = '';
     currentReflectionTaskId = null;
 }
 
 function saveReflection() {
     const good = document.getElementById('reflection-good').value.trim();
     const more = document.getElementById('reflection-more').value.trim();
+    const next = document.getElementById('reflection-next').value.trim();
     
     if (!good && !more) {
         alert('Good または More のいずれかを入力してください');
@@ -383,6 +416,7 @@ function saveReflection() {
         taskId: currentReflectionTaskId,
         good: good,
         more: more,
+        next: next,
         createdAt: new Date().toISOString()
     });
     
