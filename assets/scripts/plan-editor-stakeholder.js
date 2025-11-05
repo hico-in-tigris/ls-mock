@@ -2,6 +2,109 @@
   // ===== ステークホルダー管理モジュール =====
   let stakeholders = []; // 追加されたステークホルダーのリスト
 
+  // ステークホルダーワークスペースの描画
+  window.renderStakeholderWorkspace = function() {
+    return `
+      <div class="card p-6">
+        <div class="space-y-6">
+          <!-- ネットワークから候補を選択 -->
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
+            <div class="flex items-start gap-3 mb-3">
+              <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-blue-900 mb-2">ネットワークから候補を選ぶ</p>
+                <div class="flex items-center gap-2">
+                  <button onclick="openNetworkPicker()" class="inline-flex items-center text-sm px-3 py-1.5 rounded-md bg-white border border-blue-300 text-blue-700 hover:bg-blue-50">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    ネットワークから選択
+                  </button>
+                  <span class="text-xs text-blue-700">登録されている人物から簡単に追加できます</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- スキル・役割の充足状況 -->
+          <div id="gap-analysis-section" class="hidden">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-yellow-900 mb-2">スキル・役割の不足分析</p>
+                  <div id="gap-analysis-content" class="text-sm text-yellow-800"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <label class="block text-sm font-medium">ステークホルダーマップ</label>
+              <button onclick="analyzeGaps()" class="text-xs px-3 py-1 rounded-md bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                不足分析を表示
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-4">
+              <div class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="font-medium">主要ステークホルダー</h4>
+                  <button onclick="addStakeholderRow()" class="text-sm text-primary hover:underline">+ 手動で追加</button>
+                </div>
+                <div id="stakeholder-list" class="space-y-2">
+                  <!-- ステークホルダー行が動的に追加される -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">コミュニケーション計画</label>
+            <textarea id="stakeholder-comm-plan" class="w-full min-h-[100px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="各ステークホルダーとどのように連携・報告していきますか？"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button class="btn-secondary" onclick="handleWorkspaceSave()">保存</button>
+            <button class="btn" onclick="aiPolishWorkspace()">AIにブラッシュアップ</button>
+            <button class="btn-primary" onclick="goToNextWorkspaceModule()">次のステップへ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ネットワークピッカーモーダル -->
+      <div id="network-picker-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden">
+          <div class="p-4 border-b flex items-center justify-between">
+            <h3 class="text-lg font-semibold">ネットワークから関係者を選択</h3>
+            <button onclick="closeNetworkPicker()" class="text-muted-foreground hover:text-foreground">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="p-4">
+            <input 
+              type="text" 
+              id="network-search" 
+              placeholder="名前や役割で絞り込み..."
+              class="w-full px-3 py-2 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
+              oninput="filterNetworkPicker(this.value)"
+            />
+            <div id="network-picker-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+              <!-- 人物リストが動的に生成される -->
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   // ネットワークピッカーを開く
   window.openNetworkPicker = function() {
     const modal = document.getElementById('network-picker-modal');
