@@ -1,5 +1,5 @@
 // ===============================
-// LocalSuccess - People Views Module
+// LocalSuccess - Network Views Module
 // ===============================
 // Purpose: Render different view modes (cards, list, network)
 
@@ -12,7 +12,7 @@
  * @returns {string} HTML string
  */
 function renderPeopleContent(people) {
-    const viewMode = window.PeopleFilters.getCurrentViewMode();
+    const viewMode = window.NetworkFilters.getCurrentViewMode();
     
     if (viewMode === 'cards') {
         return renderCardsView(people);
@@ -233,7 +233,7 @@ function renderNetworkView(people) {
 }
 
 // Public API
-window.PeopleViews = {
+window.NetworkViews = {
     renderPeopleContent,
     renderCardsView,
     renderListView,

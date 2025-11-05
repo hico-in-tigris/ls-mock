@@ -1,7 +1,7 @@
 // ===============================
-// LocalSuccess - People Filters Module
+// LocalSuccess - Network Filters Module
 // ===============================
-// Purpose: Search, filter, and sort functionality for people
+// Purpose: Search, filter, and sort functionality for network
 
 (function(){
 'use strict';
@@ -163,7 +163,7 @@ function getSortBy() {
 }
 
 // Public API
-window.PeopleFilters = {
+window.NetworkFilters = {
     getFilteredPeople,
     updateSearch,
     setViewMode,

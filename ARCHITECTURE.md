@@ -67,13 +67,13 @@ assets/scripts/
 │   ├── plan-editor-simulators.js
 │   └── plan-estimator.js
 ├── people/                   # 人物・ネットワーク管理
-│   ├── people.js (205行)       # コアオーケストレーション
-│   ├── people-stats.js (95行) # 統計計算
-│   ├── people-filters.js (193行) # 検索・フィルタ・ソート
-│   ├── people-views.js (249行) # 3つのビュー（cards, list, network）
-│   ├── people-modals.js (408行) # モーダル管理
-│   ├── people-network.js (37行) # ネットワーク可視化
-│   └── people-location.js (97行) # 位置情報管理
+│   ├── network.js (205行)       # コアオーケストレーション
+│   ├── network-stats.js (95行) # 統計計算
+│   ├── network-filters.js (193行) # 検索・フィルタ・ソート
+│   ├── network-views.js (249行) # 3つのビュー（cards, list, network）
+│   ├── network-modals.js (408行) # モーダル管理
+│   ├── network-visualization.js (37行) # ネットワーク可視化
+│   └── network-location.js (97行) # 位置情報管理
 ├── actions.js                 # アクション管理
 ├── summary/                   # サマリー・リフレクション
 │   ├── summary.js
@@ -352,17 +352,17 @@ test('plan generation flow', async ({ page }) => {
 - After: 197行
 - **削減率: 81.8%**
 
-### Phase 3: people.js削減（2025年11月5日）
-- Before: 1633行（単一ファイル）
-- After: 205行（コア） + 6モジュール（1079行）
+### Phase 3: network.js削減（2025年11月5日）
+- Before: 1633行（単一ファイル people.js）
+- After: 205行（コア network.js） + 6モジュール（1079行）
 - **コア削減率: 87.5%**
 - **モジュール構成:**
-  - people-stats.js (95行) - 統計計算
-  - people-filters.js (193行) - 検索・フィルタリング
-  - people-views.js (249行) - ビューレンダリング
-  - people-modals.js (408行) - モーダル管理
-  - people-network.js (37行) - ネットワーク可視化
-  - people-location.js (97行) - 位置情報管理
+  - network-stats.js (95行) - 統計計算
+  - network-filters.js (193行) - 検索・フィルタリング
+  - network-views.js (249行) - ビューレンダリング
+  - network-modals.js (408行) - モーダル管理
+  - network-visualization.js (37行) - ネットワーク可視化
+  - network-location.js (97行) - 位置情報管理
 
 ### 合計削減
 - Total Before: 6352行 (main + plan-editor + people)

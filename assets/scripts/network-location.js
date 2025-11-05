@@ -1,7 +1,7 @@
 // ===============================
-// LocalSuccess - People Location Module
+// LocalSuccess - Network Location Module
 // ===============================
-// Purpose: Geographical location management for people
+// Purpose: Geographical location management for network contacts
 
 (function(){
 'use strict';
@@ -83,7 +83,7 @@ function openMapWithLocation(lat, lng) {
 }
 
 // Public API
-window.PeopleLocation = {
+window.NetworkLocation = {
     getCurrentLocation,
     addLocationToPerson,
     openMapWithLocation

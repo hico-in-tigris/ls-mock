@@ -1,5 +1,5 @@
 // ===============================
-// LocalSuccess - People Network Module  
+// LocalSuccess - Network Visualization Module  
 // ===============================
 // Purpose: Network visualization logic
 
@@ -27,7 +27,7 @@ function generateNetworkData(people) {
 }
 
 // Public API
-window.PeopleNetwork = {
+window.NetworkVisualization = {
     generateNetworkData
 };
 

@@ -1,5 +1,5 @@
 // ===============================
-// LocalSuccess - People Stats Module
+// LocalSuccess - Network Stats Module
 // ===============================
 // Purpose: Statistical calculations for relationship management
 
@@ -79,7 +79,7 @@ function getUrgencyLevel(daysSinceContact) {
 }
 
 // Public API
-window.PeopleStats = {
+window.NetworkStats = {
     getAllTags,
     getRelationshipStats,
     getRelationshipStrength,

@@ -1,5 +1,5 @@
 // ===============================
-// LocalSuccess - People Modals Module
+// LocalSuccess - Network Modals Module
 // ===============================
 // Purpose: Modal management (person detail, add, edit, category detail)
 
@@ -366,7 +366,7 @@ function getCommonConnections(person) {
 }
 
 // Public API
-window.PeopleModals = {
+window.NetworkModals = {
     quickContact,
     openPersonDetail,
     closePersonDetail,

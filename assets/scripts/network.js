@@ -1,17 +1,17 @@
 (function() {
     /**
-     * people.js - Core People Module
-     * Main orchestration layer integrating all people-related modules.
+     * network.js - Core Network Module
+     * Main orchestration layer integrating all network-related modules.
      */
 
 function renderPeople(container) {
-    const filteredPeople = window.PeopleFilters.getFilteredPeople();
-    const allTags = window.PeopleStats.getAllTags();
-    const relationshipStats = window.PeopleStats.getRelationshipStats();
-    const currentViewMode = window.PeopleFilters.getCurrentViewMode();
-    const searchQuery = window.PeopleFilters.getSearchQuery();
-    const selectedTags = window.PeopleFilters.getSelectedTags();
-    const sortBy = window.PeopleFilters.getSortBy();
+    const filteredPeople = window.NetworkFilters.getFilteredPeople();
+    const allTags = window.NetworkStats.getAllTags();
+    const relationshipStats = window.NetworkStats.getRelationshipStats();
+    const currentViewMode = window.NetworkFilters.getCurrentViewMode();
+    const searchQuery = window.NetworkFilters.getSearchQuery();
+    const selectedTags = window.NetworkFilters.getSelectedTags();
+    const sortBy = window.NetworkFilters.getSortBy();
     
     container.innerHTML = `
         <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
@@ -189,13 +189,13 @@ function renderPeople(container) {
             
             <!-- People Content -->
             <div id="people-content">
-                ${window.PeopleViews.renderPeopleContent(filteredPeople)}
+                ${window.NetworkViews.renderPeopleContent(filteredPeople)}
             </div>
         </div>
         
-        ${window.PeopleModals.renderPersonModal()}
-        ${window.PeopleModals.renderAddPersonModal()}
-        ${window.PeopleModals.renderCategoryDetailModal()}
+        ${window.NetworkModals.renderPersonModal()}
+        ${window.NetworkModals.renderAddPersonModal()}
+        ${window.NetworkModals.renderCategoryDetailModal()}
     `;
 }
 
