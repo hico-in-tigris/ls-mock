@@ -41,7 +41,7 @@ function renderSummary(container) {
                     <button onclick="switchReflectionPeriod('daily')" 
                             class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-primary text-primary" 
                             data-period="daily">
-                        ひとこと日記
+                        そのときのメモ
                     </button>
                     <button onclick="switchReflectionPeriod('weekly')" 
                             class="reflection-tab px-4 py-2 text-sm font-medium transition-colors hover:text-primary border-b-2 border-transparent text-muted-foreground" 

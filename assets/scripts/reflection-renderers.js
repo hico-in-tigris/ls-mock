@@ -3,74 +3,78 @@
 // ===============================
 
 function renderDailyReflection() {
-    // 過去7日分のふりかえりデータを取得
-    const dailyReflections = reflectionData.daily.slice(0, 7);
-    
+    // 期間選択用の状態
+    let selectedPeriod = window.selectedMemoPeriod || 'all';
+    // 期間選択UI
+    const periodOptions = [
+        { value: 'today', label: '今日' },
+        { value: 'week', label: '今週' },
+        { value: 'month', label: '今月' },
+        { value: 'all', label: '全期間' }
+    ];
+    // 絞り込み関数
+    function filterByPeriod(memo) {
+        const now = new Date();
+        const memoDate = new Date(memo.date.replace(/(\d+)年(\d+)月(\d+)日.*/, '$1-$2-$3'));
+        if (selectedPeriod === 'today') {
+            return memoDate.toDateString() === now.toDateString();
+        } else if (selectedPeriod === 'week') {
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - now.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            return memoDate >= weekStart && memoDate <= weekEnd;
+        } else if (selectedPeriod === 'month') {
+            return memoDate.getFullYear() === now.getFullYear() && memoDate.getMonth() === now.getMonth();
+        }
+        return true;
+    }
+    const filteredReflections = reflectionData.daily.filter(filterByPeriod);
+    // UI生成
     return `
         <div class="space-y-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold">ひとこと日記</h2>
+                <h2 class="text-xl font-bold">そのときのメモ</h2>
                 <button onclick="addDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
                     <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
-                    今日の振り返りを追加
+                    メモを追加
                 </button>
             </div>
-            
-            <!-- Daily Reflections List -->
+            <div class="mb-4 flex gap-2">
+                ${periodOptions.map(opt => `
+                    <button type="button" class="px-3 py-1 rounded border ${selectedPeriod === opt.value ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground'}" onclick="window.selectedMemoPeriod='${opt.value}';renderReflectionContent('daily');">${opt.label}</button>
+                `).join('')}
+            </div>
+            <!-- Filtered Memo List -->
             <div class="space-y-4">
-                ${dailyReflections.map(daily => `
+                ${filteredReflections.map(daily => `
                     <div class="card">
                         <div class="card-header">
                             <h3 class="font-semibold">${daily.date}</h3>
                         </div>
                         <div class="card-content space-y-3">
-                            ${daily.reflection.good ? `
-                                <div>
-                                    <div class="flex items-center space-x-2 mb-1">
-                                        <span class="text-green-600 font-medium text-sm">✓ Good</span>
-                                    </div>
-                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.good}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${daily.reflection.challenge ? `
-                                <div>
-                                    <div class="flex items-center space-x-2 mb-1">
-                                        <span class="text-orange-600 font-medium text-sm">△ More</span>
-                                    </div>
-                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.challenge}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${daily.reflection.next ? `
-                                <div>
-                                    <div class="flex items-center space-x-2 mb-1">
-                                        <span class="text-blue-600 font-medium text-sm">→ Next</span>
-                                    </div>
-                                    <p class="text-sm text-muted-foreground pl-5">${daily.reflection.next}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${!daily.reflection.good && !daily.reflection.challenge && !daily.reflection.next ? `
-                                <p class="text-sm text-muted-foreground text-center py-4">まだ振り返りがありません</p>
-                            ` : ''}
+                            <div class="flex items-center space-x-2 mb-1">
+                                ${daily.tag === 'good' ? `<span class="text-green-600 font-medium text-sm">✓ Good</span>` : ''}
+                                ${daily.tag === 'more' ? `<span class="text-orange-600 font-medium text-sm">△ More</span>` : ''}
+                                ${daily.tag === 'try' ? `<span class="text-purple-600 font-medium text-sm">★ Try</span>` : ''}
+                            </div>
+                            <p class="text-sm text-muted-foreground pl-5">${daily.memo}</p>
                         </div>
                     </div>
                 `).join('')}
             </div>
-            
-            ${dailyReflections.length === 0 ? `
+            ${filteredReflections.length === 0 ? `
                 <div class="card">
                     <div class="card-content text-center py-12">
                         <svg class="h-16 w-16 mx-auto mb-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M12 4v16m8-8H4"/>
                         </svg>
-                        <p class="text-muted-foreground mb-4">まだ振り返りがありません</p>
+                        <p class="text-muted-foreground mb-4">まだメモがありません</p>
                         <button onclick="addDailyReflection()" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                            最初の振り返りを追加
+                            最初のメモを追加
                         </button>
                     </div>
                 </div>

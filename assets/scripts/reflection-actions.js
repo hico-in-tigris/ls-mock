@@ -68,12 +68,11 @@ function openDailyReflectionModal() {
     if (modal) {
         modal.classList.remove('hidden');
         // フォームをクリア
-        document.getElementById('reflection-good').value = '';
-        document.getElementById('reflection-more').value = '';
-        document.getElementById('reflection-next').value = '';
-        // Goodフィールドにフォーカス
+        document.getElementById('reflection-memo').value = '';
+        const radios = document.getElementsByName('reflection-tag');
+        radios.forEach(r => r.checked = false);
         setTimeout(() => {
-            document.getElementById('reflection-good').focus();
+            document.getElementById('reflection-memo').focus();
         }, 100);
     }
 }
@@ -90,29 +89,25 @@ function submitDailyReflection(e) {
     
     const good = document.getElementById('reflection-good').value.trim();
     const more = document.getElementById('reflection-more').value.trim();
-    const next = document.getElementById('reflection-next').value.trim();
-    
-    if (!good && !more) {
-        alert('GoodかMoreのどちらかは入力してください。');
+    const memo = document.getElementById('reflection-memo').value.trim();
+    const tag = Array.from(document.getElementsByName('reflection-tag')).find(r => r.checked)?.value || '';
+    if (!memo || !tag) {
+        alert('メモ内容とラベルを入力してください。');
         return false;
     }
-    
     const todayFormatted = new Date().toLocaleDateString('ja-JP', { 
         year: 'numeric', 
         month: 'long', 
         day: 'numeric',
         weekday: 'short'
     });
-    
-    // 新しい振り返りを追加
+    // 新しいメモを追加
     const newReflection = {
         date: todayFormatted,
         selectedProject: null,
-        reflection: {
-            good: good || '',
-            challenge: more || '',
-            next: next || ''
-        }
+        memo,
+        tag
+    };
     };
     
     // データの先頭に追加
