@@ -14,7 +14,10 @@
         <div class="grid md:grid-cols-2 gap-6 mb-8">
           <div class="card p-8 flex flex-col gap-4 cursor-pointer hover:shadow-lg transition-shadow" onclick="selectPlanningMode('simple')">
             <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center mb-2">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#e6f9ec"/>
+                <path d="M7 12l3 3 7-7" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
             </div>
             <div class="font-bold text-lg">ライトに作成</div>
             <div class="text-muted-foreground text-sm">簡単な質問に答えるだけで、AIが事業計画の下書きを自動生成します。すぐに企画を形にしたい方におすすめです。</div>
@@ -27,7 +30,10 @@
           </div>
           <div class="card p-8 flex flex-col gap-4 cursor-pointer hover:shadow-lg transition-shadow" onclick="selectPlanningMode('workspace')">
             <div class="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center mb-2">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+              <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#e6f9ec"/>
+                <path d="M7 12l3 3 7-7" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
             </div>
             <div class="font-bold text-lg">ワークスペースから開始</div>
             <div class="text-muted-foreground text-sm">各ワークスペースで段階的に企画を作り込みます。じっくり練りたい方、複雑な企画におすすめです。</div>
