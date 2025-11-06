@@ -57,11 +57,16 @@ function renderDailyReflection() {
                         </div>
                         <div class="card-content space-y-3">
                             <div class="flex items-center space-x-2 mb-1">
-                                ${daily.tag === 'good' ? `<span class="text-green-600 font-medium text-sm">✓ Good</span>` : ''}
-                                ${daily.tag === 'more' ? `<span class="text-orange-600 font-medium text-sm">△ More</span>` : ''}
-                                ${daily.tag === 'try' ? `<span class="text-purple-600 font-medium text-sm">★ Try</span>` : ''}
+                                ${daily.tag === 'good' ? `<span class="inline-block px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-semibold">Good</span>` : ''}
+                                ${daily.tag === 'more' ? `<span class="inline-block px-2 py-1 rounded bg-orange-100 text-orange-700 text-xs font-semibold">More</span>` : ''}
+                                ${daily.tag === 'try' ? `<span class="inline-block px-2 py-1 rounded bg-purple-100 text-purple-700 text-xs font-semibold">Try</span>` : ''}
+                                ${(!daily.tag && daily.reflection?.good) ? `<span class="inline-block px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-semibold">Good</span>` : ''}
+                                ${(!daily.tag && daily.reflection?.challenge) ? `<span class="inline-block px-2 py-1 rounded bg-orange-100 text-orange-700 text-xs font-semibold">More</span>` : ''}
+                                ${(!daily.tag && daily.reflection?.next) ? `<span class="inline-block px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs font-semibold">Next</span>` : ''}
                             </div>
-                            <p class="text-sm text-muted-foreground pl-5">${daily.memo}</p>
+                            <p class="text-sm text-muted-foreground pl-5">
+                                ${typeof daily.memo !== 'undefined' && daily.memo !== '' ? daily.memo : [daily.reflection?.good, daily.reflection?.challenge, daily.reflection?.next].filter(Boolean).join(' / ')}
+                            </p>
                         </div>
                     </div>
                 `).join('')}

@@ -87,8 +87,34 @@ function closeDailyReflectionModal() {
 function submitDailyReflection(e) {
     e.preventDefault();
     
-    const good = document.getElementById('reflection-good').value.trim();
-    const more = document.getElementById('reflection-more').value.trim();
+    // 日次振り返り用フォームの処理のみ
+    const good = document.getElementById('reflection-good')?.value?.trim() || '';
+    const more = document.getElementById('reflection-more')?.value?.trim() || '';
+    const next = document.getElementById('reflection-next')?.value?.trim() || '';
+    const todayFormatted = new Date().toLocaleDateString('ja-JP', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        weekday: 'short'
+    });
+    const newReflection = {
+        date: todayFormatted,
+        selectedProject: null,
+        reflection: {
+            good,
+            challenge: more,
+            next
+        }
+    };
+    reflectionData.daily.unshift(newReflection);
+    saveReflectionData();
+    closeDailyReflectionModal();
+    renderReflectionContent('daily');
+    alert('振り返りが追加されました！');
+    return false;
+// メモ追加用フォームのsubmit処理
+function addMemo(e) {
+    e.preventDefault();
     const memo = document.getElementById('reflection-memo').value.trim();
     const tag = Array.from(document.getElementsByName('reflection-tag')).find(r => r.checked)?.value || '';
     if (!memo || !tag) {
@@ -101,29 +127,19 @@ function submitDailyReflection(e) {
         day: 'numeric',
         weekday: 'short'
     });
-    // 新しいメモを追加
-    const newReflection = {
+    const newMemo = {
         date: todayFormatted,
         selectedProject: null,
         memo,
         tag
     };
-    };
-    
-    // データの先頭に追加
-    reflectionData.daily.unshift(newReflection);
-    
-    // ローカルストレージに保存
+    reflectionData.daily.unshift(newMemo);
     saveReflectionData();
-    
-    // モーダルを閉じる
     closeDailyReflectionModal();
-    
-    // 表示を更新
     renderReflectionContent('daily');
-    
-    alert('振り返りが追加されました！');
+    alert('メモが追加されました！');
     return false;
+}
 }
 
 function saveDailyReflection() {
