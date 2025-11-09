@@ -822,6 +822,7 @@ function initRouter() {
         if (mobileIndicator && currentLink) {
             const routeNames = {
                 'dashboard': 'ダッシュボード',
+                'vision': 'Vision',
                 'projects': 'プロジェクト',
                 'people': 'ネットワーク',
                 'actions': 'アクション',
@@ -871,6 +872,14 @@ function renderCurrentRoute() {
             break;
         case 'projects':
             renderProjects(container);
+            break;
+        case 'vision':
+            if (typeof renderVision === 'function') {
+                renderVision(container);
+            } else {
+                console.error('[Router] renderVision is not defined');
+                container.innerHTML = '<div class="p-6 text-red-500">Error: Vision page failed to load</div>';
+            }
             break;
         case 'people':
             renderPeople(container);
