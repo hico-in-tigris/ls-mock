@@ -20,10 +20,36 @@
         return array;
     }
 
+    function normalizeItemValues(items, categories) {
+        if (Array.isArray(items)) {
+            return ensureArray(items, categories.length).map(list => {
+                const values = Array.isArray(list) ? list.slice(0, 8).map(value => String(value || '').trim()).filter(Boolean) : [];
+                return ensureArray(values, 8);
+            });
+        }
+        if (items && typeof items === 'object') {
+            return categories.map((category) => {
+                const list = Array.isArray(items[category]) ? items[category] : [];
+                const values = list
+                    .slice(0, 8)
+                    .map((entry) => {
+                        if (typeof entry === 'string') return entry.trim();
+                        if (entry && typeof entry === 'object') {
+                            return typeof entry.text === 'string' ? entry.text.trim() : '';
+                        }
+                        return '';
+                    })
+                    .filter(Boolean);
+                return ensureArray(values, 8);
+            });
+        }
+        return categories.map(() => ensureArray([], 8));
+    }
+
     function buildMandalaGrid(draft) {
         const grid = Array.from({ length: 9 }, () => Array(9).fill(''));
         const categories = ensureArray(draft && draft.categories, 8);
-        const items = ensureArray(draft && draft.items, 8).map(list => ensureArray(list, 8));
+        const items = normalizeItemValues(draft && draft.items, categories);
         const centerText = (draft && typeof draft.centerText === 'string') ? draft.centerText.trim() : '';
 
         grid[4][4] = centerText;

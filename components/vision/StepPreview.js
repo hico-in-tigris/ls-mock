@@ -10,10 +10,36 @@
             categories.push('');
         }
 
-        const items = Array.isArray(draft && draft.items) ? draft.items.slice(0, 8) : [];
-        while (items.length < 8) {
-            items.push([]);
+        function normalizeItemsForPreview(rawItems, categories) {
+            if (!categories.length) return [];
+            if (Array.isArray(rawItems)) {
+                return categories.map((category, index) => {
+                    const list = Array.isArray(rawItems[index]) ? rawItems[index] : [];
+                    return list
+                        .slice(0, 8)
+                        .map(value => String(value || '').trim())
+                        .filter(Boolean);
+                });
+            }
+            if (rawItems && typeof rawItems === 'object') {
+                return categories.map((category) => {
+                    const list = Array.isArray(rawItems[category]) ? rawItems[category] : [];
+                    return list
+                        .slice(0, 8)
+                        .map(item => {
+                            if (typeof item === 'string') return item.trim();
+                            if (item && typeof item === 'object') {
+                                return typeof item.text === 'string' ? item.text.trim() : '';
+                            }
+                            return '';
+                        })
+                        .filter(Boolean);
+                });
+            }
+            return categories.map(() => []);
         }
+
+        const normalizedItems = normalizeItemsForPreview(draft && draft.items, categories);
 
         root.innerHTML = `
             <div class="space-y-6 animate-fade-in">
@@ -56,7 +82,8 @@
         const previewContainer = root.querySelector('#vision-preview-grid');
         let gridMatrix = null;
         if (window.visionPreview && typeof window.visionPreview.renderPreviewGrid === 'function') {
-            gridMatrix = window.visionPreview.renderPreviewGrid(previewContainer, draft);
+            const previewDraft = Object.assign({}, draft, { items: normalizedItems });
+            gridMatrix = window.visionPreview.renderPreviewGrid(previewContainer, previewDraft);
         }
 
         if (window.visionDraftStore && typeof window.visionDraftStore.saveDraft === 'function') {
@@ -78,7 +105,7 @@
                     const payload = {
                         centerText,
                         categories,
-                        items,
+                        items: normalizedItems,
                         grid: gridMatrix
                     };
                     onCreate(payload);
