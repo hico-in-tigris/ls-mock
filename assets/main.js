@@ -20,6 +20,7 @@ function navigate(route) {
     if (currentPageMobile) {
         const pageNames = {
             'dashboard': 'Dashboard',
+            'vision': 'Vision',
             'projects': 'Projects',
             'people': 'People',
             'actions': 'Actions',
