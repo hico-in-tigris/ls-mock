@@ -40,6 +40,7 @@
 
     const MODULE_SCRIPTS = [
         'state/visionDraftStore.js',
+        'utils/mandalaSuggest.js',
         'components/vision/PreviewGrid.js',
         'components/vision/StepCenter.js',
         'components/vision/StepCategories.js',
@@ -47,7 +48,7 @@
         'components/vision/StepPreview.js'
     ];
     const MANDALA_STORAGE_KEY = 'vision:mandalas';
-    const MIN_ITEMS_PER_CATEGORY = 3;
+    const MIN_ITEMS_PER_CATEGORY = 1;
 
     let modulesPromise = null;
     let compatibilityHandlerRegistered = false;
@@ -129,13 +130,71 @@
         return result;
     }
 
+    function normalizeItemEntry(entry) {
+        if (!entry) return null;
+        if (typeof entry === 'string') {
+            const text = entry.trim();
+            if (!text) return null;
+            return { text, source: 'user' };
+        }
+        if (typeof entry !== 'object') return null;
+        const text = typeof entry.text === 'string' ? entry.text.trim() : '';
+        if (!text) return null;
+        const source = entry.source === 'user' ? 'user' : 'ai';
+        return { text, source };
+    }
+
+    function ensureItemsMap(items, categories) {
+        const result = {};
+        const safeCategories = Array.isArray(categories) ? categories.slice(0, 8) : [];
+        let sourceObject = null;
+        let sourceArray = null;
+
+        if (items && typeof items === 'object' && !Array.isArray(items)) {
+            sourceObject = items;
+        } else if (Array.isArray(items)) {
+            sourceArray = items.slice(0, safeCategories.length);
+        }
+
+        safeCategories.forEach((category, index) => {
+            const key = typeof category === 'string' ? category : '';
+            let list = [];
+            if (sourceObject && Array.isArray(sourceObject[key])) {
+                list = sourceObject[key];
+            } else if (sourceArray && Array.isArray(sourceArray[index])) {
+                list = sourceArray[index];
+            }
+            result[key] = Array.isArray(list)
+                ? list
+                    .slice(0, 8)
+                    .map(normalizeItemEntry)
+                    .filter(Boolean)
+                : [];
+        });
+
+        return result;
+    }
+
+    function itemsMapToArray(items, categories) {
+        const safeCategories = ensureArray(categories, 8, '');
+        const map = ensureItemsMap(items, safeCategories);
+        return safeCategories.map((category) => {
+            const list = Array.isArray(map[category]) ? map[category] : [];
+            return list
+                .slice(0, 8)
+                .map(entry => entry && typeof entry.text === 'string' ? entry.text.trim() : '')
+                .filter(Boolean);
+        });
+    }
+
     function sanitizeMandalaInput(data) {
-        const sanitized = {
+        const categories = ensureArray(data && data.categories, 8, '').map(value => String(value || '').trim());
+        const itemsArray = itemsMapToArray(data && data.items, categories).map(list => ensureArray(list, 8, '').map(value => String(value || '').trim()));
+        return {
             centerText: data && data.centerText ? String(data.centerText).trim() : '',
-            categories: ensureArray(data && data.categories, 8, '').map(value => String(value || '').trim()),
-            items: ensureArray(data && data.items, 8, () => []).map(list => ensureArray(list, 8, '').map(value => String(value || '').trim()))
+            categories,
+            items: itemsArray
         };
-        return sanitized;
     }
 
     function loadMandalaCollection() {
@@ -208,12 +267,10 @@
     }
 
     function areItemsValid(draft) {
-        if (!draft || !Array.isArray(draft.items)) return false;
-        return draft.items.slice(0, 8).every(list => {
-            if (!Array.isArray(list)) return false;
-            const trimmed = list.map(value => String(value || '').trim()).filter(Boolean);
-            return trimmed.length >= MIN_ITEMS_PER_CATEGORY;
-        });
+        if (!draft) return false;
+        const categories = ensureArray(draft.categories, 8, '');
+        const itemsArray = itemsMapToArray(draft.items, categories);
+        return itemsArray.every(list => list.length >= MIN_ITEMS_PER_CATEGORY);
     }
 
     function determineStartingStep(draft) {
@@ -243,15 +300,16 @@
             draft = store.createDefaultDraft();
         }
         if (!draft) {
+            const defaultCategories = ensureArray(null, 8, '');
             draft = {
                 centerText: '',
-                categories: ensureArray(null, 8, ''),
-                items: ensureArray(null, 8, () => [])
+                categories: defaultCategories,
+                items: ensureItemsMap({}, defaultCategories)
             };
         }
 
         draft.categories = ensureArray(draft.categories, 8, '');
-        draft.items = ensureArray(draft.items, 8, () => []);
+        draft.items = ensureItemsMap(draft.items, draft.categories);
 
         const startStep = determineStartingStep(draft);
         let currentStep = startStep;
@@ -298,7 +356,7 @@
             });
         }
 
-        function goToStep(step) {
+        function goToStep(step, stepOptions) {
             currentStep = step;
             updateStepIndicator(step);
             if (!stepRoot) return;
@@ -310,7 +368,10 @@
                         steps.renderStepCenter(stepRoot, draft, (update) => {
                             draft.centerText = update.centerText;
                             if (store && typeof store.saveDraft === 'function') {
-                                store.saveDraft(draft);
+                                const saved = store.saveDraft(draft);
+                                if (saved) {
+                                    draft = saved;
+                                }
                             }
                             goToStep(2);
                         });
@@ -319,23 +380,31 @@
                 case 2:
                     if (typeof steps.renderStepCategories === 'function') {
                         steps.renderStepCategories(stepRoot, draft, () => goToStep(1), (update) => {
-                            draft.categories = ensureArray(update.categories, 8, '');
+                            const nextCategories = ensureArray(update.categories, 8, '');
+                            draft.categories = nextCategories;
+                            draft.items = ensureItemsMap({}, nextCategories);
                             if (store && typeof store.saveDraft === 'function') {
-                                store.saveDraft(draft);
+                                const saved = store.saveDraft(draft);
+                                if (saved) {
+                                    draft = saved;
+                                }
                             }
-                            goToStep(3);
+                            goToStep(3, { triggerSuggestion: true });
                         });
                     }
                     break;
                 case 3:
                     if (typeof steps.renderStepItems === 'function') {
                         steps.renderStepItems(stepRoot, draft, () => goToStep(2), (update) => {
-                            draft.items = ensureArray(update.items, 8, () => []);
+                            draft.items = ensureItemsMap(update.items, draft.categories);
                             if (store && typeof store.saveDraft === 'function') {
-                                store.saveDraft(draft);
+                                const saved = store.saveDraft(draft);
+                                if (saved) {
+                                    draft = saved;
+                                }
                             }
                             goToStep(4);
-                        });
+                        }, stepOptions);
                     }
                     break;
                 case 4:

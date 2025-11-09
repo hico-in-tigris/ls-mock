@@ -13,12 +13,69 @@
         '社会貢献'
     ];
 
+    const MAX_ITEMS = 8;
+
+    function createEmptyItemsMap(categories) {
+        const map = {};
+        categories.forEach((category) => {
+            map[category] = [];
+        });
+        return map;
+    }
+
     function createDefaultDraft() {
+        const categories = DEFAULT_CATEGORIES.slice();
         return {
             centerText: '',
-            categories: DEFAULT_CATEGORIES.slice(),
-            items: DEFAULT_CATEGORIES.map(() => [])
+            categories,
+            items: createEmptyItemsMap(categories)
         };
+    }
+
+    function normalizeItemEntry(entry) {
+        if (!entry) return null;
+        if (typeof entry === 'string') {
+            const text = entry.trim();
+            if (!text) return null;
+            return { text, source: 'user' };
+        }
+        if (typeof entry !== 'object') return null;
+        const text = typeof entry.text === 'string' ? entry.text.trim() : '';
+        if (!text) return null;
+        const source = entry.source === 'user' ? 'user' : 'ai';
+        return { text, source };
+    }
+
+    function normalizeItems(rawItems, categories) {
+        const normalized = {};
+        const safeCategories = Array.isArray(categories) ? categories : [];
+        let sourceObject = null;
+        let sourceArray = null;
+
+        if (rawItems && typeof rawItems === 'object' && !Array.isArray(rawItems)) {
+            sourceObject = rawItems;
+        } else if (Array.isArray(rawItems)) {
+            sourceArray = rawItems.slice(0, safeCategories.length);
+        }
+
+        safeCategories.forEach((category, index) => {
+            const key = typeof category === 'string' ? category : '';
+            let list = [];
+            if (sourceObject && Array.isArray(sourceObject[key])) {
+                list = sourceObject[key];
+            } else if (sourceArray && Array.isArray(sourceArray[index])) {
+                list = sourceArray[index];
+            }
+
+            normalized[key] = Array.isArray(list)
+                ? list
+                    .slice(0, MAX_ITEMS)
+                    .map(normalizeItemEntry)
+                    .filter(Boolean)
+                : [];
+        });
+
+        return normalized;
     }
 
     function sanitizeDraft(rawDraft) {
@@ -27,37 +84,26 @@
             return base;
         }
 
-        const draft = {
-            centerText: typeof rawDraft.centerText === 'string' ? rawDraft.centerText : '',
-            categories: Array.isArray(rawDraft.categories) ? rawDraft.categories.slice(0, 8) : [],
-            items: Array.isArray(rawDraft.items) ? rawDraft.items.slice(0, 8) : []
-        };
+        const categories = Array.isArray(rawDraft.categories)
+            ? rawDraft.categories.slice(0, 8)
+            : [];
 
-        while (draft.categories.length < 8) {
-            draft.categories.push('');
+        while (categories.length < 8) {
+            categories.push('');
         }
 
-        while (draft.items.length < 8) {
-            draft.items.push([]);
-        }
-
-        draft.categories = draft.categories.map((value, index) => {
+        const sanitizedCategories = categories.map((value, index) => {
             if (typeof value !== 'string' || !value.trim()) {
                 return base.categories[index] || '';
             }
             return value;
         });
 
-        draft.items = draft.items.map((list) => {
-            if (!Array.isArray(list)) return [];
-            return list
-                .filter(item => typeof item === 'string')
-                .map(item => item.trim())
-                .filter(Boolean)
-                .slice(0, 8);
-        });
-
-        return draft;
+        return {
+            centerText: typeof rawDraft.centerText === 'string' ? rawDraft.centerText : '',
+            categories: sanitizedCategories,
+            items: normalizeItems(rawDraft.items, sanitizedCategories)
+        };
     }
 
     function loadDraft() {
