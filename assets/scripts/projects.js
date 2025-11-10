@@ -186,7 +186,9 @@ function viewProjectDetail(projectId) {
             </div>
             
             <!-- Content -->
-            <div class="p-6 space-y-6">
+            <div class="p-6">
+                <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+                    <div class="space-y-6" data-ls-slot="main">
                 <!-- Scope & KPI -->
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="card p-4">
@@ -335,6 +337,11 @@ function viewProjectDetail(projectId) {
                     ${project.completedAt ? `<div>完了日: ${project.completedAt}</div>` : ''}
                     ${project.estimatedDuration ? `<div>期間: ${project.estimatedDuration}</div>` : ''}
                 </div>
+                    </div>
+                    <aside class="ls-similar-panel-container space-y-4 mt-6 lg:mt-0" data-ls-slot="related">
+                        <div id="ls-project-similar-${project.id}" class="ls-similar-panel-anchor"></div>
+                    </aside>
+                </div>
             </div>
             
             <!-- Footer Actions -->
@@ -348,8 +355,21 @@ function viewProjectDetail(projectId) {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
+    const panelAnchor = modal.querySelector(`#ls-project-similar-${project.id}`);
+    if (panelAnchor) {
+        const mount = () => {
+            if (window.LSSimilar) {
+                window.LSSimilar.mountPanel({ container: panelAnchor, projectId: project.id });
+            }
+        };
+        if (window.LSSimilar) {
+            mount();
+        } else {
+            document.addEventListener('ls-similar-ready', mount, { once: true });
+        }
+    }
     document.body.style.overflow = 'hidden';
 }
 

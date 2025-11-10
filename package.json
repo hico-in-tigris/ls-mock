@@ -1,0 +1,14 @@
+{
+  "name": "ls-mock",
+  "version": "1.0.0",
+  "description": "![LocalSuccess Logo](https://placehold.co/400x200/2563eb/ffffff?text=LocalSuccess)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && find public/build -name '*.jsx' -delete",
+    "test": "npm run build && node --test tests/similar/scoring.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
