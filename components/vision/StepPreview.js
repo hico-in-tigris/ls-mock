@@ -48,26 +48,10 @@
                     <h2 class="text-2xl font-semibold">マンダラプレビュー</h2>
                     <p class="text-muted-foreground">入力内容を確認してから「作成」を押してください。プレビューは自動保存されます。</p>
                 </div>
-                <div class="grid gap-6 lg:grid-cols-[2fr_1fr]">
-                    <div class="space-y-4">
-                        <div class="bg-card border border-border rounded-lg p-6" id="vision-preview-grid"></div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-card border border-border rounded-lg p-4 space-y-3">
-                            <div>
-                                <p class="text-xs uppercase tracking-wide text-muted-foreground">メイン目標</p>
-                                <p class="text-lg font-semibold text-foreground">${centerText}</p>
-                            </div>
-                            <div class="space-y-3">
-                                <p class="text-xs uppercase tracking-wide text-muted-foreground">カテゴリ</p>
-                                <ul class="space-y-1 text-sm text-muted-foreground">
-                                    ${categories.map((category, index) => `<li><span class="text-foreground font-medium mr-2">${index + 1}.</span>${category}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="bg-muted/40 border border-border rounded-lg p-4 text-sm text-muted-foreground">
-                            プレビューと同じ内容でマンダラを作成します。必要であれば戻って修正してください。
-                        </div>
+                <div class="space-y-4">
+                    <div class="bg-card border border-border rounded-lg p-6" id="vision-preview-grid"></div>
+                    <div class="bg-muted/40 border border-border rounded-lg p-4 text-sm text-muted-foreground">
+                        プレビューと同じ内容でマンダラを作成します。必要であれば戻って修正してください。
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-3 border-t border-border pt-4 flex-wrap">
