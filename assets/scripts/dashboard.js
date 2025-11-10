@@ -2,9 +2,62 @@
 // LocalSuccess - Dashboard Module
 // ===============================
 
+const DASHBOARD_TAB_STORAGE_KEY = 'ls-dashboard-tab';
+let dashboardActiveTab = null;
+
+function getDashboardTab() {
+    if (dashboardActiveTab) {
+        return dashboardActiveTab;
+    }
+    try {
+        const stored = localStorage.getItem(DASHBOARD_TAB_STORAGE_KEY);
+        if (stored) {
+            dashboardActiveTab = stored;
+            return stored;
+        }
+    } catch (error) {
+        console.warn('Failed to read dashboard tab from storage', error);
+    }
+    dashboardActiveTab = 'overview';
+    return dashboardActiveTab;
+}
+
+function setDashboardTab(tab) {
+    dashboardActiveTab = tab;
+    try {
+        localStorage.setItem(DASHBOARD_TAB_STORAGE_KEY, tab);
+    } catch (error) {
+        console.warn('Failed to persist dashboard tab', error);
+    }
+    if (typeof window.renderCurrentRoute === 'function') {
+        window.renderCurrentRoute();
+    }
+}
+
+function mountDashboardSimilarIfNeeded(selectedTab) {
+    if (selectedTab !== 'similar') {
+        return;
+    }
+    const root = document.getElementById('ls-similar-dashboard-root');
+    if (!root) {
+        return;
+    }
+    const mount = () => {
+        const runtime = window.LSSimilar;
+        if (runtime) {
+            runtime.mountTab({ container: root });
+        }
+    };
+    if (window.LSSimilar) {
+        mount();
+    } else {
+        document.addEventListener('ls-similar-ready', mount, { once: true });
+    }
+}
+
 function renderDashboard(container) {
     const today = new Date().toISOString().split('T')[0];
-    
+
     // Get today's tasks and completed tasks
     const todayTasks = sampleData.actions.filter(a => {
         return a.deadline === today && a.status === 'Todo';
@@ -18,7 +71,8 @@ function renderDashboard(container) {
     
     // Get today's completed tasks with reflection data from localStorage
     const todayReflections = JSON.parse(localStorage.getItem('todayReflections') || '[]');
-    
+    const selectedTab = getDashboardTab();
+
     container.innerHTML = `
         <div class="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
             <div class="flex items-center justify-between">
@@ -33,7 +87,13 @@ function renderDashboard(container) {
                     今日の振り返りを追加
                 </button>
             </div>
-            
+
+            <div class="ls-similar-tabbar mt-6 flex items-center gap-2">
+                <button type="button" class="ls-similar-tab-btn ${selectedTab === 'overview' ? 'ls-similar-tab-btn-active' : ''}" data-dashboard-tab-trigger="overview">ダッシュボード</button>
+                <button type="button" class="ls-similar-tab-btn ${selectedTab === 'similar' ? 'ls-similar-tab-btn-active' : ''}" data-dashboard-tab-trigger="similar">類似事例</button>
+            </div>
+
+            <div data-dashboard-tab="overview" class="${selectedTab === 'overview' ? '' : 'hidden'}">
             <div class="grid gap-6 lg:grid-cols-3">
                 <!-- 今日やること -->
                 ${createHeaderCard(
@@ -94,7 +154,7 @@ function renderDashboard(container) {
                         ) : ''}
                     </div>`
                 )}
-                
+
                 <!-- 今日やったこと -->
                 ${createHeaderCard(
                     `<div class="flex items-center justify-between">
@@ -158,7 +218,7 @@ function renderDashboard(container) {
                         ) : ''}
                     </div>`
                 )}
-                
+
                 <!-- 次やること -->
                 ${createHeaderCard(
                     `<div class="flex items-center justify-between">
@@ -205,8 +265,13 @@ function renderDashboard(container) {
                     </div>`
                 )}
             </div>
+            </div>
+
+            <div data-dashboard-tab="similar" class="${selectedTab === 'similar' ? '' : 'hidden'}">
+                <div id="ls-similar-dashboard-root" class="mt-6"></div>
+            </div>
         </div>
-        
+
         <!-- Task Add Modal -->
         <div id="task-modal" class="fixed inset-0 z-50 hidden">
             <div class="fixed inset-0 bg-black/50" onclick="closeTaskModal()"></div>
@@ -288,6 +353,17 @@ function renderDashboard(container) {
             </div>
         </div>
     `;
+
+    container.querySelectorAll('[data-dashboard-tab-trigger]').forEach(button => {
+        button.addEventListener('click', () => {
+            const target = button.getAttribute('data-dashboard-tab-trigger');
+            if (target) {
+                setDashboardTab(target);
+            }
+        });
+    });
+
+    mountDashboardSimilarIfNeeded(selectedTab);
 }
 
 // Helper functions for the dashboard
