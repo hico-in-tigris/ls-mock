@@ -13,7 +13,7 @@
     "outDir": "public/build",
     "resolveJsonModule": true,
     "allowJs": false,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "verbatimModuleSyntax": true
   },
   "include": ["src/**/*"],

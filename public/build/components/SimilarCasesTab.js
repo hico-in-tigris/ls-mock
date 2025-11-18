@@ -1,4 +1,5 @@
-import { renderSimilarCaseCard } from './SimilarCaseCard';
+import { SimilarCasesClient } from '../client/similarService.js';
+import { renderSimilarCaseCard } from './SimilarCaseCard.js';
 const STORAGE_KEY = 'ls-similar-selected-project';
 function persistSelection(projectId) {
     try {

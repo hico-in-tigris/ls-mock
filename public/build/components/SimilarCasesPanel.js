@@ -1,4 +1,5 @@
-import { renderSimilarCaseCard } from './SimilarCaseCard';
+import { SimilarCasesClient } from '../client/similarService.js';
+import { renderSimilarCaseCard } from './SimilarCaseCard.js';
 function renderPanelCases(cases) {
     if (cases.length === 0) {
         return '<p class="ls-similar-panel-empty">該当する事例が見つかりませんでした</p>';
