@@ -168,7 +168,7 @@ function viewProjectDetail(projectId) {
     };
     
     modal.innerHTML = `
-        <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-auto" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-lg w-full max-w-4xl max-h-[95vh] h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
             <!-- Header -->
             <div class="sticky top-0 bg-white border-b border-border p-6 flex items-start justify-between">
                 <div class="flex-1">
