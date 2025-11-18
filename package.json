@@ -8,6 +8,9 @@
     "build": "tsc -p tsconfig.json && find public/build -name '*.jsx' -delete",
     "test": "npm run build && node --test tests/similar/scoring.test.js"
   },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
