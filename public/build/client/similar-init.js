@@ -38,7 +38,7 @@ function createRuntime(client, windowRef) {
 function init() {
     const windowRef = window;
     const client = new SimilarCasesClient({
-        casesUrl: '/public/data/cases.json',
+        casesUrl: 'public/data/cases.json',
         getProjects: () => collectProjects(windowRef),
         storageKey: 'ls-similar-feedback',
     });
