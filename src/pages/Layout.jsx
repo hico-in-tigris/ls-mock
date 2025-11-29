@@ -6,7 +6,8 @@ import {
   Feather,
   Layers,
   Menu,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,7 +19,6 @@ const thoughtPages = ['ThoughtEntry', 'HypothesisDetail', 'HypothesisList'];
 const localSuccessNav = [
   { name: 'ダッシュボード', href: 'Dashboard', icon: () => <span className="text-lg">📊</span> },
   { name: 'プロジェクト', href: 'Projects', icon: () => <span className="text-lg">📁</span> },
-  { name: '関係者', href: 'People', icon: () => <span className="text-lg">👥</span> },
   { name: 'アクション', href: 'Actions', icon: () => <span className="text-lg">✅</span> },
   { name: 'ふりかえり', href: 'Summary', icon: () => <span className="text-lg">📝</span> },
   { name: '設定', href: 'Settings', icon: () => <span className="text-lg">⚙️</span> },
@@ -166,17 +166,36 @@ export default function Layout({ children, currentPageName }) {
               );
             })}
 
-            <div className="pt-4 mt-4 border-t border-slate-100">
-              <p className="px-4 text-xs text-slate-400 mb-2">思考整理</p>
+            <div className="pt-4 mt-4 border-t border-slate-100 space-y-1">
+              <p className="px-4 text-xs text-slate-400 mb-2">OS機能</p>
+              
+              {/* PeopleOS */}
+              <Link
+                to={createPageUrl('People')}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                  (currentPageName === 'People' || currentPageName === 'PersonDetail')
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                )}
+              >
+                <Users className="w-5 h-5 text-emerald-500" />
+                PeopleOS
+              </Link>
+              
+              {/* 仮説OS */}
               <Link
                 to={createPageUrl('ThoughtEntry')}
                 onClick={() => setSidebarOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  thoughtPages.includes(currentPageName)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
               >
-                <Feather className="w-5 h-5 text-slate-400" />
+                <Feather className="w-5 h-5 text-blue-500" />
                 仮説OS
               </Link>
             </div>

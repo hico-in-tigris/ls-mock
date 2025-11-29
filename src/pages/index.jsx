@@ -52,6 +52,11 @@ function _getCurrentPage(url) {
         urlLastPart = urlLastPart.split('?')[0];
     }
 
+    // PersonDetailの場合は'PersonDetail'を返す
+    if (url.includes('/people/') && urlLastPart !== 'people') {
+        return 'PersonDetail';
+    }
+
     const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
     return pageName || Object.keys(PAGES)[0];
 }
