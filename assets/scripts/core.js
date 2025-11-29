@@ -841,6 +841,13 @@ function initRouter() {
     // Hash change handler
     function handleHashChange() {
         const hash = window.location.hash.slice(1); // Remove #
+        
+        // If hash is empty, redirect to dashboard
+        if (!hash || hash === '') {
+            window.location.hash = '#/dashboard';
+            return;
+        }
+        
         const route = hash.replace('/', '') || 'dashboard';
         console.log('[Router] Hash change:', hash, '→ Route:', route);
         appState.currentRoute = route;
