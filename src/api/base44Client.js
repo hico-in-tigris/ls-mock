@@ -1,8 +1,5 @@
-import { createClient } from '@base44/sdk';
-// import { getAccessToken } from '@base44/sdk/utils/auth-utils';
+// Base44 SDKの代わりにMockDBを使用
+import mockDB from './mockDB/index.js';
 
-// Create a client with authentication required
-export const base44 = createClient({
-  appId: "69256516596df3603b71178a", 
-  requiresAuth: true // Ensure authentication is required for all operations
-});
+// Base44 SDK互換のクライアントオブジェクト
+export const base44 = mockDB;

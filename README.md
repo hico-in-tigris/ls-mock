@@ -1,20 +1,160 @@
 # Base44 App
 
+Base44 APIと連携するVite + Reactアプリケーションです。地域おこし協力隊や地方創生に関わる方々のためのプロジェクト管理・思考整理ツールです。
 
-This app was created automatically by Base44.
-It's a Vite+React app that communicates with the Base44 API.
+## 🚀 機能概要
 
-## Running the app
+### 主要機能
+
+- **📊 Dashboard（ダッシュボード）** - プロジェクトの進捗状況、最近の連絡先、今日のアクションを一覧表示
+- **👥 People（関係者管理）** - 地域の関係者情報を管理し、連絡履歴やタグで整理
+- **✅ Actions（アクション管理）** - タスクをカンバン形式で管理（Todo / In Progress / Done）
+- **📋 Projects（プロジェクト管理）** - 5段階のウィザード形式でプロジェクトを設計・管理
+  - アイデア整理
+  - 企画構成（5W1H）
+  - 目標設定（SMART目標・KPI）
+  - 関係者分析
+  - 提案作成
+- **📝 Summary（振り返り）** - プロジェクトやアクションの振り返りを記録
+- **💭 ThoughtEntry（思考記録）** - 想いや違和感を入力し、AIが仮説を生成
+- **🔬 Hypothesis（仮説管理）** - 生成された仮説を管理・検証
+- **⚙️ Settings（設定）** - アプリケーション設定
+
+## 🛠️ 技術スタック
+
+- **フレームワーク**: React 18 + Vite 6
+- **ルーティング**: React Router DOM 7
+- **状態管理**: TanStack Query (React Query) 5
+- **UIライブラリ**: Radix UI + Tailwind CSS
+- **フォーム管理**: React Hook Form + Zod
+- **API連携**: Base44 SDK
+- **その他**:
+  - Framer Motion（アニメーション）
+  - Recharts（グラフ）
+  - React Markdown（マークダウン表示）
+  - date-fns（日付処理）
+
+## 📦 セットアップ
+
+### 必要な環境
+
+- Node.js 18以上
+- npm または yarn
+
+### インストール
 
 ```bash
+# 依存関係のインストール
 npm install
+```
+
+### 開発サーバーの起動
+
+```bash
+# 開発モードで起動（ホットリロード有効）
 npm run dev
 ```
 
-## Building the app
+ブラウザで `http://localhost:5173` を開いてください。
+
+### ビルド
 
 ```bash
+# 本番用ビルド
 npm run build
 ```
 
-For more information and support, please contact Base44 support at app@base44.com.
+ビルド成果物は `dist/` ディレクトリに出力されます。
+
+### プレビュー
+
+```bash
+# ビルド結果をプレビュー
+npm run preview
+```
+
+## 📁 プロジェクト構造
+
+```
+src/
+├── api/              # Base44 API クライアント
+│   ├── base44Client.js
+│   ├── entities.js
+│   └── integrations.js
+├── components/       # React コンポーネント
+│   ├── actions/      # アクション関連
+│   ├── collaboration/# コラボレーション機能
+│   ├── dashboard/    # ダッシュボード関連
+│   ├── people/       # 関係者管理関連
+│   ├── projects/     # プロジェクト関連
+│   ├── summary/      # 振り返り関連
+│   ├── synchro/      # 同期機能
+│   ├── thought/      # 思考記録・仮説関連
+│   └── ui/           # 共通UIコンポーネント（shadcn/ui）
+├── hooks/            # カスタムフック
+├── lib/              # ユーティリティ関数
+├── pages/            # ページコンポーネント
+│   ├── Dashboard.jsx
+│   ├── People.jsx
+│   ├── Actions.jsx
+│   ├── Projects.jsx
+│   ├── Summary.jsx
+│   ├── Settings.jsx
+│   ├── ThoughtEntry.jsx
+│   ├── HypothesisList.jsx
+│   └── HypothesisDetail.jsx
+└── utils/            # ヘルパー関数
+```
+
+## 🔧 設定
+
+### Base44 API設定
+
+Base44 APIの認証情報を設定する必要があります。環境変数または設定ファイルでAPIキーを設定してください。
+
+### 環境変数
+
+`.env` ファイルを作成して、以下の変数を設定できます：
+
+```env
+VITE_BASE44_API_URL=your_api_url
+VITE_BASE44_API_KEY=your_api_key
+```
+
+## 🚢 デプロイ
+
+### Vercel
+
+```bash
+# Vercel CLIでデプロイ
+vercel
+```
+
+### その他のホスティングサービス
+
+ビルド後、`dist/` ディレクトリの内容を静的ホスティングサービスにデプロイしてください。
+
+## 📝 開発ガイド
+
+### コードスタイル
+
+- ESLintを使用したリントチェック
+- Prettierによる自動フォーマット（推奨）
+
+### 主要な依存関係
+
+- `@base44/sdk`: Base44 APIとの通信
+- `@tanstack/react-query`: サーバー状態管理
+- `react-router-dom`: ルーティング
+- `@radix-ui/*`: アクセシブルなUIコンポーネント
+- `tailwindcss`: スタイリング
+
+## 🤝 サポート
+
+Base44に関するサポートや質問は、以下までお問い合わせください：
+
+- Email: app@base44.com
+
+## 📄 ライセンス
+
+このプロジェクトはBase44によって作成されました。
