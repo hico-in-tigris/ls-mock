@@ -35,68 +35,7 @@ export default function Layout({ children, currentPageName }) {
   
   const isThoughtMode = thoughtPages.includes(currentPageName);
 
-  // 仮説OSモードの場合はシンプルなレイアウト
-  if (isThoughtMode) {
-    return (
-      <div className="min-h-screen bg-slate-50">
-        {/* Simple Header for Thought Mode */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-slate-100">
-          <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-            <Link 
-              to={createPageUrl('ThoughtEntry')}
-              className="flex items-center gap-2"
-            >
-              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                <Feather className="w-4 h-4 text-slate-600" />
-              </div>
-              <span className="font-medium text-slate-900 hidden sm:inline">
-                仮説OS
-              </span>
-            </Link>
-
-            <nav className="flex items-center gap-1">
-              {thoughtNav.map((item) => {
-                const isActive = currentPageName === item.href;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    to={createPageUrl(item.href)}
-                    className={cn(
-                      "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      isActive 
-                        ? "bg-slate-100 text-slate-900" 
-                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                    )}
-                  >
-                    <span className="hidden sm:inline">{item.name}</span>
-                    <Icon className="w-4 h-4 sm:hidden" />
-                  </Link>
-                );
-              })}
-              
-              <div className="w-px h-5 bg-slate-200 mx-2" />
-              
-              <Link
-                to={createPageUrl('Dashboard')}
-                className="px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              >
-                <span className="hidden sm:inline">LocalSuccessへ</span>
-                <span className="sm:hidden">📊</span>
-              </Link>
-            </nav>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="pt-14">
-          {children}
-        </main>
-      </div>
-    );
-  }
-
-  // 従来のLocalSuccessレイアウト
+  // すべてのページで統一されたレイアウトを使用
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Mobile Header */}
@@ -199,6 +138,33 @@ export default function Layout({ children, currentPageName }) {
                 仮説OS
               </Link>
             </div>
+
+            {/* 仮説OS内のナビゲーション（仮説OSページ内でのみ表示） */}
+            {isThoughtMode && (
+              <div className="pt-4 mt-4 border-t border-slate-100 space-y-1">
+                <p className="px-4 text-xs text-slate-400 mb-2">仮説OS</p>
+                {thoughtNav.map((item) => {
+                  const isActive = currentPageName === item.href;
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={createPageUrl(item.href)}
+                      onClick={() => setSidebarOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                        isActive 
+                          ? "bg-blue-50 text-blue-700" 
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </nav>
 
           {/* Footer */}
