@@ -1,4 +1,4 @@
-import { base44 } from './base44Client';
+import { base44 } from './apiClient';
 
 // MockDBからエンティティをエクスポート
 export const Person = base44.entities.Person;

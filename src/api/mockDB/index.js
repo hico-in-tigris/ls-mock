@@ -2,20 +2,28 @@
  * MockDB - Base44 SDKの代替実装
  * localStorageベースの擬似データベース
  */
-import { entities } from './entities.js';
-import { Core } from './integrations.js';
-import { auth } from './auth.js';
 
-/**
- * Base44 SDK互換のクライアントオブジェクト
- */
-export const mockDB = {
-  entities,
-  integrations: {
-    Core,
+import * as entities from './entities.js';
+import * as integrations from './integrations.js';
+
+// Base44 SDKと互換性のあるインターフェース
+const mockDB = {
+  entities: {
+    Person: entities.Person,
+    Project: entities.Project,
+    Action: entities.Action,
+    Reflection: entities.Reflection,
+    RegionData: entities.RegionData,
+    Hypothesis: entities.Hypothesis,
+    ThoughtEntry: entities.ThoughtEntry,
+    Comment: entities.Comment,
+    HypothesisShare: entities.HypothesisShare,
+    Activity: entities.Activity,
   },
-  auth,
+  auth: entities.auth,
+  integrations: {
+    Core: integrations.Core,
+  },
 };
 
 export default mockDB;
-

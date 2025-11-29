@@ -1,4 +1,4 @@
-import { base44 } from './base44Client';
+import { base44 } from './apiClient';
 
 // MockDBから統合機能をエクスポート
 export const Core = base44.integrations.Core;

@@ -27,7 +27,7 @@ Base44 APIと連携するVite + Reactアプリケーションです。地域お�
 - **状態管理**: TanStack Query (React Query) 5
 - **UIライブラリ**: Radix UI + Tailwind CSS
 - **フォーム管理**: React Hook Form + Zod
-- **API連携**: Base44 SDK
+- **データベース**: MockDB (localStorageベースの擬似DB)
 - **その他**:
   - Framer Motion（アニメーション）
   - Recharts（グラフ）
@@ -77,10 +77,15 @@ npm run preview
 
 ```
 src/
-├── api/              # Base44 API クライアント
-│   ├── base44Client.js
-│   ├── entities.js
-│   └── integrations.js
+├── api/              # API クライアント
+│   ├── apiClient.js     # MockDBクライアント（Base44 SDK互換）
+│   ├── entities.js      # エンティティエクスポート
+│   ├── integrations.js  # 統合機能エクスポート
+│   └── mockDB/          # MockDB実装
+│       ├── index.js      # メインエクスポート
+│       ├── db.js         # データベース操作クラス
+│       ├── entities.js   # エンティティラッパー
+│       └── integrations.js # 統合機能モック
 ├── components/       # React コンポーネント
 │   ├── actions/      # アクション関連
 │   ├── collaboration/# コラボレーション機能
@@ -108,17 +113,28 @@ src/
 
 ## 🔧 設定
 
-### Base44 API設定
+### MockDB（擬似データベース）
 
-Base44 APIの認証情報を設定する必要があります。環境変数または設定ファイルでAPIキーを設定してください。
+このアプリケーションは、Base44 SDKの代わりに**MockDB**というlocalStorageベースの擬似データベースを使用しています。
 
-### 環境変数
+- **データ保存**: ブラウザのlocalStorageに保存されます
+- **データ永続化**: ブラウザを閉じてもデータは保持されます
+- **初期データ**: アプリ起動時にサンプルデータが自動的にシードされます
 
-`.env` ファイルを作成して、以下の変数を設定できます：
+#### データのクリア
 
-```env
-VITE_BASE44_API_URL=your_api_url
-VITE_BASE44_API_KEY=your_api_key
+開発中にデータをリセットしたい場合は、ブラウザの開発者ツールで以下を実行：
+
+```javascript
+// すべてのMockDBデータをクリア
+localStorage.clear();
+```
+
+または、特定のエンティティのみクリア：
+
+```javascript
+// Personデータのみクリア
+localStorage.removeItem('mockdb_Person');
 ```
 
 ## 🚢 デプロイ

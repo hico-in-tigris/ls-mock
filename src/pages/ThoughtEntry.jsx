@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { createPageUrl } from '@/utils';
 import { Feather, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";

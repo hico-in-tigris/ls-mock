@@ -1,130 +1,138 @@
 /**
- * MockDB Integrations - Base44 integrationsの代替実装
+ * MockDB Integrations - 統合機能のモック実装
+ * Base44 SDKのintegrations APIと互換性を保つ
  */
 
 /**
  * LLM呼び出しのモック実装
- * 実際のLLMの代わりに、簡単なテンプレートベースの応答を返す
  */
-export const InvokeLLM = async (options) => {
-  const { prompt, response_json_schema } = options;
-  
-  // デモ用のモック応答
-  // 実際の実装では、OpenAI APIや他のLLMサービスを呼び出す
-  console.log('MockDB: InvokeLLM called with prompt:', prompt);
-  
-  // スキーマに基づいてモック応答を生成
-  if (response_json_schema?.properties?.hypotheses) {
-    // 仮説生成のモック
-    return {
-      hypotheses: [
-        {
-          title: '地域コミュニティの活性化',
-          target: '地域住民',
-          background: '地域のつながりが薄れている',
-          perspective: 'コミュニティイベントを通じた関係構築'
-        },
-        {
-          title: '移住者の受け入れ体制',
-          target: '移住希望者',
-          background: '移住希望者が増えているが受け入れ体制が不十分',
-          perspective: '移住者サポートプログラムの構築'
-        }
-      ]
-    };
-  }
-  
-  // デフォルトのモック応答
-  return {
-    response: 'これはモックDBからの応答です。実際のLLMサービスを接続するには、このファイルを編集してください。',
-    prompt: prompt
-  };
-};
+class CoreIntegration {
+  /**
+   * LLMを呼び出してJSONレスポンスを取得
+   */
+  async InvokeLLM({ prompt, response_json_schema }) {
+    // モック実装：実際のLLMの代わりに、プロンプトに基づいて簡易的なレスポンスを生成
+    console.log('Mock LLM Invocation:', { prompt, response_json_schema });
 
-/**
- * メール送信のモック実装
- */
-export const SendEmail = async (options) => {
-  console.log('MockDB: SendEmail called with:', options);
-  return {
-    success: true,
-    messageId: `mock_${Date.now()}`,
-    message: 'メール送信はモックモードです。実際のメールは送信されません。'
-  };
-};
-
-/**
- * ファイルアップロードのモック実装
- */
-export const UploadFile = async (options) => {
-  console.log('MockDB: UploadFile called with:', options);
-  return {
-    success: true,
-    fileUrl: `https://mockdb.example.com/files/${Date.now()}`,
-    fileId: `mock_file_${Date.now()}`
-  };
-};
-
-/**
- * 画像生成のモック実装
- */
-export const GenerateImage = async (options) => {
-  console.log('MockDB: GenerateImage called with:', options);
-  return {
-    success: true,
-    imageUrl: `https://mockdb.example.com/images/${Date.now()}.png`,
-    imageId: `mock_image_${Date.now()}`
-  };
-};
-
-/**
- * アップロードファイルからのデータ抽出のモック実装
- */
-export const ExtractDataFromUploadedFile = async (options) => {
-  console.log('MockDB: ExtractDataFromUploadedFile called with:', options);
-  return {
-    success: true,
-    extractedData: {
-      text: 'モックDBからの抽出データ',
-      metadata: {}
+    // プロンプトから仮説を生成する簡易ロジック
+    if (prompt.includes('仮説') || prompt.includes('hypothesis')) {
+      return {
+        hypotheses: [
+          {
+            title: '地域コミュニティの活性化',
+            target: '地域住民',
+            background: '地域のつながりが薄れている',
+            perspective: 'コミュニティイベントを通じた関係構築'
+          },
+          {
+            title: '若者の移住促進',
+            target: '都市部の若者',
+            background: '人口減少と高齢化',
+            perspective: '移住体験プログラムの提供'
+          },
+          {
+            title: '地域資源の活用',
+            target: '地域の事業者',
+            background: '未活用の地域資源がある',
+            perspective: '資源マッピングと活用プランの策定'
+          }
+        ]
+      };
     }
-  };
-};
 
-/**
- * 署名付きURL作成のモック実装
- */
-export const CreateFileSignedUrl = async (options) => {
-  console.log('MockDB: CreateFileSignedUrl called with:', options);
-  return {
-    success: true,
-    signedUrl: `https://mockdb.example.com/signed/${Date.now()}?signature=mock`,
-    expiresAt: new Date(Date.now() + 3600000).toISOString()
-  };
-};
+    // デフォルトレスポンス
+    if (response_json_schema?.properties) {
+      const result = {};
+      Object.keys(response_json_schema.properties).forEach(key => {
+        const prop = response_json_schema.properties[key];
+        if (prop.type === 'array') {
+          result[key] = [];
+        } else if (prop.type === 'object') {
+          result[key] = {};
+        } else {
+          result[key] = null;
+        }
+      });
+      return result;
+    }
 
-/**
- * プライベートファイルアップロードのモック実装
- */
-export const UploadPrivateFile = async (options) => {
-  console.log('MockDB: UploadPrivateFile called with:', options);
-  return {
-    success: true,
-    fileUrl: `https://mockdb.example.com/private/${Date.now()}`,
-    fileId: `mock_private_${Date.now()}`
-  };
-};
+    return { result: 'Mock LLM response' };
+  }
 
-/**
- * Core統合オブジェクト（Base44 SDK互換）
- */
-export const Core = {
-  InvokeLLM,
-  SendEmail,
-  UploadFile,
-  GenerateImage,
-  ExtractDataFromUploadedFile,
-  CreateFileSignedUrl,
-  UploadPrivateFile,
-};
+  /**
+   * メール送信（モック）
+   */
+  async SendEmail({ to, subject, body }) {
+    console.log('Mock SendEmail:', { to, subject, body });
+    return Promise.resolve({ success: true, messageId: 'mock_message_id' });
+  }
 
+  /**
+   * ファイルアップロード（モック）
+   */
+  async UploadFile({ file, path }) {
+    console.log('Mock UploadFile:', { file, path });
+    return Promise.resolve({ 
+      success: true, 
+      url: `https://mock-storage.example.com/${path || 'uploads/' + file.name}`,
+      fileId: 'mock_file_id'
+    });
+  }
+
+  /**
+   * 画像生成（モック）
+   */
+  async GenerateImage({ prompt, size }) {
+    console.log('Mock GenerateImage:', { prompt, size });
+    return Promise.resolve({ 
+      success: true, 
+      url: 'https://via.placeholder.com/512',
+      imageId: 'mock_image_id'
+    });
+  }
+
+  /**
+   * アップロードファイルからデータ抽出（モック）
+   */
+  async ExtractDataFromUploadedFile({ fileId, extractionType }) {
+    console.log('Mock ExtractDataFromUploadedFile:', { fileId, extractionType });
+    return Promise.resolve({ 
+      success: true, 
+      data: { extracted: 'mock_data' }
+    });
+  }
+
+  /**
+   * 署名付きURL作成（モック）
+   */
+  async CreateFileSignedUrl({ fileId, expiresIn }) {
+    console.log('Mock CreateFileSignedUrl:', { fileId, expiresIn });
+    return Promise.resolve({ 
+      url: `https://mock-storage.example.com/signed/${fileId}?expires=${expiresIn || 3600}`,
+      expiresAt: new Date(Date.now() + (expiresIn || 3600) * 1000).toISOString()
+    });
+  }
+
+  /**
+   * プライベートファイルアップロード（モック）
+   */
+  async UploadPrivateFile({ file, path }) {
+    console.log('Mock UploadPrivateFile:', { file, path });
+    return Promise.resolve({ 
+      success: true, 
+      url: `https://mock-storage.example.com/private/${path || 'uploads/' + file.name}`,
+      fileId: 'mock_private_file_id'
+    });
+  }
+}
+
+export const Core = new CoreIntegration();
+
+// 個別関数としてもエクスポート
+export const InvokeLLM = Core.InvokeLLM.bind(Core);
+export const SendEmail = Core.SendEmail.bind(Core);
+export const UploadFile = Core.UploadFile.bind(Core);
+export const GenerateImage = Core.GenerateImage.bind(Core);
+export const ExtractDataFromUploadedFile = Core.ExtractDataFromUploadedFile.bind(Core);
+export const CreateFileSignedUrl = Core.CreateFileSignedUrl.bind(Core);
+export const UploadPrivateFile = Core.UploadPrivateFile.bind(Core);
