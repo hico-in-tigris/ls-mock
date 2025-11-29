@@ -179,38 +179,5 @@ export function clearAllDB() {
   });
 }
 
-/**
- * 初期データのシード
- */
-export function seedInitialData() {
-  // Personの初期データ
-  const personDB = createEntity('Person');
-  if (personDB.getAll().length === 0) {
-    personDB.create({
-      name: '田中 健一',
-      role: '住民',
-      tags: ['#移住相談', '#空き家'],
-      last_contact: '2025-10-28',
-      contact_info: 'tanaka@example.com',
-      notes: '都市部からの移住希望。空き家活用に興味を持っている。',
-    });
-  }
-
-  // Actionの初期データ
-  const actionDB = createEntity('Action');
-  if (actionDB.getAll().length === 0) {
-    actionDB.create({
-      content: '田中さんに連絡する',
-      type: '連絡',
-      status: 'Todo',
-      due_date: new Date().toISOString().split('T')[0],
-    });
-  }
-}
-
-// アプリ起動時に初期データをシード
-if (typeof window !== 'undefined') {
-  seedInitialData();
-}
 
 

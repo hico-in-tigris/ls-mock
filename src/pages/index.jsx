@@ -3,6 +3,7 @@ import Layout from "./Layout.jsx";
 import Dashboard from "./Dashboard";
 
 import People from "./People";
+import PersonDetail from "./PersonDetail";
 
 import Actions from "./Actions";
 
@@ -69,6 +70,8 @@ function PagesContent() {
                 
                 <Route path="/Dashboard" element={<Dashboard />} />
                 
+                <Route path="/people" element={<People />} />
+                <Route path="/people/:id" element={<PersonDetail />} />
                 <Route path="/People" element={<People />} />
                 
                 <Route path="/Actions" element={<Actions />} />

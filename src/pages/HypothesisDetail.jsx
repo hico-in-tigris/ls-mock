@@ -24,6 +24,10 @@ import CollaborationPanel from '@/components/collaboration/CollaborationPanel';
 import CommentThread from '@/components/collaboration/CommentThread';
 import SyncRecommendations from '@/components/synchro/SyncRecommendations';
 import PublishToggle from '@/components/synchro/PublishToggle';
+import { recommendPeopleForHypothesis } from '@/api/integrations';
+import PeopleCard from '@/components/people/PeopleCard';
+import { Users } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HypothesisDetail() {
   const queryClient = useQueryClient();
@@ -32,10 +36,13 @@ export default function HypothesisDetail() {
 
   const { data: hypothesis, isLoading } = useQuery({
     queryKey: ['hypothesis', hypothesisId],
-    queryFn: async () => {
-      const results = await base44.entities.Hypothesis.filter({ id: hypothesisId });
-      return results[0];
-    },
+    queryFn: () => base44.entities.Hypothesis.get(hypothesisId),
+    enabled: !!hypothesisId
+  });
+
+  const { data: recommendedPeople = [] } = useQuery({
+    queryKey: ['recommendedPeople', hypothesisId],
+    queryFn: () => recommendPeopleForHypothesis(hypothesisId),
     enabled: !!hypothesisId
   });
 
@@ -697,6 +704,42 @@ ${hypothesis.answer_summary || ''}
             onGenerateTags={() => generateEmotionalTagsMutation.mutateAsync()}
           />
         </section>
+
+        <Separator className="my-8" />
+
+        {/* Section 7: この仮説に関わりそうな人（PeopleOS連動） */}
+        {recommendedPeople.length > 0 && (
+          <section className="mb-10">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  この仮説に関わりそうな人
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-4">
+                  AIが推薦した、この仮説に関連する価値観やスキルを持つ関係者
+                </p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recommendedPeople.map(person => (
+                    <PeopleCard
+                      key={person.id}
+                      id={person.id}
+                      name={person.name}
+                      role={person.role}
+                      skills={person.skills || []}
+                      values={person.values || []}
+                      lastContactAt={person.lastContactAt}
+                      projects={person.projects || []}
+                      onClick={() => window.location.href = `/people/${person.id}`}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {/* 公開設定 */}
         <section className="mb-10">

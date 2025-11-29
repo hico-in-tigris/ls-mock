@@ -94,6 +94,7 @@ class AuthWrapper {
 
 // エンティティをエクスポート
 export const Person = new EntityWrapper('Person');
+export const Interaction = new EntityWrapper('Interaction');
 export const Project = new EntityWrapper('Project');
 export const Action = new EntityWrapper('Action');
 export const Reflection = new EntityWrapper('Reflection');

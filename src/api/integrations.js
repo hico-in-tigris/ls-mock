@@ -10,6 +10,41 @@ export const ExtractDataFromUploadedFile = base44.integrations.Core.ExtractDataF
 export const CreateFileSignedUrl = base44.integrations.Core.CreateFileSignedUrl;
 export const UploadPrivateFile = base44.integrations.Core.UploadPrivateFile;
 
+/**
+ * 仮説OS × PeopleOS の連動API
+ * 仮説に関連する人材を推薦
+ */
+function intersectScore(a, b) {
+  if (!a || !b || !Array.isArray(a) || !Array.isArray(b)) return 0;
+  const intersection = a.filter(v => b.includes(v));
+  return intersection.length / Math.max(a.length, b.length, 1);
+}
+
+export async function recommendPeopleForHypothesis(hypothesisId) {
+  try {
+    const hypothesis = await base44.entities.Hypothesis.get(hypothesisId);
+    const people = await base44.entities.Person.list();
+
+    const scored = people.map(p => {
+      const valuesScore = intersectScore(p.values || [], hypothesis.tags || []) * 0.6;
+      const skillsScore = intersectScore(p.skills || [], hypothesis.needSkills || []) * 0.4;
+      
+      return {
+        ...p,
+        score: valuesScore + skillsScore,
+      };
+    });
+
+    return scored
+      .filter(p => p.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+  } catch (error) {
+    console.error('Error recommending people:', error);
+    return [];
+  }
+}
+
 
 
 
