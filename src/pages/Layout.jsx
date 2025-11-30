@@ -7,7 +7,12 @@ import {
   Layers,
   Menu,
   X,
-  Users
+  Users,
+  LayoutDashboard,
+  Folder,
+  CheckSquare,
+  FileText,
+  Settings
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,11 +22,11 @@ const thoughtPages = ['ThoughtEntry', 'HypothesisDetail', 'HypothesisList'];
 
 // 従来のLocalSuccessナビゲーション
 const localSuccessNav = [
-  { name: 'ダッシュボード', href: 'Dashboard', icon: () => <span className="text-lg">📊</span> },
-  { name: 'プロジェクト', href: 'Projects', icon: () => <span className="text-lg">📁</span> },
-  { name: 'アクション', href: 'Actions', icon: () => <span className="text-lg">✅</span> },
-  { name: 'ふりかえり', href: 'Summary', icon: () => <span className="text-lg">📝</span> },
-  { name: '設定', href: 'Settings', icon: () => <span className="text-lg">⚙️</span> },
+  { name: 'ダッシュボード', href: 'Dashboard', icon: LayoutDashboard },
+  { name: 'プロジェクト', href: 'Projects', icon: Folder },
+  { name: 'アクション', href: 'Actions', icon: CheckSquare },
+  { name: 'ふりかえり', href: 'Summary', icon: FileText },
+  { name: '設定', href: 'Settings', icon: Settings },
 ];
 
 // 仮説OSナビゲーション
@@ -99,7 +104,7 @@ export default function Layout({ children, currentPageName }) {
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   )}
                 >
-                  <Icon />
+                  <Icon className="w-5 h-5" />
                   {item.name}
                 </Link>
               );
