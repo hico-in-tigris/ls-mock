@@ -4,6 +4,10 @@ import Dashboard from "./Dashboard";
 
 import People from "./People";
 import PersonDetail from "./PersonDetail";
+import PeopleSkills from "./PeopleSkills";
+import PeopleInterests from "./PeopleInterests";
+import PeopleRecommend from "./PeopleRecommend";
+import PeopleAdd from "./PeopleAdd";
 
 import Actions from "./Actions";
 
@@ -26,6 +30,10 @@ const PAGES = {
     Dashboard: Dashboard,
     
     People: People,
+    PeopleSkills: PeopleSkills,
+    PeopleInterests: PeopleInterests,
+    PeopleRecommend: PeopleRecommend,
+    PeopleAdd: PeopleAdd,
     
     Actions: Actions,
     
@@ -53,8 +61,23 @@ function _getCurrentPage(url) {
     }
 
     // PersonDetailの場合は'PersonDetail'を返す
-    if (url.includes('/people/') && urlLastPart !== 'people') {
+    if (url.includes('/people/') && urlLastPart !== 'people' && 
+        !['skills', 'interests', 'recommend', 'add'].includes(urlLastPart)) {
         return 'PersonDetail';
+    }
+
+    // PeopleOS関連のページをチェック
+    if (url.includes('/people/skills')) {
+        return 'PeopleSkills';
+    }
+    if (url.includes('/people/interests')) {
+        return 'PeopleInterests';
+    }
+    if (url.includes('/people/recommend')) {
+        return 'PeopleRecommend';
+    }
+    if (url.includes('/people/add')) {
+        return 'PeopleAdd';
     }
 
     const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
@@ -77,7 +100,15 @@ function PagesContent() {
                 
                 <Route path="/people" element={<People />} />
                 <Route path="/people/:id" element={<PersonDetail />} />
+                <Route path="/people/skills" element={<PeopleSkills />} />
+                <Route path="/people/interests" element={<PeopleInterests />} />
+                <Route path="/people/recommend" element={<PeopleRecommend />} />
+                <Route path="/people/add" element={<PeopleAdd />} />
                 <Route path="/People" element={<People />} />
+                <Route path="/PeopleSkills" element={<PeopleSkills />} />
+                <Route path="/PeopleInterests" element={<PeopleInterests />} />
+                <Route path="/PeopleRecommend" element={<PeopleRecommend />} />
+                <Route path="/PeopleAdd" element={<PeopleAdd />} />
                 
                 <Route path="/Actions" element={<Actions />} />
                 

@@ -81,7 +81,7 @@ export default function People() {
               </div>
             </div>
             <Button 
-              onClick={() => navigate('/people/new')}
+              onClick={() => navigate('/people/add')}
               className="bg-ls-primary hover:bg-ls-primary-light text-white gap-1.5"
             >
               <Plus className="w-4 h-4" />

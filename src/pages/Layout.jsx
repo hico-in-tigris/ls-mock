@@ -26,7 +26,7 @@ const hypothesisPages = ['ThoughtEntry', 'HypothesisDetail', 'HypothesisList'];
 const projectPages = ['Projects'];
 
 // PeopleOS関連のページ
-const peoplePages = ['People', 'PersonDetail'];
+const peoplePages = ['People', 'PersonDetail', 'PeopleSkills', 'PeopleInterests', 'PeopleRecommend', 'PeopleAdd'];
 
 // メインナビゲーション
 const mainNav = [
@@ -68,8 +68,11 @@ const mainNav = [
     icon: Users,
     label: 'PeopleOS',
     subItems: [
-      { name: '関係者一覧', href: 'People' },
-      { name: 'スキル・関心データベース', href: 'People' } // Peopleページ内の機能として実装
+      { name: '一覧', href: 'People' },
+      { name: 'スキルで探す', href: 'PeopleSkills' },
+      { name: '関心で探す', href: 'PeopleInterests' },
+      { name: '推薦AI', href: 'PeopleRecommend' },
+      { name: '追加する', href: 'PeopleAdd' }
     ]
   },
   { 
@@ -106,7 +109,11 @@ export default function Layout({ children, currentPageName }) {
     if (subItems) {
       return subItems.some(item => {
         if (item.href === 'Dashboard' && currentPageName === 'Dashboard') return true;
-        if (item.href === 'People' && peoplePages.includes(currentPageName)) return true;
+        if (item.href === 'People' && (currentPageName === 'People' || currentPageName === 'PersonDetail')) return true;
+        if (item.href === 'PeopleSkills' && currentPageName === 'PeopleSkills') return true;
+        if (item.href === 'PeopleInterests' && currentPageName === 'PeopleInterests') return true;
+        if (item.href === 'PeopleRecommend' && currentPageName === 'PeopleRecommend') return true;
+        if (item.href === 'PeopleAdd' && currentPageName === 'PeopleAdd') return true;
         if (item.href === 'Projects' && projectPages.includes(currentPageName)) return true;
         return currentPageName === item.href;
       });
@@ -200,10 +207,15 @@ export default function Layout({ children, currentPageName }) {
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 mt-1 space-y-1">
                       {item.subItems.map((subItem) => {
-                        const subIsActive = subItem.href === 'Dashboard' && currentPageName === 'Dashboard' ||
-                                           subItem.href === 'People' && peoplePages.includes(currentPageName) ||
-                                           subItem.href === 'Projects' && projectPages.includes(currentPageName) ||
-                                           currentPageName === subItem.href;
+                        const subIsActive = 
+                          (subItem.href === 'Dashboard' && currentPageName === 'Dashboard') ||
+                          (subItem.href === 'People' && (currentPageName === 'People' || currentPageName === 'PersonDetail')) ||
+                          (subItem.href === 'PeopleSkills' && currentPageName === 'PeopleSkills') ||
+                          (subItem.href === 'PeopleInterests' && currentPageName === 'PeopleInterests') ||
+                          (subItem.href === 'PeopleRecommend' && currentPageName === 'PeopleRecommend') ||
+                          (subItem.href === 'PeopleAdd' && currentPageName === 'PeopleAdd') ||
+                          (subItem.href === 'Projects' && projectPages.includes(currentPageName)) ||
+                          currentPageName === subItem.href;
                         return (
                           <Link
                             key={subItem.name}
