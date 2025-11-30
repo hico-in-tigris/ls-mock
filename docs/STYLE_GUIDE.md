@@ -71,12 +71,26 @@
 
 ## 4. UIコンポーネント／デザインルール
 
+> **重要**: 詳細なUIデザインガイドラインは [UI_GUIDELINES.md](./UI_GUIDELINES.md) を参照してください。
+
 ### shadcn/ui の基本方針
 
 - **スタイル**: new-york style を使用
 - **コンポーネント配置**: `src/components/ui/` 配下
 - **カスタマイズ**: shadcn/ui コンポーネントは直接編集可能（コピー&ペースト方式）
 - **追加コンポーネント**: `npx shadcn@latest add [component]` で追加
+
+### LocalSuccess UIガイドライン
+
+プロダクト全体のUI統一を目的とした軽量デザインシステムが定義されています：
+
+- **デザイン原則**: Calm & Clarity, Flow First, Consistency, Friendly Minimal
+- **カラーパレット**: 低彩度のグリーン/アースカラーを基調
+- **タイポグラフィ**: 明確な階層構造
+- **コンポーネント指針**: LSPageLayout, LSSection, LSCard, LSListItem など
+- **ページテンプレート**: 統一されたページ構造
+
+詳細は [UI_GUIDELINES.md](./UI_GUIDELINES.md) を参照してください。
 
 ### コンポーネントのレイヤー分け
 

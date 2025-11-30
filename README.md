@@ -30,6 +30,8 @@ npm run build
 - [機能一覧](./docs/FEATURES.md) - 主要機能の詳細
 - [アーキテクチャ](./docs/ARCHITECTURE.md) - 技術スタックとプロジェクト構造
 - [開発ガイド](./docs/DEVELOPMENT.md) - セットアップと開発手順
+- [スタイルガイド](./docs/STYLE_GUIDE.md) - コーディングスタイルとプロジェクト固有ルール
+- [UIガイドライン](./docs/UI_GUIDELINES.md) - UIデザインシステムとコンポーネント指針
 
 ## ✨ Author
 
