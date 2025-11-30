@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/apiClient';
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO, isWithinInterval, isToday } from 'date-fns';
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { 
   FileText, 
   Plus, 
-  Calendar,
   CheckCircle2,
   TrendingUp,
   Smile,
@@ -19,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Dialog, 
   DialogContent, 
@@ -29,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import ReflectionForm from '@/components/summary/ReflectionForm';
 import EmptyState from '@/components/ui/EmptyState';
+import { useSummary } from '@/hooks/useSummary';
 
 const moodConfig = {
   'great': { icon: Smile, label: '最高', color: 'text-emerald-500 bg-emerald-50' },
@@ -39,44 +37,19 @@ const moodConfig = {
 };
 
 export default function Summary() {
-  const queryClient = useQueryClient();
   const [periodType, setPeriodType] = useState('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [editReflection, setEditReflection] = useState(null);
 
-  const { data: reflections = [], isLoading } = useQuery({
-    queryKey: ['reflections'],
-    queryFn: () => base44.entities.Reflection.list('-period_date'),
-  });
-
-  const { data: actions = [] } = useQuery({
-    queryKey: ['actions'],
-    queryFn: () => base44.entities.Action.list('-created_date'),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Reflection.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reflections'] });
-      setShowForm(false);
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Reflection.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reflections'] });
-      setEditReflection(null);
-    },
-  });
-
-  const createActionMutation = useMutation({
-    mutationFn: (data) => base44.entities.Action.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['actions'] });
-    },
-  });
+  const {
+    reflections: filteredReflections,
+    doneActions,
+    isLoading,
+    createMutation,
+    updateMutation,
+    createActionMutation
+  } = useSummary(periodType, selectedDate);
 
   const getPeriodLabel = () => {
     switch (periodType) {
@@ -91,38 +64,6 @@ export default function Summary() {
       default:
         return '';
     }
-  };
-
-  const getFilteredReflections = () => {
-    return reflections.filter(r => {
-      if (!r.period_date) return false;
-      const reflectionDate = parseISO(r.period_date);
-      
-      switch (periodType) {
-        case 'daily':
-          return format(reflectionDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-        case 'weekly':
-          return isWithinInterval(reflectionDate, {
-            start: startOfWeek(selectedDate, { weekStartsOn: 1 }),
-            end: endOfWeek(selectedDate, { weekStartsOn: 1 })
-          });
-        case 'monthly':
-          return isWithinInterval(reflectionDate, {
-            start: startOfMonth(selectedDate),
-            end: endOfMonth(selectedDate)
-          });
-        default:
-          return true;
-      }
-    });
-  };
-
-  const getDoneActions = () => {
-    return actions.filter(a => {
-      if (a.status !== 'Done' || !a.completed_at) return false;
-      const completedDate = parseISO(a.completed_at);
-      return format(completedDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-    });
   };
 
   const handlePrevPeriod = () => {
@@ -162,6 +103,18 @@ export default function Summary() {
       ...data,
       period_type: periodType,
       period_date: format(selectedDate, 'yyyy-MM-dd')
+    }, {
+      onSuccess: () => {
+        setShowForm(false);
+      }
+    });
+  };
+
+  const handleUpdateReflection = (data) => {
+    updateMutation.mutate({ id: editReflection.id, data }, {
+      onSuccess: () => {
+        setEditReflection(null);
+      }
     });
   };
 
@@ -174,8 +127,6 @@ export default function Summary() {
     });
   };
 
-  const filteredReflections = getFilteredReflections();
-  const doneActions = getDoneActions();
   const todayReflection = filteredReflections.find(r => r.period_type === periodType);
 
   return (
@@ -399,7 +350,7 @@ export default function Summary() {
           <ReflectionForm
             reflection={editReflection}
             doneActions={doneActions}
-            onSubmit={(data) => updateMutation.mutate({ id: editReflection.id, data })}
+            onSubmit={handleUpdateReflection}
             onCancel={() => setEditReflection(null)}
             isLoading={updateMutation.isPending}
           />
