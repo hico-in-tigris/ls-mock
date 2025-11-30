@@ -265,6 +265,57 @@ function seedInitialData() {
             phone: '090-1234-5678',
             sns: { twitter: null, instagram: null }
           }
+        },
+        {
+          name: '松本 大輔',
+          role: 'coop',
+          avatarUrl: null,
+          skills: ['Web制作', 'データ分析', 'プロジェクト管理', 'マーケティング'],
+          values: ['若者の移住促進', '地域経済の活性化', '地域ブランディング'],
+          description: '協力隊3年目。ITを活用した地域課題解決に取り組む。移住促進サイトの運営も担当。',
+          projects: [],
+          hypotheses: [],
+          interactions: [],
+          lastContactAt: new Date(Date.now() - 0 * 24 * 60 * 60 * 1000).toISOString(),
+          contact: {
+            email: 'matsumoto@example.com',
+            phone: '090-2345-6789',
+            sns: { twitter: '@matsumoto_d', instagram: '@matsumoto_d' }
+          }
+        },
+        {
+          name: '井上 麻衣',
+          role: 'business',
+          avatarUrl: null,
+          skills: ['料理', 'イベント企画', 'コミュニティ形成', '地域資源の活用'],
+          values: ['地域資源の活用', '文化継承', '観光振興'],
+          description: '地元のカフェ経営者。地域の食材を使ったメニュー開発と、地域イベントの企画に取り組む。',
+          projects: [],
+          hypotheses: [],
+          interactions: [],
+          lastContactAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
+          contact: {
+            email: 'inoue@cafe-local.com',
+            phone: '090-3456-7890',
+            sns: { twitter: null, instagram: '@cafe_local' }
+          }
+        },
+        {
+          name: '木村 健太',
+          role: 'resident',
+          avatarUrl: null,
+          skills: ['建築・設計', '空き家活用', 'プロジェクト管理'],
+          values: ['空き家活用', '持続可能な地域づくり', '地域資源の活用'],
+          description: '建築士。空き家のリノベーションと活用に取り組む。移住希望者の相談も受けている。',
+          projects: [],
+          hypotheses: [],
+          interactions: [],
+          lastContactAt: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+          contact: {
+            email: 'kimura@arch.example.com',
+            phone: '090-4567-8901',
+            sns: { twitter: null, instagram: null }
+          }
         }
       ];
       
