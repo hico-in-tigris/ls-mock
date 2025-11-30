@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 import { User, Calendar, Folder } from "lucide-react";
 
 const roleColors = {
-  "admin": "bg-blue-100 text-blue-700 border-blue-200",
-  "coop": "bg-emerald-100 text-emerald-700 border-emerald-200",
-  "resident": "bg-amber-100 text-amber-700 border-amber-200",
-  "npo": "bg-purple-100 text-purple-700 border-purple-200",
-  "business": "bg-indigo-100 text-indigo-700 border-indigo-200",
-  "expert": "bg-slate-100 text-slate-700 border-slate-200"
+  "admin": "bg-ls-secondary/10 text-ls-secondary border-ls-secondary/20",
+  "coop": "bg-ls-primary/10 text-ls-primary border-ls-primary/20",
+  "resident": "bg-ls-accent/10 text-ls-accent border-ls-accent/20",
+  "npo": "bg-ls-primary-light/10 text-ls-primary-light border-ls-primary-light/20",
+  "business": "bg-ls-secondary/10 text-ls-secondary border-ls-secondary/20",
+  "expert": "bg-ls-bg text-ls-text-light border-ls-border"
 };
 
 const roleLabels = {
@@ -50,13 +50,13 @@ export default function PeopleCard({
 
   return (
     <Card 
-      className="cursor-pointer hover:shadow-lg transition-all duration-200"
+      className="cursor-pointer hover:shadow-md transition-all duration-200 border-ls-border shadow-sm"
       onClick={onClick}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <Avatar className="h-12 w-12">
-            <AvatarFallback className="bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600">
+            <AvatarFallback className="bg-ls-primary/10 text-ls-primary">
               {getInitials(name)}
             </AvatarFallback>
           </Avatar>
@@ -64,7 +64,7 @@ export default function PeopleCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-slate-900 truncate">{name}</h3>
+                <h3 className="text-sm font-medium text-ls-text truncate">{name}</h3>
                 <Badge 
                   variant="secondary" 
                   className={cn("mt-1 text-xs", roleColors[role] || roleColors.expert)}
@@ -77,12 +77,12 @@ export default function PeopleCard({
             {skills.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2">
                 {skills.slice(0, 3).map((skill, i) => (
-                  <Badge key={i} variant="outline" className="text-xs">
+                  <Badge key={i} variant="outline" className="text-xs border-ls-border">
                     {skill}
                   </Badge>
                 ))}
                 {skills.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border-ls-border">
                     +{skills.length - 3}
                   </Badge>
                 )}
@@ -92,25 +92,25 @@ export default function PeopleCard({
             {values.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2">
                 {values.slice(0, 3).map((value, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs bg-slate-50">
+                  <Badge key={i} variant="secondary" className="text-xs bg-ls-bg border-ls-border">
                     {value}
                   </Badge>
                 ))}
                 {values.length > 3 && (
-                  <Badge variant="secondary" className="text-xs bg-slate-50">
+                  <Badge variant="secondary" className="text-xs bg-ls-bg border-ls-border">
                     +{values.length - 3}
                   </Badge>
                 )}
               </div>
             )}
 
-            <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
+            <div className="flex items-center gap-4 mt-3 text-xs text-ls-text-light">
               <div className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-4 h-4" />
                 <span>{formatLastContact(lastContactAt)}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Folder className="w-3.5 h-3.5" />
+                <Folder className="w-4 h-4" />
                 <span>{projects.length}件</span>
               </div>
             </div>

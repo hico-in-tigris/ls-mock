@@ -104,38 +104,45 @@ export default function Actions() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-              <CheckSquare className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-ls-bg">
+      {/* LSPageLayout: Header */}
+      <div className="px-4 pt-6 pb-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+                <CheckSquare className="w-5 h-5 text-ls-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-ls-text">小さな検証</h1>
+                <p className="text-sm text-ls-text-light mt-1">{actions.length}件のアクション</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">アクション管理</h1>
-              <p className="text-sm text-slate-500">{actions.length}件のアクション</p>
-            </div>
+            <Button 
+              onClick={() => setShowForm(true)}
+              className="bg-ls-primary hover:bg-ls-primary-light text-white gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              アクションを追加
+            </Button>
           </div>
-          <Button 
-            onClick={() => setShowForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            アクションを追加
-          </Button>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      {/* LSPageLayout: Main Content */}
+      <div className="px-4 pb-6">
+        <div className="max-w-7xl mx-auto">
+          {/* LSSection: Filters */}
+          <div className="mt-6">
+            <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="アクションを検索..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
-            />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ls-text-light" />
+              <Input
+                placeholder="アクションを検索..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 border-ls-border"
+              />
           </div>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-full sm:w-40">
@@ -164,31 +171,37 @@ export default function Actions() {
           </Tabs>
         </div>
 
-        {/* Content */}
-        {isLoading ? (
-          <div className="grid lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-64 bg-slate-100 rounded-xl animate-pulse" />
-            ))}
+            </div>
           </div>
-        ) : filteredActions.length === 0 && !search && typeFilter === 'all' ? (
-          <EmptyState
-            icon={CheckSquare}
-            title="まだアクションがありません"
-            description="「アクションを追加」ボタンから最初のアクションを作成しましょう"
-            actionLabel="アクションを追加"
-            onAction={() => setShowForm(true)}
-          />
-        ) : (
-          <ActionKanban
-            actions={filteredActions}
-            people={people}
-            projects={projects}
-            onStatusChange={handleStatusChange}
-            onEdit={setEditAction}
-            onDelete={setDeleteConfirm}
-          />
-        )}
+
+          {/* LSSection: Content */}
+          <div className="mt-6">
+            {isLoading ? (
+              <div className="grid lg:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-64 bg-ls-border/50 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredActions.length === 0 && !search && typeFilter === 'all' ? (
+              <EmptyState
+                icon={CheckSquare}
+                title="まだアクションがありません"
+                description="「アクションを追加」ボタンから最初のアクションを作成しましょう"
+                actionLabel="アクションを追加"
+                onAction={() => setShowForm(true)}
+              />
+            ) : (
+              <ActionKanban
+                actions={filteredActions}
+                people={people}
+                projects={projects}
+                onStatusChange={handleStatusChange}
+                onEdit={setEditAction}
+                onDelete={setDeleteConfirm}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Add Action Dialog */}
@@ -237,7 +250,7 @@ export default function Actions() {
             <AlertDialogCancel>キャンセル</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate(deleteConfirm.id)}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-ls-danger hover:bg-ls-danger/90 text-white"
             >
               削除
             </AlertDialogAction>

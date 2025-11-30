@@ -29,11 +29,11 @@ import EmptyState from '@/components/ui/EmptyState';
 import { useSummary } from '@/hooks/useSummary';
 
 const moodConfig = {
-  'great': { icon: Smile, label: '最高', color: 'text-emerald-500 bg-emerald-50' },
-  'good': { icon: Smile, label: '良い', color: 'text-blue-500 bg-blue-50' },
-  'neutral': { icon: Meh, label: '普通', color: 'text-slate-500 bg-slate-50' },
-  'difficult': { icon: Frown, label: '難しかった', color: 'text-amber-500 bg-amber-50' },
-  'challenging': { icon: Frown, label: '大変だった', color: 'text-red-500 bg-red-50' }
+  'great': { icon: Smile, label: '最高', color: 'text-ls-success bg-ls-success/10' },
+  'good': { icon: Smile, label: '良い', color: 'text-ls-primary bg-ls-primary/10' },
+  'neutral': { icon: Meh, label: '普通', color: 'text-ls-text-light bg-ls-bg' },
+  'difficult': { icon: Frown, label: '難しかった', color: 'text-ls-warning bg-ls-warning/10' },
+  'challenging': { icon: Frown, label: '大変だった', color: 'text-ls-danger bg-ls-danger/10' }
 };
 
 export default function Summary() {
@@ -130,30 +130,38 @@ export default function Summary() {
   const todayReflection = filteredReflections.find(r => r.period_type === periodType);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-ls-bg">
+      {/* LSPageLayout: Header */}
+      <div className="px-4 pt-6 pb-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-ls-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-ls-text">ふりかえり</h1>
+                <p className="text-sm text-ls-text-light mt-1">日々の学びを記録しましょう</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">ふりかえり</h1>
-              <p className="text-sm text-slate-500">日々の学びを記録しましょう</p>
-            </div>
+            <Button 
+              onClick={() => setShowForm(true)}
+              className="bg-ls-primary hover:bg-ls-primary-light text-white gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              ふりかえりを追加
+            </Button>
           </div>
-          <Button 
-            onClick={() => setShowForm(true)}
-            className="bg-purple-600 hover:bg-purple-700 gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            ふりかえりを追加
-          </Button>
         </div>
+      </div>
 
-        {/* Period Selection */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+      {/* LSPageLayout: Main Content */}
+      <div className="px-4 pb-6">
+        <div className="max-w-4xl mx-auto">
+
+          {/* LSSection: Period Selection */}
+          <div className="mt-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <Tabs value={periodType} onValueChange={setPeriodType}>
             <TabsList>
               <TabsTrigger value="daily">日次</TabsTrigger>
@@ -179,64 +187,67 @@ export default function Summary() {
               className="ml-2"
             >
               今日
-            </Button>
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* Stats */}
-        {periodType === 'daily' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <CheckCircle2 className="w-6 h-6 mx-auto mb-2 text-emerald-500" />
-                <div className="text-2xl font-bold">{doneActions.length}</div>
-                <div className="text-xs text-slate-500">完了アクション</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <FileText className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-                <div className="text-2xl font-bold">{filteredReflections.length}</div>
-                <div className="text-xs text-slate-500">ふりかえり</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <TrendingUp className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                <div className="text-2xl font-bold">
-                  {filteredReflections.reduce((acc, r) => acc + (r.next_actions?.length || 0), 0)}
-                </div>
-                <div className="text-xs text-slate-500">次のアクション</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                {todayReflection ? (
-                  <>
-                    {React.createElement(moodConfig[todayReflection.mood]?.icon || Meh, {
-                      className: cn("w-6 h-6 mx-auto mb-2", moodConfig[todayReflection.mood]?.color.split(' ')[0])
-                    })}
-                    <div className="text-sm font-medium">
-                      {moodConfig[todayReflection.mood]?.label}
+          {/* LSSection: Stats */}
+          {periodType === 'daily' && (
+            <div className="mt-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card className="border-ls-border shadow-sm">
+                  <CardContent className="p-4 text-center">
+                    <CheckCircle2 className="w-6 h-6 mx-auto mb-2 text-ls-success" />
+                    <div className="text-2xl font-bold text-ls-text">{doneActions.length}</div>
+                    <div className="text-xs text-ls-text-light">完了アクション</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-ls-border shadow-sm">
+                  <CardContent className="p-4 text-center">
+                    <FileText className="w-6 h-6 mx-auto mb-2 text-ls-primary" />
+                    <div className="text-2xl font-bold text-ls-text">{filteredReflections.length}</div>
+                    <div className="text-xs text-ls-text-light">ふりかえり</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-ls-border shadow-sm">
+                  <CardContent className="p-4 text-center">
+                    <TrendingUp className="w-6 h-6 mx-auto mb-2 text-ls-secondary" />
+                    <div className="text-2xl font-bold text-ls-text">
+                      {filteredReflections.reduce((acc, r) => acc + (r.next_actions?.length || 0), 0)}
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <Meh className="w-6 h-6 mx-auto mb-2 text-slate-300" />
-                    <div className="text-sm text-slate-400">未記録</div>
-                  </>
-                )}
-                <div className="text-xs text-slate-500">気分</div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                    <div className="text-xs text-ls-text-light">次のアクション</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-ls-border shadow-sm">
+                  <CardContent className="p-4 text-center">
+                    {todayReflection ? (
+                      <>
+                        {React.createElement(moodConfig[todayReflection.mood]?.icon || Meh, {
+                          className: cn("w-6 h-6 mx-auto mb-2", moodConfig[todayReflection.mood]?.color.split(' ')[0])
+                        })}
+                        <div className="text-sm font-medium text-ls-text">
+                          {moodConfig[todayReflection.mood]?.label}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Meh className="w-6 h-6 mx-auto mb-2 text-ls-border" />
+                        <div className="text-sm text-ls-text-light">未記録</div>
+                      </>
+                    )}
+                    <div className="text-xs text-ls-text-light">気分</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
 
-        {/* Reflections List */}
+          {/* LSSection: Reflections List */}
+          <div className="mt-6">
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-slate-100 rounded-xl animate-pulse" />
+              <div key={i} className="h-32 bg-ls-border/50 rounded-lg animate-pulse" />
             ))}
           </div>
         ) : filteredReflections.length === 0 ? (
@@ -256,20 +267,20 @@ export default function Summary() {
               return (
                 <Card 
                   key={reflection.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer"
+                  className="hover:shadow-md transition-shadow cursor-pointer border-ls-border shadow-sm"
                   onClick={() => setEditReflection(reflection)}
                 >
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between mb-4">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={cn("p-2 rounded-xl", mood.color)}>
+                        <div className={cn("p-2 rounded-lg", mood.color)}>
                           <MoodIcon className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="font-medium text-slate-900">
+                          <p className="text-sm font-medium text-ls-text">
                             {format(parseISO(reflection.period_date), 'M月d日（E）', { locale: ja })}
                           </p>
-                          <Badge variant="secondary" className="mt-1">
+                          <Badge variant="secondary" className="mt-1 bg-ls-bg border-ls-border">
                             {reflection.period_type === 'daily' ? '日次' : 
                              reflection.period_type === 'weekly' ? '週次' : '月次'}
                           </Badge>
@@ -279,28 +290,28 @@ export default function Summary() {
 
                     {reflection.good_points && (
                       <div className="mb-3">
-                        <p className="text-xs font-medium text-emerald-600 mb-1">良かったこと</p>
-                        <p className="text-sm text-slate-600 line-clamp-2">{reflection.good_points}</p>
+                        <p className="text-xs font-medium text-ls-success mb-1">良かったこと</p>
+                        <p className="text-sm text-ls-text line-clamp-2">{reflection.good_points}</p>
                       </div>
                     )}
 
                     {reflection.learnings && (
                       <div className="mb-3">
-                        <p className="text-xs font-medium text-blue-600 mb-1">学び</p>
-                        <p className="text-sm text-slate-600 line-clamp-2">{reflection.learnings}</p>
+                        <p className="text-xs font-medium text-ls-primary mb-1">学び</p>
+                        <p className="text-sm text-ls-text line-clamp-2">{reflection.learnings}</p>
                       </div>
                     )}
 
                     {reflection.next_actions?.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-indigo-600 mb-2">次のアクション</p>
+                        <p className="text-xs font-medium text-ls-secondary mb-2">次のアクション</p>
                         <div className="flex flex-wrap gap-2">
                           {reflection.next_actions.slice(0, 3).map((action, i) => (
                             <Button
                               key={i}
                               variant="outline"
                               size="sm"
-                              className="gap-1 text-xs"
+                              className="gap-1 text-xs border-ls-border"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePromoteToAction(action);
@@ -311,7 +322,7 @@ export default function Summary() {
                             </Button>
                           ))}
                           {reflection.next_actions.length > 3 && (
-                            <Badge variant="secondary">
+                            <Badge variant="secondary" className="bg-ls-bg border-ls-border">
                               +{reflection.next_actions.length - 3}
                             </Badge>
                           )}
@@ -324,6 +335,7 @@ export default function Summary() {
             })}
           </div>
         )}
+        </div>
       </div>
 
       {/* Create Reflection Dialog */}

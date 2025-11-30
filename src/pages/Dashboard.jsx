@@ -105,56 +105,63 @@ export default function Dashboard() {
   const activeProjects = projects.filter(p => p.status !== 'Done').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-ls-bg">
+      <div className="px-4 pt-6 pb-4">
+        <div className="max-w-7xl mx-auto">
+          {/* LSPageLayout: Header */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-ls-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-semibold text-ls-text">
                 おかえりなさい、{user?.full_name || 'ゲスト'}さん
               </h1>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-ls-text-light mt-1">
                 {format(new Date(), 'yyyy年M月d日（E）', { locale: ja })}
               </p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatsCard
-            title="今日の完了"
-            value={completedToday}
-            icon={CheckCircle2}
-            iconClassName="bg-emerald-50"
-            trendLabel="タスク"
-          />
-          <StatsCard
-            title="進行中プロジェクト"
-            value={activeProjects}
-            icon={Folder}
-            iconClassName="bg-indigo-50"
-          />
-          <StatsCard
-            title="関係者"
-            value={people.length}
-            icon={Users}
-            iconClassName="bg-amber-50"
-          />
-          <StatsCard
-            title="今週の達成率"
-            value={`${Math.round((completedToday / Math.max(todayActions.length, 1)) * 100)}%`}
-            icon={TrendingUp}
-            iconClassName="bg-blue-50"
-          />
-        </div>
+      {/* LSPageLayout: Main Content */}
+      <div className="px-4 pb-6">
+        <div className="max-w-7xl mx-auto">
+          {/* LSSection: Stats */}
+          <div className="mt-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatsCard
+                title="今日の完了"
+                value={completedToday}
+                icon={CheckCircle2}
+                iconClassName="bg-ls-success/10"
+                trendLabel="タスク"
+              />
+              <StatsCard
+                title="進行中プロジェクト"
+                value={activeProjects}
+                icon={Folder}
+                iconClassName="bg-ls-primary/10"
+              />
+              <StatsCard
+                title="関係者"
+                value={people.length}
+                icon={Users}
+                iconClassName="bg-ls-accent/10"
+              />
+              <StatsCard
+                title="今週の達成率"
+                value={`${Math.round((completedToday / Math.max(todayActions.length, 1)) * 100)}%`}
+                icon={TrendingUp}
+                iconClassName="bg-ls-secondary/10"
+              />
+            </div>
+          </div>
 
-        {/* Main Grid */}
-        <div className="grid lg:grid-cols-3 gap-6">
+          {/* LSSection: Main Grid */}
+          <div className="mt-6">
+            <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <TodayActions 
               actions={todayActions}
@@ -166,10 +173,11 @@ export default function Dashboard() {
           </div>
           <div className="space-y-6">
             <ProjectProgress projects={projects} />
-            <RecentContacts 
-              people={people} 
-              onContactAction={handleContactAction}
-            />
+              <RecentContacts 
+                people={people} 
+                onContactAction={handleContactAction}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -214,7 +222,7 @@ export default function Dashboard() {
             <Button 
               onClick={handleCreateAction}
               disabled={!newAction.content.trim() || createActionMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-ls-primary hover:bg-ls-primary-light text-white"
             >
               <Plus className="w-4 h-4 mr-1.5" />
               追加

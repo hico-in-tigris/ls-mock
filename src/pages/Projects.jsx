@@ -50,9 +50,9 @@ import ProjectWizard from '@/components/projects/ProjectWizard';
 import EmptyState from '@/components/ui/EmptyState';
 
 const statusConfig = {
-  "Plan": { color: "bg-slate-100 text-slate-700" },
-  "Try": { color: "bg-blue-100 text-blue-700" },
-  "Done": { color: "bg-emerald-100 text-emerald-700" }
+  "Plan": { color: "bg-ls-bg text-ls-text-light border-ls-border" },
+  "Try": { color: "bg-ls-secondary/10 text-ls-secondary border-ls-secondary/20" },
+  "Done": { color: "bg-ls-success/10 text-ls-success border-ls-success/20" }
 };
 
 export default function Projects() {
@@ -120,39 +120,46 @@ export default function Projects() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Folder className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-ls-bg">
+      {/* LSPageLayout: Header */}
+      <div className="px-4 pt-6 pb-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+                <Folder className="w-5 h-5 text-ls-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-ls-text">プロジェクト化</h1>
+                <p className="text-sm text-ls-text-light mt-1">{projects.length}件のプロジェクト</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">プロジェクト管理</h1>
-              <p className="text-sm text-slate-500">{projects.length}件のプロジェクト</p>
-            </div>
+            <Button 
+              onClick={() => setShowCreateForm(true)}
+              className="bg-ls-primary hover:bg-ls-primary-light text-white gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              新規プロジェクト
+            </Button>
           </div>
-          <Button 
-            onClick={() => setShowCreateForm(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            新規プロジェクト
-          </Button>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="プロジェクトを検索..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+      {/* LSPageLayout: Main Content */}
+      <div className="px-4 pb-6">
+        <div className="max-w-7xl mx-auto">
+          {/* LSSection: Filters */}
+          <div className="mt-6">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ls-text-light" />
+                <Input
+                  placeholder="プロジェクトを検索..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10 border-ls-border"
+                />
+              </div>
           <Tabs value={statusFilter} onValueChange={setStatusFilter}>
             <TabsList>
               <TabsTrigger value="all">すべて</TabsTrigger>
@@ -160,48 +167,52 @@ export default function Projects() {
               <TabsTrigger value="Try">Try</TabsTrigger>
               <TabsTrigger value="Done">Done</TabsTrigger>
             </TabsList>
-          </Tabs>
-        </div>
+              </Tabs>
+            </div>
+          </div>
 
-        {/* Projects Grid */}
-        {isLoading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-56 bg-slate-100 rounded-xl animate-pulse" />
-            ))}
-          </div>
-        ) : filteredProjects.length === 0 && !search && statusFilter === 'all' ? (
-          <EmptyState
-            icon={Folder}
-            title="まだプロジェクトがありません"
-            description="「新規プロジェクト」ボタンから最初のプロジェクトを作成しましょう"
-            actionLabel="新規プロジェクト"
-            onAction={() => setShowCreateForm(true)}
-          />
-        ) : filteredProjects.length === 0 ? (
-          <EmptyState
-            icon={Search}
-            title="該当するプロジェクトがありません"
-            description="検索条件を変更してみてください"
-          />
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredProjects.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onView={(p) => {
-                  setSelectedProject(p);
-                  setShowWizard(true);
-                }}
-                onEdit={(p) => {
-                  setSelectedProject(p);
-                  setShowWizard(true);
-                }}
+          {/* LSSection: Projects Grid */}
+          <div className="mt-6">
+            {isLoading ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-56 bg-ls-border/50 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredProjects.length === 0 && !search && statusFilter === 'all' ? (
+              <EmptyState
+                icon={Folder}
+                title="まだプロジェクトがありません"
+                description="「新規プロジェクト」ボタンから最初のプロジェクトを作成しましょう"
+                actionLabel="新規プロジェクト"
+                onAction={() => setShowCreateForm(true)}
               />
-            ))}
+            ) : filteredProjects.length === 0 ? (
+              <EmptyState
+                icon={Search}
+                title="該当するプロジェクトがありません"
+                description="検索条件を変更してみてください"
+              />
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredProjects.map(project => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    onView={(p) => {
+                      setSelectedProject(p);
+                      setShowWizard(true);
+                    }}
+                    onEdit={(p) => {
+                      setSelectedProject(p);
+                      setShowWizard(true);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Create Project Dialog */}
@@ -247,7 +258,7 @@ export default function Projects() {
             <Button
               onClick={handleCreateProject}
               disabled={!newProject.title.trim() || createMutation.isPending}
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-ls-primary hover:bg-ls-primary-light text-white"
             >
               作成して設計を開始
             </Button>
@@ -263,8 +274,8 @@ export default function Projects() {
               <SheetHeader className="mb-6">
                 <div className="flex items-center justify-between">
                   <SheetTitle className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                      <Folder className="w-5 h-5 text-indigo-600" />
+                    <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+                      <Folder className="w-5 h-5 text-ls-primary" />
                     </div>
                     <div>
                       <div className="text-lg">{selectedProject.title}</div>
@@ -327,7 +338,7 @@ export default function Projects() {
             <AlertDialogCancel>キャンセル</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate(deleteConfirm.id)}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-ls-danger hover:bg-ls-danger/90 text-white"
             >
               削除
             </AlertDialogAction>
