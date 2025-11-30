@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/apiClient';
 import { createPageUrl } from '@/utils';
-import { Feather, Loader2 } from 'lucide-react';
+import { Lightbulb, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import ThoughtInput from '@/components/thought/ThoughtInput';
 import HypothesisCard from '@/components/thought/HypothesisCard';
 
+/**
+ * ThoughtEntry - 想いを言葉にするページ
+ * LocalSuccess UIガイドライン v0.1 準拠
+ * LSPageLayout構造: Header → Section → CTA
+ */
 export default function ThoughtEntry() {
   const queryClient = useQueryClient();
   const [step, setStep] = useState('input'); // input, hypotheses, loading
@@ -101,88 +107,120 @@ ${input}
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <div className="max-w-3xl mx-auto px-4 py-12 sm:py-20">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-            <Feather className="w-6 h-6 text-slate-600" />
+    <div className="min-h-screen bg-ls-bg">
+      {/* LSPageLayout: Header */}
+      <div className="px-4 pt-6 pb-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-ls-primary/10 flex items-center justify-center">
+              <Lightbulb className="w-5 h-5 text-ls-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold text-ls-text">
+                想いを言葉にする
+              </h1>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-medium text-slate-900 mb-2">
-            想いを言葉にする
-          </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-ls-text-light ml-[52px]">
             {step === 'input' && '最近感じている違和感やモヤモヤを教えてください'}
-            {step === 'loading' && '仮説を生成しています...'}
+            {step === 'loading' && 'AIが複数の視点から仮説を考えています...'}
             {step === 'hypotheses' && 'あなたの想いから、いくつかの仮説が見えてきました'}
           </p>
         </div>
+      </div>
 
-        {/* Step: Input */}
-        {step === 'input' && (
-          <ThoughtInput 
-            onSubmit={handleSubmitThought}
-            isLoading={generateHypothesesMutation.isPending}
-          />
-        )}
-
-        {/* Step: Loading */}
-        {step === 'loading' && (
-          <div className="text-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-slate-400 mx-auto mb-4" />
-            <p className="text-sm text-slate-500">
-              AIが複数の視点から仮説を考えています...
-            </p>
-          </div>
-        )}
-
-        {/* Step: Hypotheses Selection */}
-        {step === 'hypotheses' && (
-          <div className="space-y-6">
-            {/* Original Input Display */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <p className="text-xs text-slate-400 mb-1">あなたの入力</p>
-              <p className="text-sm text-slate-700">{originalInput}</p>
+      {/* LSPageLayout: Main Content */}
+      <div className="px-4 pb-6">
+        <div className="max-w-3xl mx-auto">
+          {/* Step: Input */}
+          {step === 'input' && (
+            <div className="mt-6">
+              <ThoughtInput 
+                onSubmit={handleSubmitThought}
+                isLoading={generateHypothesesMutation.isPending}
+              />
             </div>
+          )}
 
-            {/* Hypothesis Cards */}
-            <div className="grid gap-4">
-              {hypotheses.map((hypothesis, index) => (
-                <HypothesisCard
-                  key={index}
-                  hypothesis={hypothesis}
-                  isSelected={selectedHypothesis === hypothesis}
-                  onSelect={handleSelectHypothesis}
-                />
-              ))}
+          {/* Step: Loading */}
+          {step === 'loading' && (
+            <div className="mt-6">
+              <Card className="border-ls-border shadow-sm">
+                <CardContent className="p-8 text-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-ls-text-light mx-auto mb-4" />
+                  <p className="text-sm text-ls-text-light">
+                    AIが複数の視点から仮説を考えています...
+                  </p>
+                </CardContent>
+              </Card>
             </div>
+          )}
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setStep('input');
-                  setHypotheses([]);
-                  setSelectedHypothesis(null);
-                }}
-                className="flex-1"
-              >
-                入力し直す
-              </Button>
-              <Button
-                onClick={handleConfirmSelection}
-                disabled={!selectedHypothesis || createHypothesisMutation.isPending}
-                className="flex-1 bg-slate-800 hover:bg-slate-900"
-              >
-                {createHypothesisMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                ) : null}
-                この仮説を深掘りする
-              </Button>
+          {/* Step: Hypotheses Selection */}
+          {step === 'hypotheses' && (
+            <div className="space-y-6">
+              {/* LSSection: Original Input Display */}
+              <div className="mt-6">
+                <h2 className="text-lg font-medium text-ls-text mb-3">
+                  あなたの入力
+                </h2>
+                <Card className="border-ls-border shadow-sm">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-ls-text leading-relaxed">
+                      {originalInput}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* LSSection: Hypothesis Cards */}
+              <div className="mt-6">
+                <h2 className="text-lg font-medium text-ls-text mb-3">
+                  生成された仮説
+                </h2>
+                <div className="space-y-4">
+                  {hypotheses.map((hypothesis, index) => (
+                    <HypothesisCard
+                      key={index}
+                      hypothesis={hypothesis}
+                      isSelected={selectedHypothesis === hypothesis}
+                      onSelect={handleSelectHypothesis}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* LSPageLayout: Footer CTA */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setStep('input');
+                    setHypotheses([]);
+                    setSelectedHypothesis(null);
+                  }}
+                  className="flex-1 border-ls-border text-ls-text hover:bg-ls-bg"
+                >
+                  入力し直す
+                </Button>
+                <Button
+                  onClick={handleConfirmSelection}
+                  disabled={!selectedHypothesis || createHypothesisMutation.isPending}
+                  className="flex-1 bg-ls-primary hover:bg-ls-primary-light text-white"
+                >
+                  {createHypothesisMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      保存中...
+                    </>
+                  ) : (
+                    'この仮説を深掘りする'
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

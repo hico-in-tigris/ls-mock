@@ -10,6 +10,20 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			// LocalSuccess UIガイドライン v0.1 カラートークン
+  			'ls-primary': '#4D6B57',
+  			'ls-primary-light': '#6C8A73',
+  			'ls-secondary': '#375A73',
+  			'ls-accent': '#89A97C',
+  			'ls-bg': '#FAFAF7',
+  			'ls-surface': '#FFFFFF',
+  			'ls-border': '#E5E5DF',
+  			'ls-text': '#333333',
+  			'ls-text-light': '#666666',
+  			'ls-danger': '#D9534F',
+  			'ls-warning': '#F0AD4E',
+  			'ls-success': '#5CB85C',
+  			// shadcn/ui カラー（既存）
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
