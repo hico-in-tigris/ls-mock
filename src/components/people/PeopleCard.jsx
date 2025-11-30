@@ -120,13 +120,13 @@ export default function PeopleCard({
                 <Badge 
                   key={i} 
                   variant="secondary" 
-                  className="text-xs bg-ls-bg border-ls-border"
+                  className="text-xs bg-ls-bg border-ls-border rounded-full px-2.5 py-0.5"
                 >
                   {interest}
                 </Badge>
               ))}
               {interests.length > 3 && (
-                <Badge variant="secondary" className="text-xs bg-ls-bg border-ls-border">
+                <Badge variant="secondary" className="text-xs bg-ls-bg border-ls-border rounded-full px-2.5 py-0.5">
                   +{interests.length - 3}
                 </Badge>
               )}
@@ -143,13 +143,13 @@ export default function PeopleCard({
                 <Badge 
                   key={i} 
                   variant="outline" 
-                  className="text-xs border-ls-border"
+                  className="text-xs border-ls-border rounded-full px-2.5 py-0.5"
                 >
                   {skill}
                 </Badge>
               ))}
               {skills.length > 3 && (
-                <Badge variant="outline" className="text-xs border-ls-border">
+                <Badge variant="outline" className="text-xs border-ls-border rounded-full px-2.5 py-0.5">
                   +{skills.length - 3}
                 </Badge>
               )}

@@ -47,13 +47,18 @@ function seedInitialData() {
       const skillsPool = [
         'ファシリテーション', '企画・イベント運営', '事業戦略', '農業・林業', 
         'デザイン・PR', 'マーケティング', '地域活性化', 'コミュニティ形成',
-        '資金調達', 'プロジェクト管理', 'データ分析', 'SNS運用'
+        '資金調達', 'プロジェクト管理', 'データ分析', 'SNS運用',
+        '動画制作', 'Web制作', '写真撮影', 'ライティング', '翻訳',
+        '会計・経理', '法律', '建築・設計', '医療・介護', '教育',
+        '音楽', 'アート', '料理', '伝統工芸', 'スポーツ'
       ];
       
       const valuesPool = [
         '地域コミュニティの活性化', '持続可能な地域づくり', '若者の移住促進',
         '地域資源の活用', '高齢者支援', '子育て支援', '環境保護',
-        '地域経済の活性化', '文化継承', '多様性の尊重'
+        '地域経済の活性化', '文化継承', '多様性の尊重',
+        '防災', '健康・福祉', '教育', '観光振興', '農業振興',
+        '空き家活用', '地域ブランディング', '起業支援', '働き方改革'
       ];
       
       const samplePeople = [
@@ -61,8 +66,8 @@ function seedInitialData() {
           name: '田中 健一',
           role: 'resident',
           avatarUrl: null,
-          skills: ['農業・林業', '地域コミュニティの活性化'],
-          values: ['持続可能な地域づくり', '地域資源の活用'],
+          skills: ['農業・林業', '地域コミュニティの活性化', '空き家活用'],
+          values: ['持続可能な地域づくり', '地域資源の活用', '子育て支援'],
           description: '都市部からの移住希望。空き家活用に興味を持っている。子育て環境を重視。',
           projects: [],
           hypotheses: [],
@@ -78,8 +83,8 @@ function seedInitialData() {
           name: '佐藤 美咲',
           role: 'coop',
           avatarUrl: null,
-          skills: ['企画・イベント運営', 'ファシリテーション', 'SNS運用'],
-          values: ['若者の移住促進', '地域コミュニティの活性化'],
+          skills: ['企画・イベント運営', 'ファシリテーション', 'SNS運用', '動画制作'],
+          values: ['若者の移住促進', '地域コミュニティの活性化', '観光振興'],
           description: '地域おこし協力隊2年目。イベント企画が得意で、観光振興に取り組んでいる。',
           projects: [],
           hypotheses: [],
@@ -112,8 +117,8 @@ function seedInitialData() {
           name: '鈴木 花子',
           role: 'business',
           avatarUrl: null,
-          skills: ['マーケティング', 'デザイン・PR', '事業戦略'],
-          values: ['地域経済の活性化', '観光振興'],
+          skills: ['マーケティング', 'デザイン・PR', '事業戦略', '写真撮影'],
+          values: ['地域経済の活性化', '観光振興', '地域ブランディング'],
           description: '地元の民宿経営者。観光客誘致と地域イベントに積極的。',
           projects: [],
           hypotheses: [],
@@ -180,8 +185,8 @@ function seedInitialData() {
           name: '小林 みどり',
           role: 'resident',
           avatarUrl: null,
-          skills: ['子育て支援', 'コミュニティ形成', 'イベント企画'],
-          values: ['子育て支援', '地域コミュニティの活性化'],
+          skills: ['子育て支援', 'コミュニティ形成', 'イベント企画', 'ファシリテーション'],
+          values: ['子育て支援', '地域コミュニティの活性化', '防災'],
           description: '子育て中の母親。地域の子育てサークルを運営。',
           projects: [],
           hypotheses: [],
@@ -197,8 +202,8 @@ function seedInitialData() {
           name: '加藤 誠',
           role: 'business',
           avatarUrl: null,
-          skills: ['事業戦略', '資金調達', 'マーケティング'],
-          values: ['地域経済の活性化', '若者の移住促進'],
+          skills: ['事業戦略', '資金調達', 'マーケティング', '会計・経理'],
+          values: ['地域経済の活性化', '若者の移住促進', '起業支援'],
           description: '地域の商工会会長。地域経済の活性化に取り組む。',
           projects: [],
           hypotheses: [],
@@ -214,8 +219,8 @@ function seedInitialData() {
           name: '吉田 あかり',
           role: 'expert',
           avatarUrl: null,
-          skills: ['デザイン・PR', 'SNS運用', 'マーケティング'],
-          values: ['観光振興', '地域資源の活用'],
+          skills: ['デザイン・PR', 'SNS運用', 'マーケティング', 'Web制作', '写真撮影'],
+          values: ['観光振興', '地域資源の活用', '地域ブランディング'],
           description: 'デザイナー。地域のPRとブランディングを支援。',
           projects: [],
           hypotheses: [],
@@ -225,6 +230,40 @@ function seedInitialData() {
             email: 'yoshida@design.example.com',
             phone: '090-9012-3456',
             sns: { twitter: '@yoshida_akari', instagram: '@yoshida_akari' }
+          }
+        },
+        {
+          name: '渡辺 翔太',
+          role: 'expert',
+          avatarUrl: null,
+          skills: ['動画制作', 'Web制作', 'SNS運用', 'ライティング'],
+          values: ['若者の移住促進', '観光振興', '地域ブランディング'],
+          description: 'フリーランスの動画クリエイター。地域の魅力を動画で発信。',
+          projects: [],
+          hypotheses: [],
+          interactions: [],
+          lastContactAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+          contact: {
+            email: 'watanabe@video.example.com',
+            phone: '090-0123-4567',
+            sns: { twitter: '@watanabe_shota', instagram: '@watanabe_shota' }
+          }
+        },
+        {
+          name: '斎藤 ゆり',
+          role: 'resident',
+          avatarUrl: null,
+          skills: ['教育', 'コミュニティ形成', 'ファシリテーション'],
+          values: ['教育', '子育て支援', '地域コミュニティの活性化'],
+          description: '元教師。地域の教育活動と子育て支援に取り組む。',
+          projects: [],
+          hypotheses: [],
+          interactions: [],
+          lastContactAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+          contact: {
+            email: 'saito@example.com',
+            phone: '090-1234-5678',
+            sns: { twitter: null, instagram: null }
           }
         }
       ];

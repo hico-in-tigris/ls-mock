@@ -31,10 +31,10 @@ export default function PersonDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ls-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">読み込み中...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ls-primary mx-auto"></div>
+          <p className="mt-4 text-sm text-ls-text-light">読み込み中...</p>
         </div>
       </div>
     );
@@ -42,10 +42,13 @@ export default function PersonDetail() {
 
   if (!person) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ls-bg flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-600">関係者が見つかりません</p>
-          <Button onClick={() => navigate('/people')} className="mt-4">
+          <p className="text-sm text-ls-text-light">関係者が見つかりません</p>
+          <Button 
+            onClick={() => navigate('/people')} 
+            className="mt-4 bg-ls-primary hover:bg-ls-primary-light text-white"
+          >
             一覧に戻る
           </Button>
         </div>
@@ -54,8 +57,8 @@ export default function PersonDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-ls-bg">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <PersonHeader person={person} />
 
         <div className="grid lg:grid-cols-3 gap-6">

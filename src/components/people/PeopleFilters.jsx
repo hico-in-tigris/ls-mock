@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Search, Filter, X, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, Filter, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -11,18 +12,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { STAGES, ROLES, STATUSES } from '@/lib/people/types';
 import { extractAllInterests, extractAllSkills } from '@/lib/people/utils';
 import { cn } from "@/lib/utils";
 
 /**
- * PeopleFilters - 人物一覧のフィルターコンポーネント
+ * PeopleFilters - 人物一覧のフィルターコンポーネント（刷新版）
+ * Sheetを使用したタグフィルター
+ * URLクエリで状態保持
  * LocalSuccess UIガイドライン v0.1 準拠
  */
 export default function PeopleFilters({ 
@@ -30,26 +34,79 @@ export default function PeopleFilters({
   filters,
   onFiltersChange 
 }) {
-  const [openInterests, setOpenInterests] = useState(false);
-  const [openSkills, setOpenSkills] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [openInterestsSheet, setOpenInterestsSheet] = useState(false);
+  const [openSkillsSheet, setOpenSkillsSheet] = useState(false);
   
   const allInterests = extractAllInterests(people);
   const allSkills = extractAllSkills(people);
   
+  // URLクエリから初期状態を読み込む（初回のみ）
+  useEffect(() => {
+    const urlFilters = {
+      keyword: searchParams.get('keyword') || '',
+      interests: searchParams.get('interest')?.split(',').filter(Boolean) || [],
+      skills: searchParams.get('skill')?.split(',').filter(Boolean) || [],
+      stage: searchParams.get('stage') || 'all',
+      role: searchParams.get('role') || 'all',
+      status: searchParams.get('status') || 'all'
+    };
+    
+    // URLと現在のフィルターが異なる場合のみ更新
+    const currentFiltersStr = JSON.stringify({
+      keyword: filters.keyword || '',
+      interests: filters.interests || [],
+      skills: filters.skills || [],
+      stage: filters.stage || 'all',
+      role: filters.role || 'all',
+      status: filters.status || 'all'
+    });
+    const urlFiltersStr = JSON.stringify(urlFilters);
+    
+    if (urlFiltersStr !== currentFiltersStr) {
+      onFiltersChange(urlFilters);
+    }
+  }, [searchParams]);
+  
+  // フィルター変更時にURLを更新
+  const updateFilters = (newFilters) => {
+    onFiltersChange(newFilters);
+    
+    const params = new URLSearchParams();
+    if (newFilters.keyword) params.set('keyword', newFilters.keyword);
+    if (newFilters.interests && newFilters.interests.length > 0) {
+      params.set('interest', newFilters.interests.join(','));
+    }
+    if (newFilters.skills && newFilters.skills.length > 0) {
+      params.set('skill', newFilters.skills.join(','));
+    }
+    if (newFilters.stage && newFilters.stage !== 'all') {
+      params.set('stage', newFilters.stage);
+    }
+    if (newFilters.role && newFilters.role !== 'all') {
+      params.set('role', newFilters.role);
+    }
+    if (newFilters.status && newFilters.status !== 'all') {
+      params.set('status', newFilters.status);
+    }
+    
+    setSearchParams(params, { replace: true });
+  };
+  
   const handleKeywordChange = (keyword) => {
-    onFiltersChange({ ...filters, keyword });
+    updateFilters({ ...filters, keyword });
   };
   
   const handleStageChange = (stage) => {
-    onFiltersChange({ ...filters, stage });
+    updateFilters({ ...filters, stage });
   };
   
   const handleRoleChange = (role) => {
-    onFiltersChange({ ...filters, role });
+    updateFilters({ ...filters, role });
   };
   
   const handleStatusChange = (status) => {
-    onFiltersChange({ ...filters, status });
+    updateFilters({ ...filters, status });
   };
   
   const toggleInterest = (interest) => {
@@ -57,7 +114,7 @@ export default function PeopleFilters({
     const newInterests = current.includes(interest)
       ? current.filter(i => i !== interest)
       : [...current, interest];
-    onFiltersChange({ ...filters, interests: newInterests });
+    updateFilters({ ...filters, interests: newInterests });
   };
   
   const toggleSkill = (skill) => {
@@ -65,18 +122,20 @@ export default function PeopleFilters({
     const newSkills = current.includes(skill)
       ? current.filter(s => s !== skill)
       : [...current, skill];
-    onFiltersChange({ ...filters, skills: newSkills });
+    updateFilters({ ...filters, skills: newSkills });
   };
   
   const clearFilters = () => {
-    onFiltersChange({
+    const cleared = {
       keyword: '',
       interests: [],
       skills: [],
       stage: 'all',
       role: 'all',
       status: 'all'
-    });
+    };
+    updateFilters(cleared);
+    setSearchParams({}, { replace: true });
   };
   
   const hasActiveFilters = 
@@ -142,9 +201,9 @@ export default function PeopleFilters({
           </SelectContent>
         </Select>
         
-        {/* 関心タグ */}
-        <Popover open={openInterests} onOpenChange={setOpenInterests}>
-          <PopoverTrigger asChild>
+        {/* 関心タグ - Sheet */}
+        <Sheet open={openInterestsSheet} onOpenChange={setOpenInterestsSheet}>
+          <SheetTrigger asChild>
             <Button 
               variant="outline" 
               className={cn(
@@ -154,22 +213,23 @@ export default function PeopleFilters({
             >
               関心タグ
               {filters.interests && filters.interests.length > 0 && (
-                <Badge className="ml-2 bg-ls-primary text-white">
+                <Badge className="ml-2 bg-ls-primary text-white rounded-full">
                   {filters.interests.length}
                 </Badge>
               )}
-              <ChevronDown className="w-4 h-4 ml-2" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-4 border-ls-border">
-            <div className="space-y-2">
-              <div className="text-sm font-medium text-ls-text mb-2">関心領域</div>
-              <div className="max-h-64 overflow-y-auto space-y-2">
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-md border-ls-border">
+            <SheetHeader>
+              <SheetTitle className="text-ls-text">関心領域で絞り込み</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-4">
+              <div className="max-h-[calc(100vh-200px)] overflow-y-auto space-y-2">
                 {allInterests.length === 0 ? (
-                  <p className="text-xs text-ls-text-light">関心領域がありません</p>
+                  <p className="text-sm text-ls-text-light">関心領域がありません</p>
                 ) : (
                   allInterests.map(interest => (
-                    <div key={interest} className="flex items-center space-x-2">
+                    <div key={interest} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-ls-bg">
                       <Checkbox
                         id={`interest-${interest}`}
                         checked={filters.interests?.includes(interest) || false}
@@ -186,37 +246,38 @@ export default function PeopleFilters({
                 )}
               </div>
             </div>
-          </PopoverContent>
-        </Popover>
+          </SheetContent>
+        </Sheet>
         
-        {/* スキルタグ */}
-        <Popover open={openSkills} onOpenChange={setOpenSkills}>
-          <PopoverTrigger asChild>
+        {/* スキルタグ - Sheet */}
+        <Sheet open={openSkillsSheet} onOpenChange={setOpenSkillsSheet}>
+          <SheetTrigger asChild>
             <Button 
               variant="outline" 
               className={cn(
                 "border-ls-border text-ls-text hover:bg-ls-bg",
-                filters.skills && filters.skills.length > 0 && "bg-ls-primary/10 border-ls-primary"
+                filters.skills && filters.skills.length > 0 && "bg-ls-secondary/10 border-ls-secondary"
               )}
             >
               スキルタグ
               {filters.skills && filters.skills.length > 0 && (
-                <Badge className="ml-2 bg-ls-primary text-white">
+                <Badge className="ml-2 bg-ls-secondary text-white rounded-full">
                   {filters.skills.length}
                 </Badge>
               )}
-              <ChevronDown className="w-4 h-4 ml-2" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-4 border-ls-border">
-            <div className="space-y-2">
-              <div className="text-sm font-medium text-ls-text mb-2">スキル</div>
-              <div className="max-h-64 overflow-y-auto space-y-2">
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-md border-ls-border">
+            <SheetHeader>
+              <SheetTitle className="text-ls-text">スキルで絞り込み</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-4">
+              <div className="max-h-[calc(100vh-200px)] overflow-y-auto space-y-2">
                 {allSkills.length === 0 ? (
-                  <p className="text-xs text-ls-text-light">スキルがありません</p>
+                  <p className="text-sm text-ls-text-light">スキルがありません</p>
                 ) : (
                   allSkills.map(skill => (
-                    <div key={skill} className="flex items-center space-x-2">
+                    <div key={skill} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-ls-bg">
                       <Checkbox
                         id={`skill-${skill}`}
                         checked={filters.skills?.includes(skill) || false}
@@ -233,8 +294,8 @@ export default function PeopleFilters({
                 )}
               </div>
             </div>
-          </PopoverContent>
-        </Popover>
+          </SheetContent>
+        </Sheet>
         
         {/* フィルタークリア */}
         {hasActiveFilters && (
@@ -258,12 +319,12 @@ export default function PeopleFilters({
             <Badge
               key={interest}
               variant="secondary"
-              className="bg-ls-primary/10 text-ls-primary border-ls-primary/20"
+              className="bg-ls-primary/10 text-ls-primary border-ls-primary/20 rounded-full px-2.5 py-0.5"
             >
               {interest}
               <button
                 onClick={() => toggleInterest(interest)}
-                className="ml-1 hover:bg-ls-primary/20 rounded-full p-0.5"
+                className="ml-1.5 hover:bg-ls-primary/20 rounded-full p-0.5"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -273,12 +334,12 @@ export default function PeopleFilters({
             <Badge
               key={skill}
               variant="secondary"
-              className="bg-ls-secondary/10 text-ls-secondary border-ls-secondary/20"
+              className="bg-ls-secondary/10 text-ls-secondary border-ls-secondary/20 rounded-full px-2.5 py-0.5"
             >
               {skill}
               <button
                 onClick={() => toggleSkill(skill)}
-                className="ml-1 hover:bg-ls-secondary/20 rounded-full p-0.5"
+                className="ml-1.5 hover:bg-ls-secondary/20 rounded-full p-0.5"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -289,4 +350,3 @@ export default function PeopleFilters({
     </div>
   );
 }
-

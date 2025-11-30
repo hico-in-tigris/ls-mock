@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tag, Briefcase, Lightbulb } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tag, Briefcase, Lightbulb, Edit } from "lucide-react";
+import PersonTagsEditor from './PersonTagsEditor';
 
 /**
  * 人物詳細ページの基本情報セクション
@@ -10,78 +12,120 @@ import { Tag, Briefcase, Lightbulb } from "lucide-react";
  * @param {array} personProjects - 人物に関連するプロジェクト
  */
 export default function PersonInfo({ person, personHypotheses, personProjects }) {
+  const [tagsEditorOpen, setTagsEditorOpen] = useState(false);
+  
+  const interests = person.values || person.interests || [];
+  const skills = person.skills || [];
+
   return (
     <div className="space-y-6">
-      {/* Values */}
-      {person.values && person.values.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Tag className="w-5 h-5" />
-              価値観
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+      {/* 関心領域 */}
+      <Card className="border-ls-border shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium text-ls-text">
+            <Tag className="w-5 h-5 text-ls-primary" />
+            関心領域
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setTagsEditorOpen(true)}
+            className="text-ls-text-light hover:text-ls-text"
+          >
+            <Edit className="w-4 h-4 mr-1" />
+            編集
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {interests.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {person.values.map((value, i) => (
-                <Badge key={i} variant="secondary" className="text-sm">
-                  {value}
+              {interests.map((interest, i) => (
+                <Badge 
+                  key={i} 
+                  variant="secondary" 
+                  className="text-sm rounded-full px-2.5 py-0.5 bg-ls-bg border-ls-border"
+                >
+                  {interest}
                 </Badge>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <p className="text-sm text-ls-text-light">関心領域が設定されていません</p>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Skills */}
-      {person.skills && person.skills.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5" />
-              スキル
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+      {/* スキル */}
+      <Card className="border-ls-border shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium text-ls-text">
+            <Briefcase className="w-5 h-5 text-ls-primary" />
+            スキル
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setTagsEditorOpen(true)}
+            className="text-ls-text-light hover:text-ls-text"
+          >
+            <Edit className="w-4 h-4 mr-1" />
+            編集
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {skills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {person.skills.map((skill, i) => (
-                <Badge key={i} variant="outline" className="text-sm">
+              {skills.map((skill, i) => (
+                <Badge 
+                  key={i} 
+                  variant="outline" 
+                  className="text-sm rounded-full px-2.5 py-0.5 border-ls-border"
+                >
                   {skill}
                 </Badge>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <p className="text-sm text-ls-text-light">スキルが設定されていません</p>
+          )}
+        </CardContent>
+      </Card>
+      
+      {/* タグ編集Drawer */}
+      <PersonTagsEditor
+        person={person}
+        open={tagsEditorOpen}
+        onOpenChange={setTagsEditorOpen}
+      />
 
       {/* Description */}
       {person.description && (
-        <Card>
+        <Card className="border-ls-border shadow-sm">
           <CardHeader>
-            <CardTitle>プロフィール</CardTitle>
+            <CardTitle className="text-lg font-medium text-ls-text">プロフィール</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-slate-600 whitespace-pre-wrap">{person.description}</p>
+            <p className="text-sm text-ls-text leading-relaxed whitespace-pre-wrap">{person.description}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Hypotheses */}
       {personHypotheses.length > 0 && (
-        <Card>
+        <Card className="border-ls-border shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="w-5 h-5" />
+            <CardTitle className="flex items-center gap-2 text-lg font-medium text-ls-text">
+              <Lightbulb className="w-5 h-5 text-ls-primary" />
               関わった仮説
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {personHypotheses.map(hypothesis => (
-                <div key={hypothesis.id} className="p-3 border rounded-lg">
-                  <h4 className="font-semibold text-slate-900">{hypothesis.title}</h4>
+                <div key={hypothesis.id} className="p-3 rounded-lg border border-ls-border bg-ls-bg">
+                  <h4 className="text-sm font-medium text-ls-text">{hypothesis.title}</h4>
                   {hypothesis.target && (
-                    <p className="text-sm text-slate-600 mt-1">対象: {hypothesis.target}</p>
+                    <p className="text-xs text-ls-text-light mt-1">対象: {hypothesis.target}</p>
                   )}
                 </div>
               ))}
@@ -92,18 +136,18 @@ export default function PersonInfo({ person, personHypotheses, personProjects })
 
       {/* Projects */}
       {personProjects.length > 0 && (
-        <Card>
+        <Card className="border-ls-border shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5" />
+            <CardTitle className="flex items-center gap-2 text-lg font-medium text-ls-text">
+              <Briefcase className="w-5 h-5 text-ls-primary" />
               関わったプロジェクト
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {personProjects.map(project => (
-                <div key={project.id} className="p-3 border rounded-lg">
-                  <h4 className="font-semibold text-slate-900">{project.name || project.title}</h4>
+                <div key={project.id} className="p-3 rounded-lg border border-ls-border bg-ls-bg">
+                  <h4 className="text-sm font-medium text-ls-text">{project.name || project.title}</h4>
                 </div>
               ))}
             </div>
