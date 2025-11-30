@@ -162,32 +162,33 @@ export default function Summary() {
           {/* LSSection: Period Selection */}
           <div className="mt-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Tabs value={periodType} onValueChange={setPeriodType}>
-            <TabsList>
-              <TabsTrigger value="daily">日次</TabsTrigger>
-              <TabsTrigger value="weekly">週次</TabsTrigger>
-              <TabsTrigger value="monthly">月次</TabsTrigger>
-            </TabsList>
-          </Tabs>
+              <Tabs value={periodType} onValueChange={setPeriodType}>
+                <TabsList>
+                  <TabsTrigger value="daily">日次</TabsTrigger>
+                  <TabsTrigger value="weekly">週次</TabsTrigger>
+                  <TabsTrigger value="monthly">月次</TabsTrigger>
+                </TabsList>
+              </Tabs>
 
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={handlePrevPeriod}>
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-sm font-medium min-w-[180px] text-center">
-              {getPeriodLabel()}
-            </span>
-            <Button variant="outline" size="icon" onClick={handleNextPeriod}>
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setSelectedDate(new Date())}
-              className="ml-2"
-            >
-              今日
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" onClick={handlePrevPeriod}>
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-sm font-medium min-w-[180px] text-center">
+                  {getPeriodLabel()}
+                </span>
+                <Button variant="outline" size="icon" onClick={handleNextPeriod}>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setSelectedDate(new Date())}
+                  className="ml-2"
+                >
+                  今日
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -244,97 +245,98 @@ export default function Summary() {
 
           {/* LSSection: Reflections List */}
           <div className="mt-6">
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-ls-border/50 rounded-lg animate-pulse" />
-            ))}
+            {isLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-32 bg-ls-border/50 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredReflections.length === 0 ? (
+              <EmptyState
+                icon={FileText}
+                title="この期間のふりかえりはありません"
+                description="「ふりかえりを追加」ボタンから記録を始めましょう"
+                actionLabel="ふりかえりを追加"
+                onAction={() => setShowForm(true)}
+              />
+            ) : (
+              <div className="space-y-4">
+                {filteredReflections.map(reflection => {
+                  const mood = moodConfig[reflection.mood] || moodConfig.neutral;
+                  const MoodIcon = mood.icon;
+                  
+                  return (
+                    <Card 
+                      key={reflection.id}
+                      className="hover:shadow-md transition-shadow cursor-pointer border-ls-border shadow-sm"
+                      onClick={() => setEditReflection(reflection)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={cn("p-2 rounded-lg", mood.color)}>
+                              <MoodIcon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-ls-text">
+                                {format(parseISO(reflection.period_date), 'M月d日（E）', { locale: ja })}
+                              </p>
+                              <Badge variant="secondary" className="mt-1 bg-ls-bg border-ls-border">
+                                {reflection.period_type === 'daily' ? '日次' : 
+                                 reflection.period_type === 'weekly' ? '週次' : '月次'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+
+                        {reflection.good_points && (
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-ls-success mb-1">良かったこと</p>
+                            <p className="text-sm text-ls-text leading-relaxed line-clamp-2">{reflection.good_points}</p>
+                          </div>
+                        )}
+
+                        {reflection.learnings && (
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-ls-primary mb-1">学び</p>
+                            <p className="text-sm text-ls-text leading-relaxed line-clamp-2">{reflection.learnings}</p>
+                          </div>
+                        )}
+
+                        {reflection.next_actions?.length > 0 && (
+                          <div>
+                            <p className="text-xs font-medium text-ls-secondary mb-2">次のアクション</p>
+                            <div className="flex flex-wrap gap-2">
+                              {reflection.next_actions.slice(0, 3).map((action, i) => (
+                                <Button
+                                  key={i}
+                                  variant="outline"
+                                  size="sm"
+                                  className="gap-1 text-xs border-ls-border text-ls-text hover:bg-ls-bg"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePromoteToAction(action);
+                                  }}
+                                >
+                                  {action}
+                                  <ArrowRight className="w-3 h-3" />
+                                </Button>
+                              ))}
+                              {reflection.next_actions.length > 3 && (
+                                <Badge variant="secondary" className="bg-ls-bg border-ls-border">
+                                  +{reflection.next_actions.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        ) : filteredReflections.length === 0 ? (
-          <EmptyState
-            icon={FileText}
-            title="この期間のふりかえりはありません"
-            description="「ふりかえりを追加」ボタンから記録を始めましょう"
-            actionLabel="ふりかえりを追加"
-            onAction={() => setShowForm(true)}
-          />
-        ) : (
-          <div className="space-y-4">
-            {filteredReflections.map(reflection => {
-              const mood = moodConfig[reflection.mood] || moodConfig.neutral;
-              const MoodIcon = mood.icon;
-              
-              return (
-                <Card 
-                  key={reflection.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer border-ls-border shadow-sm"
-                  onClick={() => setEditReflection(reflection)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={cn("p-2 rounded-lg", mood.color)}>
-                          <MoodIcon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-ls-text">
-                            {format(parseISO(reflection.period_date), 'M月d日（E）', { locale: ja })}
-                          </p>
-                          <Badge variant="secondary" className="mt-1 bg-ls-bg border-ls-border">
-                            {reflection.period_type === 'daily' ? '日次' : 
-                             reflection.period_type === 'weekly' ? '週次' : '月次'}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-
-                    {reflection.good_points && (
-                      <div className="mb-3">
-                        <p className="text-xs font-medium text-ls-success mb-1">良かったこと</p>
-                        <p className="text-sm text-ls-text line-clamp-2">{reflection.good_points}</p>
-                      </div>
-                    )}
-
-                    {reflection.learnings && (
-                      <div className="mb-3">
-                        <p className="text-xs font-medium text-ls-primary mb-1">学び</p>
-                        <p className="text-sm text-ls-text line-clamp-2">{reflection.learnings}</p>
-                      </div>
-                    )}
-
-                    {reflection.next_actions?.length > 0 && (
-                      <div>
-                        <p className="text-xs font-medium text-ls-secondary mb-2">次のアクション</p>
-                        <div className="flex flex-wrap gap-2">
-                          {reflection.next_actions.slice(0, 3).map((action, i) => (
-                            <Button
-                              key={i}
-                              variant="outline"
-                              size="sm"
-                              className="gap-1 text-xs border-ls-border"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePromoteToAction(action);
-                              }}
-                            >
-                              {action}
-                              <ArrowRight className="w-3 h-3" />
-                            </Button>
-                          ))}
-                          {reflection.next_actions.length > 3 && (
-                            <Badge variant="secondary" className="bg-ls-bg border-ls-border">
-                              +{reflection.next_actions.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
         </div>
       </div>
 

@@ -162,21 +162,22 @@ export default function Dashboard() {
           {/* LSSection: Main Grid */}
           <div className="mt-6">
             <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <TodayActions 
-              actions={todayActions}
-              onToggleStatus={handleToggleStatus}
-              onAddAction={() => setShowAddAction(true)}
-              people={people}
-              projects={projects}
-            />
-          </div>
-          <div className="space-y-6">
-            <ProjectProgress projects={projects} />
-              <RecentContacts 
-                people={people} 
-                onContactAction={handleContactAction}
-              />
+              <div className="lg:col-span-2">
+                <TodayActions 
+                  actions={todayActions}
+                  onToggleStatus={handleToggleStatus}
+                  onAddAction={() => setShowAddAction(true)}
+                  people={people}
+                  projects={projects}
+                />
+              </div>
+              <div className="space-y-6">
+                <ProjectProgress projects={projects} />
+                <RecentContacts 
+                  people={people} 
+                  onContactAction={handleContactAction}
+                />
+              </div>
             </div>
           </div>
         </div>

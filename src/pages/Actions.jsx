@@ -135,42 +135,40 @@ export default function Actions() {
           {/* LSSection: Filters */}
           <div className="mt-6">
             <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ls-text-light" />
-              <Input
-                placeholder="アクションを検索..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 border-ls-border"
-              />
-          </div>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full sm:w-40">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="タイプで絞り込み" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">すべて</SelectItem>
-              <SelectItem value="連絡">連絡</SelectItem>
-              <SelectItem value="調整">調整</SelectItem>
-              <SelectItem value="準備">準備</SelectItem>
-              <SelectItem value="記録">記録</SelectItem>
-            </SelectContent>
-          </Select>
-          <Tabs value={viewMode} onValueChange={setViewMode} className="hidden sm:block">
-            <TabsList>
-              <TabsTrigger value="kanban" className="gap-1.5">
-                <LayoutGrid className="w-4 h-4" />
-                カンバン
-              </TabsTrigger>
-              <TabsTrigger value="list" className="gap-1.5">
-                <List className="w-4 h-4" />
-                リスト
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ls-text-light" />
+                <Input
+                  placeholder="アクションを検索..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10 border-ls-border"
+                />
+              </div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="タイプで絞り込み" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">すべて</SelectItem>
+                  <SelectItem value="連絡">連絡</SelectItem>
+                  <SelectItem value="調整">調整</SelectItem>
+                  <SelectItem value="準備">準備</SelectItem>
+                  <SelectItem value="記録">記録</SelectItem>
+                </SelectContent>
+              </Select>
+              <Tabs value={viewMode} onValueChange={setViewMode} className="hidden sm:block">
+                <TabsList>
+                  <TabsTrigger value="kanban" className="gap-1.5">
+                    <LayoutGrid className="w-4 h-4" />
+                    カンバン
+                  </TabsTrigger>
+                  <TabsTrigger value="list" className="gap-1.5">
+                    <List className="w-4 h-4" />
+                    リスト
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </div>
 
