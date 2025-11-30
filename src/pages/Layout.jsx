@@ -3,42 +3,116 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  Feather,
-  Layers,
+  Home,
+  Lightbulb,
+  CheckSquare,
+  Folder,
+  Users,
+  FileText,
+  Settings,
   Menu,
   X,
-  Users,
-  LayoutDashboard,
-  Folder,
-  CheckSquare,
-  FileText,
-  Settings
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
-// 仮説OSモードのページ
-const thoughtPages = ['ThoughtEntry', 'HypothesisDetail', 'HypothesisList'];
+// 気づき・ログ関連のページ
+const hypothesisPages = ['ThoughtEntry', 'HypothesisDetail', 'HypothesisList'];
 
-// 従来のLocalSuccessナビゲーション
-const localSuccessNav = [
-  { name: 'ダッシュボード', href: 'Dashboard', icon: LayoutDashboard },
-  { name: 'プロジェクト', href: 'Projects', icon: Folder },
-  { name: 'アクション', href: 'Actions', icon: CheckSquare },
-  { name: 'ふりかえり', href: 'Summary', icon: FileText },
-  { name: '設定', href: 'Settings', icon: Settings },
-];
+// プロジェクト関連のページ
+const projectPages = ['Projects'];
 
-// 仮説OSナビゲーション
-const thoughtNav = [
-  { name: '想いを入力', href: 'ThoughtEntry', icon: Feather },
-  { name: '仮説一覧', href: 'HypothesisList', icon: Layers },
+// PeopleOS関連のページ
+const peoplePages = ['People', 'PersonDetail'];
+
+// メインナビゲーション
+const mainNav = [
+  { 
+    name: 'ホーム', 
+    href: 'Dashboard', 
+    icon: Home,
+    label: 'Dashboard'
+  },
+  { 
+    name: '気づき・ログ', 
+    href: 'ThoughtEntry', 
+    icon: Lightbulb,
+    label: 'Hypothesis Entry',
+    subItems: [
+      { name: '仮説生成（AI）', href: 'ThoughtEntry' }
+    ]
+  },
+  { 
+    name: '小さな検証', 
+    href: 'Actions', 
+    icon: CheckSquare,
+    label: 'Actions'
+  },
+  { 
+    name: 'プロジェクト化', 
+    href: 'Projects', 
+    icon: Folder,
+    label: 'ProjectOS',
+    subItems: [
+      { name: 'プロジェクト一覧', href: 'Projects' },
+      { name: '進行状況', href: 'Dashboard' }, // Dashboardに進行状況セクションがある想定
+      { name: '公開・応援', href: 'Projects' } // 将来的に専用ページを作成する想定
+    ]
+  },
+  { 
+    name: '仲間・協力者', 
+    href: 'People', 
+    icon: Users,
+    label: 'PeopleOS',
+    subItems: [
+      { name: '関係者一覧', href: 'People' },
+      { name: 'スキル・関心データベース', href: 'People' } // Peopleページ内の機能として実装
+    ]
+  },
+  { 
+    name: 'ふりかえり', 
+    href: 'Summary', 
+    icon: FileText,
+    label: 'Review'
+  },
+  { 
+    name: '設定', 
+    href: 'Settings', 
+    icon: Settings,
+    label: 'Settings'
+  },
 ];
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [openSections, setOpenSections] = useState({
+    hypothesis: hypothesisPages.includes(currentPageName),
+    project: projectPages.includes(currentPageName),
+    people: peoplePages.includes(currentPageName)
+  });
   
-  const isThoughtMode = thoughtPages.includes(currentPageName);
+  const toggleSection = (section) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+  
+  const isActive = (href, subItems) => {
+    if (currentPageName === href) return true;
+    if (subItems) {
+      return subItems.some(item => {
+        if (item.href === 'Dashboard' && currentPageName === 'Dashboard') return true;
+        if (item.href === 'People' && peoplePages.includes(currentPageName)) return true;
+        if (item.href === 'Projects' && projectPages.includes(currentPageName)) return true;
+        return currentPageName === item.href;
+      });
+    }
+    return false;
+  };
 
   // すべてのページで統一されたレイアウトを使用
   return (
@@ -48,7 +122,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">🌱</span>
-            <span className="font-bold text-slate-900">LocalSuccess</span>
+            <span className="font-bold text-slate-900">LocalSuccess OS</span>
           </div>
           <Button 
             variant="ghost" 
@@ -80,7 +154,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center gap-3">
               <span className="text-2xl">🌱</span>
               <div>
-                <h1 className="font-bold text-slate-900">LocalSuccess</h1>
+                <h1 className="font-bold text-slate-900">LocalSuccess OS</h1>
                 <p className="text-xs text-slate-500">地域の力を可視化</p>
               </div>
             </div>
@@ -88,9 +162,69 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {localSuccessNav.map((item) => {
-              const isActive = currentPageName === item.href;
+            {mainNav.map((item) => {
               const Icon = item.icon;
+              const itemIsActive = isActive(item.href, item.subItems);
+              const sectionKey = item.href === 'ThoughtEntry' ? 'hypothesis' : 
+                                item.href === 'Projects' ? 'project' : 
+                                item.href === 'People' ? 'people' : null;
+              const isOpen = sectionKey ? openSections[sectionKey] : false;
+              
+              if (item.subItems) {
+                return (
+                  <Collapsible
+                    key={item.name}
+                    open={isOpen}
+                    onOpenChange={() => sectionKey && toggleSection(sectionKey)}
+                  >
+                    <CollapsibleTrigger
+                      className={cn(
+                        "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                        itemIsActive
+                          ? "bg-blue-50 text-blue-700"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5" />
+                        <div className="text-left">
+                          <div>{item.name}</div>
+                          <div className="text-xs opacity-70">{item.label}</div>
+                        </div>
+                      </div>
+                      {isOpen ? (
+                        <ChevronDown className="w-4 h-4" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 mt-1 space-y-1">
+                      {item.subItems.map((subItem) => {
+                        const subIsActive = subItem.href === 'Dashboard' && currentPageName === 'Dashboard' ||
+                                           subItem.href === 'People' && peoplePages.includes(currentPageName) ||
+                                           subItem.href === 'Projects' && projectPages.includes(currentPageName) ||
+                                           currentPageName === subItem.href;
+                        return (
+                          <Link
+                            key={subItem.name}
+                            to={createPageUrl(subItem.href)}
+                            onClick={() => setSidebarOpen(false)}
+                            className={cn(
+                              "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all",
+                              subIsActive
+                                ? "bg-blue-100 text-blue-700 font-medium"
+                                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                            )}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50" />
+                            {subItem.name}
+                          </Link>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              }
               
               return (
                 <Link
@@ -99,77 +233,19 @@ export default function Layout({ children, currentPageName }) {
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                    isActive 
-                      ? "bg-blue-50 text-blue-700" 
+                    itemIsActive
+                      ? "bg-blue-50 text-blue-700"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   )}
                 >
                   <Icon className="w-5 h-5" />
-                  {item.name}
+                  <div className="text-left">
+                    <div>{item.name}</div>
+                    <div className="text-xs opacity-70">{item.label}</div>
+                  </div>
                 </Link>
               );
             })}
-
-            <div className="pt-4 mt-4 border-t border-slate-100 space-y-1">
-              <p className="px-4 text-xs text-slate-400 mb-2">OS機能</p>
-              
-              {/* PeopleOS */}
-              <Link
-                to={createPageUrl('People')}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  (currentPageName === 'People' || currentPageName === 'PersonDetail')
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                )}
-              >
-                <Users className="w-5 h-5 text-emerald-500" />
-                PeopleOS
-              </Link>
-              
-              {/* 仮説OS */}
-              <Link
-                to={createPageUrl('ThoughtEntry')}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  thoughtPages.includes(currentPageName)
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                )}
-              >
-                <Feather className="w-5 h-5 text-blue-500" />
-                仮説OS
-              </Link>
-            </div>
-
-            {/* 仮説OS内のナビゲーション（仮説OSページ内でのみ表示） */}
-            {isThoughtMode && (
-              <div className="pt-4 mt-4 border-t border-slate-100 space-y-1">
-                <p className="px-4 text-xs text-slate-400 mb-2">仮説OS</p>
-                {thoughtNav.map((item) => {
-                  const isActive = currentPageName === item.href;
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={createPageUrl(item.href)}
-                      onClick={() => setSidebarOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                        isActive 
-                          ? "bg-blue-50 text-blue-700" 
-                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
           </nav>
 
           {/* Footer */}
