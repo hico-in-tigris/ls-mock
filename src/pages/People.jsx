@@ -2,50 +2,65 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/apiClient';
-import { Users, Plus, Search, Filter } from 'lucide-react';
+import { Users, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import PeopleCard from '@/components/people/PeopleCard';
+import PeopleFilters from '@/components/people/PeopleFilters';
+import ActivePeopleRanking from '@/components/people/ActivePeopleRanking';
 import EmptyState from '@/components/ui/EmptyState';
+import { enrichPersonData, filterPeople, sortPeople } from '@/lib/people/utils';
 
-const roleOptions = [
-  { value: 'all', label: 'すべての役割' },
-  { value: 'admin', label: '行政' },
-  { value: 'coop', label: '協力隊' },
-  { value: 'resident', label: '住民' },
-  { value: 'npo', label: 'NPO' },
-  { value: 'business', label: '事業者' },
-  { value: 'expert', label: '専門家' }
-];
-
+/**
+ * PeopleOS v1.1 - 仲間・協力者一覧ページ（刷新版）
+ * LocalSuccess の思考フロー × 地域プレイヤーのレーダー
+ * LocalSuccess UIガイドライン v0.1 準拠
+ */
 export default function People() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
+  const [filters, setFilters] = useState({
+    keyword: '',
+    interests: [],
+    skills: [],
+    stage: 'all',
+    role: 'all',
+    status: 'all'
+  });
+  const [sortBy, setSortBy] = useState('activityScore');
 
   const { data: people = [], isLoading } = useQuery({
     queryKey: ['people'],
     queryFn: () => base44.entities.Person.list('-lastContactAt'),
   });
 
+  // データを拡張（新しいフィールドを追加）
+  const enrichedPeople = useMemo(() => {
+    return people.map(person => enrichPersonData(person));
+  }, [people]);
+
+  // フィルタリング
   const filteredPeople = useMemo(() => {
-    return people.filter(person => {
-      const matchesSearch = 
-        person.name?.toLowerCase().includes(search.toLowerCase()) ||
-        person.skills?.some(skill => skill.toLowerCase().includes(search.toLowerCase())) ||
-        person.values?.some(value => value.toLowerCase().includes(search.toLowerCase()));
-      
-      const matchesRole = roleFilter === 'all' || person.role === roleFilter;
-      
-      return matchesSearch && matchesRole;
-    });
-  }, [people, search, roleFilter]);
+    const filtered = filterPeople(enrichedPeople, filters);
+    return sortPeople(filtered, sortBy);
+  }, [enrichedPeople, filters, sortBy]);
+
+  // ランキング用（アクティブ順）
+  const rankedPeople = useMemo(() => {
+    return sortPeople(enrichedPeople, 'activityScore');
+  }, [enrichedPeople]);
 
   const handleCardClick = (personId) => {
     navigate(`/people/${personId}`);
+  };
+
+  const handleContact = (personId) => {
+    // TODO: 後で実装
+    console.log('Contact person:', personId);
+  };
+
+  const handleEdit = (personId) => {
+    // TODO: 後で実装
+    console.log('Edit person:', personId);
   };
 
   return (
@@ -60,7 +75,9 @@ export default function People() {
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-ls-text">仲間・協力者</h1>
-                <p className="text-sm text-ls-text-light mt-1">{people.length}人の関係者</p>
+                <p className="text-sm text-ls-text-light mt-1">
+                  {filteredPeople.length}人{enrichedPeople.length !== filteredPeople.length && ` / ${enrichedPeople.length}人`}
+                </p>
               </div>
             </div>
             <Button 
@@ -77,69 +94,64 @@ export default function People() {
       {/* LSPageLayout: Main Content */}
       <div className="px-4 pb-6">
         <div className="max-w-7xl mx-auto">
-          {/* LSSection: Filters */}
-          <div className="mt-6">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ls-text-light" />
-                <Input
-                  placeholder="名前・スキル・価値観で検索..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 border-ls-border"
+          <div className="grid lg:grid-cols-4 gap-6">
+            {/* メインコンテンツエリア */}
+            <div className="lg:col-span-3">
+              {/* LSSection: Filters */}
+              <div className="mt-6">
+                <PeopleFilters
+                  people={enrichedPeople}
+                  filters={filters}
+                  onFiltersChange={setFilters}
                 />
               </div>
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full sm:w-40">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="役割で絞り込み" />
-            </SelectTrigger>
-            <SelectContent>
-              {roleOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          {/* LSSection: People Grid */}
-          <div className="mt-6">
-            {isLoading ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-48 bg-ls-border/50 rounded-lg animate-pulse" />
-                ))}
+              {/* LSSection: People Grid */}
+              <div className="mt-6">
+                {isLoading ? (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="h-64 bg-ls-border/50 rounded-lg animate-pulse" />
+                    ))}
+                  </div>
+                ) : filteredPeople.length === 0 ? (
+                  <EmptyState
+                    icon={Users}
+                    title="該当する関係者がいません"
+                    description="検索条件を変更してみてください"
+                  />
+                ) : (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredPeople.map(person => (
+                      <PeopleCard
+                        key={person.id}
+                        id={person.id}
+                        name={person.name}
+                        fullName={person.fullName}
+                        role={person.role}
+                        status={person.status}
+                        interests={person.interests}
+                        skills={person.skills}
+                        recentActivity={person.recentActivity}
+                        projectCount={person.projectCount}
+                        stage={person.stage}
+                        activityScore={person.activityScore}
+                        onClick={handleCardClick}
+                        onContact={handleContact}
+                        onEdit={handleEdit}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : filteredPeople.length === 0 ? (
-              <EmptyState
-                icon={Users}
-                title={search || roleFilter !== 'all' ? '該当する関係者がいません' : 'まだ関係者がいません'}
-                description={search || roleFilter !== 'all' 
-                  ? '検索条件を変更してみてください' 
-                  : '「関係者を追加」ボタンから最初の関係者を登録しましょう'}
-              />
-            ) : (
-              <ScrollArea className="h-[calc(100vh-300px)]">
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-                  {filteredPeople.map(person => (
-                    <PeopleCard
-                      key={person.id}
-                      id={person.id}
-                      name={person.name}
-                      role={person.role}
-                      skills={person.skills || []}
-                      values={person.values || []}
-                      lastContactAt={person.lastContactAt}
-                      projects={person.projects || []}
-                      onClick={() => handleCardClick(person.id)}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
+            </div>
+
+            {/* サイドバー: ランキング */}
+            <div className="lg:col-span-1">
+              <div className="mt-6">
+                <ActivePeopleRanking people={rankedPeople} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
