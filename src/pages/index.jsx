@@ -23,6 +23,8 @@ import HypothesisDetail from "./HypothesisDetail";
 
 import HypothesisList from "./HypothesisList";
 
+import IntentApprovalDetail from "./IntentApprovalDetail";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -123,6 +125,8 @@ function PagesContent() {
                 <Route path="/HypothesisDetail" element={<HypothesisDetail />} />
                 
                 <Route path="/HypothesisList" element={<HypothesisList />} />
+                
+                <Route path="/intent-approval/:caseId" element={<IntentApprovalDetail />} />
                 
             </Routes>
         </Layout>
